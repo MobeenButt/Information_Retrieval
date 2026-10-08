@@ -1,0 +1,3 @@
+Title: Recommendation Systems
+
+Recommendation systems such as those of Netflix and Spotify suggest items without an explicit query. Collaborative filtering uses the behavior of similar users, while content-based methods use item features. Recommendation is closely related to information filtering.

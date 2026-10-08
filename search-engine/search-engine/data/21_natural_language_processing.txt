@@ -1,0 +1,3 @@
+Title: Natural Language Processing
+
+Natural language processing lets computers analyze human language. Typical tasks include part-of-speech tagging, named entity recognition, translation and question answering. NLP techniques improve search by helping systems understand queries and documents.

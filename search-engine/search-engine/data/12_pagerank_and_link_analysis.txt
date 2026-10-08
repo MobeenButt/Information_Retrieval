@@ -1,0 +1,3 @@
+Title: PageRank and Link Analysis
+
+PageRank ranks web pages using the link graph of the web. A page is important if many important pages link to it. Link analysis helped early web search engines improve ranking beyond simple keyword matching.

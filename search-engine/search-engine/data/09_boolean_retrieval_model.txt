@@ -1,0 +1,3 @@
+Title: Boolean Retrieval Model
+
+The boolean model matches documents using exact AND, OR and NOT operators. A document either matches or it does not, so there is no ranking of the results. It is precise for expert users such as librarians but frustrating for casual searchers.

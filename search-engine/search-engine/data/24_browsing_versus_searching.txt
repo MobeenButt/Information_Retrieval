@@ -1,0 +1,3 @@
+Title: Browsing versus Searching
+
+Searching has a focused goal and a user who knows what the repository holds. Browsing has a vague goal, for example scrolling through travel photos without a clear target. Interfaces such as search engines and photo galleries often support both behaviors.

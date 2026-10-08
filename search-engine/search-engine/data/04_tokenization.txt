@@ -1,0 +1,3 @@
+Title: Tokenization
+
+Tokenization breaks a stream of text into tokens such as words and numbers. Decisions about punctuation, hyphens, case and apostrophes change what the index stores. Good tokenizers lowercase the text, and languages without spaces between words need special handling.

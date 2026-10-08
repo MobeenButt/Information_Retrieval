@@ -1,0 +1,3 @@
+Title: Web Crawling
+
+A web crawler follows hyperlinks to discover and download pages for a search engine. Crawlers respect robots.txt, avoid duplicate pages and revisit pages to keep the index fresh. The downloaded pages are then processed and added to the index.

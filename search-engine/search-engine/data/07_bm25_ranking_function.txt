@@ -1,0 +1,3 @@
+Title: BM25 Ranking Function
+
+BM25 is a probabilistic ranking function used by Lucene and Elasticsearch. It improves on plain TF-IDF by saturating term frequency and normalizing for document length. The parameters k1 and b control how quickly repeated terms stop adding to the score.

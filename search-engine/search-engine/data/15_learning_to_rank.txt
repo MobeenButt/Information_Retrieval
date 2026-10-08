@@ -1,0 +1,3 @@
+Title: Learning to Rank
+
+Learning to rank uses machine learning to order search results. Features such as the BM25 score, click data and page quality are combined by a trained model. This replaces hand-tuned ranking formulas with a model learned from relevance judgments.

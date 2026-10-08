@@ -1,0 +1,3 @@
+Title: Query Expansion
+
+Query expansion adds related terms such as synonyms to the original query to improve recall. For example, a search for car can also look for automobile. Relevance feedback and thesauri are common sources of expansion terms.

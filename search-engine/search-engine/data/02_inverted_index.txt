@@ -1,0 +1,3 @@
+Title: Inverted Index
+
+An inverted index maps each term to the list of documents that contain it, called a postings list. Instead of scanning every document, the search engine looks up the query terms in the index, which makes retrieval fast even for millions of documents. Postings often store the term frequency and the positions of each term.

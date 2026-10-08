@@ -1,0 +1,3 @@
+Title: Generative AI and Retrieval-Augmented Generation
+
+Large language models such as ChatGPT generate answers instead of listing links. Retrieval-augmented generation first retrieves relevant documents from a search index and then gives them to the model as context. This reduces hallucination and keeps answers grounded in sources.

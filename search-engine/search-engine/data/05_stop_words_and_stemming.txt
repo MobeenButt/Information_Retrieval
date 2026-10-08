@@ -1,0 +1,3 @@
+Title: Stop Words and Stemming
+
+Stop words are very frequent words such as the, is and of that carry little meaning for ranking. Stemming strips suffixes so that running and runs both map to run. Stemming increases recall because more word forms match, but it can merge words that are unrelated.

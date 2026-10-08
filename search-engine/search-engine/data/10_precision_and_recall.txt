@@ -1,0 +1,3 @@
+Title: Precision and Recall
+
+Precision is the fraction of retrieved documents that are relevant, and recall is the fraction of relevant documents that were retrieved. A search engine usually trades one against the other. Metrics such as mean average precision and NDCG evaluate the quality of ranked results.

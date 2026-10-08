@@ -1,0 +1,3 @@
+Title: TF-IDF Weighting
+
+TF-IDF scores a term in a document by combining term frequency with inverse document frequency. A term that appears often in a document is important to it, while a term that appears in every document is a poor discriminator. Documents are ranked by the combined weight of the query terms they contain.

@@ -1,0 +1,3 @@
+Title: Vector Databases and FAISS
+
+A vector database stores embeddings and finds nearest neighbors quickly. FAISS is a library for efficient similarity search over dense vectors. These tools power semantic search and recommendation by comparing meaning rather than exact words.

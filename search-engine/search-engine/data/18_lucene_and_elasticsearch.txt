@@ -1,0 +1,3 @@
+Title: Lucene and Elasticsearch
+
+Apache Lucene is a Java library that builds inverted indexes and ranks documents with BM25. Elasticsearch is a distributed search engine built on Lucene that exposes a REST API. Developers use them to add full-text search to their applications.

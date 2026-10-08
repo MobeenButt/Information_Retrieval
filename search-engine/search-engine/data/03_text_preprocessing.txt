@@ -1,0 +1,3 @@
+Title: Text Preprocessing
+
+Before indexing, text is processed in several steps. Tokenization splits text into words, stop-word removal drops common words like the and of, and stemming reduces words to their roots. The same processing must be applied to documents and queries so that their terms can match.

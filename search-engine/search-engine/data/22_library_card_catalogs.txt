@@ -1,0 +1,3 @@
+Title: Library Card Catalogs
+
+Before computers, libraries used card catalogs to organize books by author, title and subject. A librarian never reads every book; she relies on the index to find the right shelf. Early library automation was the first generation of information retrieval systems.

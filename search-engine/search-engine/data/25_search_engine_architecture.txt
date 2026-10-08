@@ -1,0 +1,3 @@
+Title: Search Engine Architecture
+
+A search engine has an offline part and an online part. Offline, documents are crawled, processed and indexed. Online, the query is processed, the index is looked up and the candidate documents are ranked before the results are shown to the user.

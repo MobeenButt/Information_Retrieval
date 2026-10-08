@@ -1,0 +1,3 @@
+Title: Vector Space Model
+
+The vector space model represents documents and queries as vectors of term weights. Relevance is estimated with the cosine similarity between the query vector and each document vector. The more meaningful terms a query and a document share, the higher their similarity and the higher the document rank.

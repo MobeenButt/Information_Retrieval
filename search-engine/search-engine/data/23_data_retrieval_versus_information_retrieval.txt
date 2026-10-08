@@ -1,0 +1,3 @@
+Title: Data Retrieval versus Information Retrieval
+
+Data retrieval, as in a SQL database, returns exact matches for well-structured queries, and one wrong value can mean total failure. Information retrieval deals with loosely structured text and returns ranked, approximate results, where a small error rarely breaks the system.
