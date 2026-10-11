@@ -1,0 +1,27 @@
+[
+  {
+    "query": "best treatment for diabetes",
+    "relevant": [11, 12, 13],
+    "note": "docs 11,12,13 all cover diabetes treatment"
+  },
+  {
+    "query": "machine learning intrusion detection",
+    "relevant": [6, 9],
+    "note": "doc 6 (ML intrusion detection), doc 9 (deep-learning network anomaly)"
+  },
+  {
+    "query": "information retrieval search ranking",
+    "relevant": [23, 24, 25],
+    "note": "the three IR-category docs: ranking, clustering, query expansion"
+  },
+  {
+    "query": "continuous glucose monitoring",
+    "relevant": [13],
+    "note": "doc 13 is specifically about continuous glucose monitoring"
+  },
+  {
+    "query": "bug investigation software repositories",
+    "relevant": [20, 21],
+    "note": "doc 20 (bug investigation platform), doc 21 (bug localization)"
+  }
+]

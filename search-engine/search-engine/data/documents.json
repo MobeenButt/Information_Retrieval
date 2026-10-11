@@ -1,0 +1,202 @@
+[
+  {
+    "id": 1,
+    "title": "Deep Neural Networks for Image Classification",
+    "abstract": "Image classification is a core task in computer vision that assigns labels to digital images. This paper proposes a deep neural network architecture for classifying images into fine-grained categories. We investigate how network depth and regularization affect classification accuracy on large benchmark datasets. The work connects artificial intelligence research with practical vision applications.",
+    "methodology": "We trained a deep neural network with multiple hidden layers on the CIFAR image dataset using stochastic gradient descent. Data augmentation and dropout regularization were applied to reduce overfitting. Model performance was measured using accuracy and confusion matrices across validation splits.",
+    "results": "The proposed neural network achieved 94 percent accuracy on the test set, outperforming shallow models. Dropout regularization reduced overfitting and improved generalization to unseen images. The deep architecture proved effective for complex image classification tasks.",
+    "category": "AI"
+  },
+  {
+    "id": 2,
+    "title": "Transformer Models for Natural Language Processing",
+    "abstract": "Transformer architectures have transformed natural language processing by enabling contextual representation of text. This study evaluates self-attention models on sentiment analysis and text classification benchmarks. We compare transformer models against recurrent neural networks for language understanding tasks. The research highlights the role of attention mechanisms in modern artificial intelligence.",
+    "methodology": "We fine-tuned a pre-trained transformer model on sentiment analysis datasets using a masked language modeling objective. Training used the Adam optimizer with learning rate scheduling over multiple epochs. Evaluation compared precision, recall, and F1 score against a recurrent neural network baseline.",
+    "results": "The transformer model reached an F1 score of 0.91 on sentiment classification, exceeding the recurrent network baseline. Self-attention captured long-range dependencies in text more effectively than recurrence. The results confirm that transformers advance natural language processing performance.",
+    "category": "AI"
+  },
+  {
+    "id": 3,
+    "title": "Convolutional Neural Networks for Medical Image Analysis",
+    "abstract": "Medical image analysis benefits from convolutional neural networks that learn spatial features directly from pixels. This paper applies convolutional networks to detect abnormalities in chest radiographs. We explore transfer learning from general image classification to the medical domain. The work bridges artificial intelligence and healthcare imaging applications.",
+    "methodology": "A convolutional neural network was initialized with weights from a general image dataset and fine-tuned on labeled radiographs. The pipeline normalized images and applied data augmentation to handle class imbalance. Performance was assessed using sensitivity, specificity, and the area under the ROC curve.",
+    "results": "The fine-tuned convolutional network achieved an AUC of 0.96 for abnormality detection. Transfer learning reduced the data required to reach clinical accuracy. The neural network generalized well to unseen medical images.",
+    "category": "AI"
+  },
+  {
+    "id": 4,
+    "title": "Reinforcement Learning for Autonomous Systems",
+    "abstract": "Reinforcement learning enables autonomous systems to learn control policies through trial and error interaction. This paper studies deep reinforcement learning for robotic navigation in unknown environments. We examine reward shaping and exploration strategies for stable policy learning. The research contributes to artificial intelligence for autonomous decision making.",
+    "methodology": "A deep reinforcement learning agent was trained in a simulated environment using proximal policy optimization. Reward shaping guided the agent toward goal-directed navigation behavior. Success rates and collision counts were recorded across training episodes.",
+    "results": "The reinforcement learning agent learned navigation policies with a 92 percent success rate. Reward shaping accelerated convergence and reduced collisions during training. The autonomous system adapted to previously unseen maze configurations.",
+    "category": "AI"
+  },
+  {
+    "id": 5,
+    "title": "Generative Adversarial Networks for Data Augmentation",
+    "abstract": "Generative adversarial networks synthesize realistic data by pitting a generator against a discriminator. This paper uses generative adversarial networks to augment training data for image classification. We analyze how synthetic samples influence neural network generalization. The study situates generative modeling within artificial intelligence research.",
+    "methodology": "A generative adversarial network was trained to produce synthetic images that augment a small training set. A classifier was then trained on the combined real and synthetic data. Performance was compared against training on real data alone.",
+    "results": "Augmenting with synthetic samples improved classifier accuracy by six percent on the held-out test set. The discriminator and generator reached equilibrium during training. The generative adversarial network produced visually plausible samples.",
+    "category": "AI"
+  },
+  {
+    "id": 6,
+    "title": "Machine Learning for Intrusion Detection Systems",
+    "abstract": "Intrusion detection systems protect networks by identifying malicious traffic patterns. This paper applies machine learning to classify network intrusions in real time. We compare supervised and anomaly based detection approaches for cybersecurity. The research addresses the growing need for automated network defense.",
+    "methodology": "We trained machine learning classifiers on the NSL-KDD network intrusion dataset using features extracted from connection records. Both supervised and unsupervised anomaly detection models were evaluated. Detection performance was measured with precision, recall, and false positive rate.",
+    "results": "The machine learning intrusion detector achieved 97 percent recall for known attack classes. Anomaly based detection flagged novel intrusions that supervised models missed. The system maintained a low false positive rate under realistic traffic loads.",
+    "category": "Cybersecurity"
+  },
+  {
+    "id": 7,
+    "title": "Static Analysis for Malware Detection",
+    "abstract": "Malware detection relies on identifying malicious code without executing it. This paper presents a static analysis framework that extracts features from executable files to detect malware. We combine n-gram byte analysis with machine learning classification for cybersecurity. The approach avoids the risk of running suspicious programs.",
+    "methodology": "Static features including byte n-grams and API call sequences were extracted from a corpus of malware and benign executables. A machine learning classifier was trained on the resulting feature vectors. Cross validation estimated detection accuracy and false alarm rates.",
+    "results": "The static analysis model detected malware with 95 percent accuracy and a two percent false positive rate. Byte n-gram features proved more discriminative than header metadata alone. The framework scaled to large collections of executable files.",
+    "category": "Cybersecurity"
+  },
+  {
+    "id": 8,
+    "title": "Post-Quantum Cryptography for Secure Communication",
+    "abstract": "Quantum computing threatens classical cryptographic schemes used for secure communication. This paper evaluates lattice based post-quantum cryptography as a defense against future attacks. We benchmark key exchange and signature schemes for cybersecurity applications. The work prepares communication systems for the post-quantum era.",
+    "methodology": "We implemented lattice based key exchange and digital signature schemes in software and measured their performance. Security parameters were selected to resist known quantum attacks. Benchmarks compared throughput and key sizes against classical alternatives.",
+    "results": "Lattice based schemes achieved practical throughput while resisting quantum attack models. Key sizes remained manageable for real world deployment. The post-quantum cryptography prototypes outperformed classical schemes in forward secrecy.",
+    "category": "Cybersecurity"
+  },
+  {
+    "id": 9,
+    "title": "Network Anomaly Detection using Deep Learning",
+    "abstract": "Network anomaly detection identifies deviations from normal traffic that may signal cyberattacks. This paper uses deep learning to model normal network behavior and flag anomalies. We combine machine learning with cybersecurity for unsupervised threat detection. The approach reduces reliance on labeled attack data.",
+    "methodology": "A deep learning autoencoder was trained on normal network traffic to reconstruct its patterns. Reconstruction error was used as an anomaly score during testing. The detector was evaluated on traffic traces containing injected attacks.",
+    "results": "The deep learning anomaly detector identified injected attacks with high recall and low false alarm rates. Reconstruction error correlated strongly with malicious traffic. The unsupervised model adapted to changing network conditions.",
+    "category": "Cybersecurity"
+  },
+  {
+    "id": 10,
+    "title": "Automated Vulnerability Detection in Source Code",
+    "abstract": "Software vulnerabilities allow attackers to compromise systems through flawed source code. This paper automates vulnerability detection by learning patterns from code commits and security tickets. We frame cybersecurity defect finding as a machine learning classification task. The goal is to catch vulnerabilities before deployment.",
+    "methodology": "We mined vulnerable and patched code commits from open source repositories and labeled them using security tickets. A machine learning classifier learned code patterns associated with vulnerabilities. Evaluation used precision, recall, and false positive rate over held-out commits.",
+    "results": "The automated detector flagged vulnerable commits with 88 percent precision. Combining code and commit message features improved recall over code alone. The tool surfaced security issues that manual review had missed.",
+    "category": "Cybersecurity"
+  },
+  {
+    "id": 11,
+    "title": "Machine Learning for Diabetes Treatment Prediction",
+    "abstract": "Diabetes treatment selection is challenging because patient responses vary widely. This paper predicts the best treatment for diabetes patients using machine learning models trained on electronic health records. We compare several treatment strategies for type two diabetes management. The work aims to personalize therapy and improve patient outcomes.",
+    "methodology": "We collected electronic health records for diabetes patients including glucose levels, medication history, and treatment outcomes. Machine learning models were trained to predict the best treatment response for each patient. Models were evaluated with cross validation and area under the ROC curve.",
+    "results": "The model predicted the best diabetes treatment with 89 percent accuracy across patient subgroups. Personalized treatment recommendations reduced average glucose levels in a simulated cohort. The approach supports clinical decisions for diabetes management.",
+    "category": "Healthcare"
+  },
+  {
+    "id": 12,
+    "title": "Comparative Study of Diabetes Treatment Strategies",
+    "abstract": "Selecting the best treatment for diabetes requires comparing medication efficacy and safety. This paper compares diabetes treatment strategies including insulin therapy and oral medication regimens. We analyze patient outcomes to identify the best treatment for type two diabetes. The study informs clinical guidelines for diabetes care.",
+    "methodology": "We conducted a comparative analysis of diabetes treatment strategies using patient outcome data from clinical registries. Treatment groups included insulin therapy, oral medication, and combination regimens. Outcomes were compared using glucose control and complication rates.",
+    "results": "Combination therapy was the best treatment for advanced diabetes in terms of glucose control. Early intervention with oral medication reduced long term complications. The comparative study produced evidence based treatment recommendations for diabetes.",
+    "category": "Healthcare"
+  },
+  {
+    "id": 13,
+    "title": "Continuous Glucose Monitoring for Diabetes Management",
+    "abstract": "Continuous glucose monitoring helps patients track blood sugar and adjust diabetes treatment in real time. This paper evaluates continuous glucose monitors as a tool for diabetes management. We assess how monitoring data informs the best treatment decisions for diabetes. The research improves day to day diabetes care.",
+    "methodology": "Patients with diabetes used continuous glucose monitors for three months while clinicians reviewed their trends. Monitoring data was correlated with treatment adjustments and glycemic outcomes. Statistical tests compared glucose variability before and after monitoring.",
+    "results": "Continuous glucose monitoring reduced glucose variability and improved treatment adherence in diabetes patients. Clinicians used monitoring trends to refine the best treatment plan for each patient. Patients reported better confidence in self managing their diabetes.",
+    "category": "Healthcare"
+  },
+  {
+    "id": 14,
+    "title": "Deep Learning for Cancer Diagnosis from Medical Images",
+    "abstract": "Cancer diagnosis from medical images demands accurate and early detection of tumors. This paper applies deep learning to diagnose cancer from histopathology slides. We address class imbalance and interpretability in clinical image analysis. The work advances healthcare diagnostics for oncology.",
+    "methodology": "A deep learning convolutional network was trained on labeled histopathology images of cancer and benign tissue. Class imbalance was handled with weighted loss and oversampling. Pathologist review provided ground truth for evaluation.",
+    "results": "The deep learning model detected cancer with 93 percent sensitivity and 90 percent specificity. Saliency maps highlighted tumor regions consistent with pathologist annotations. The system supported faster cancer diagnosis workflows.",
+    "category": "Healthcare"
+  },
+  {
+    "id": 15,
+    "title": "Computational Drug Discovery for Rare Diseases",
+    "abstract": "Drug discovery for rare diseases is limited by small patient populations and sparse data. This paper uses computational methods to repurpose existing drugs for rare diseases. We combine molecular similarity and machine learning to prioritize drug candidates. The research accelerates healthcare treatment development.",
+    "methodology": "We built molecular fingerprints for approved drugs and rare disease targets and computed similarity scores. A machine learning model ranked drug candidates by predicted therapeutic effect. Top candidates were validated against literature evidence.",
+    "results": "The computational pipeline shortlisted five repurposed drug candidates with strong literature support. Molecular similarity correlated with known treatment effects. The approach reduced drug discovery time for rare diseases.",
+    "category": "Healthcare"
+  },
+  {
+    "id": 16,
+    "title": "Scalable NoSQL Database Design for Big Data",
+    "abstract": "Big data applications require databases that scale horizontally across many nodes. This paper presents a scalable NoSQL database design for large volume workloads. We compare document stores and key value stores for database performance. The work supports modern data driven applications.",
+    "methodology": "We designed a NoSQL document store schema and benchmarked read and write throughput under horizontal scaling. Workloads mixed analytical and transactional queries against a sharded cluster. Throughput and latency were measured as nodes were added.",
+    "results": "The NoSQL database sustained linear throughput growth as nodes were added to the cluster. Document stores outperformed key value stores for complex queries. The scalable design handled petabyte scale workloads with low latency.",
+    "category": "Databases"
+  },
+  {
+    "id": 17,
+    "title": "Query Optimization Techniques for Relational Databases",
+    "abstract": "Relational database performance depends heavily on query optimization by the query planner. This paper studies query optimization techniques including index selection and join reordering. We evaluate cost based optimization for relational database queries. The research improves database efficiency for analytical workloads.",
+    "methodology": "We implemented cost based query optimization with index selection and join reordering in a relational database engine. A benchmark of analytical queries measured execution time before and after optimization. The optimizer was tuned using statistics on data distribution.",
+    "results": "Query optimization reduced average execution time by 40 percent on analytical workloads. Index selection had the largest impact on join heavy queries. The cost based planner chose near optimal execution plans.",
+    "category": "Databases"
+  },
+  {
+    "id": 18,
+    "title": "Distributed Database Systems for High Availability",
+    "abstract": "Distributed database systems provide high availability by replicating data across multiple sites. This paper evaluates consistency and availability tradeoffs in distributed databases. We implement consensus protocols to coordinate database replicas. The work addresses fault tolerant database design.",
+    "methodology": "We built a distributed database prototype with multi site replication and a consensus protocol for updates. Failures were injected to test availability and consistency under partition. Recovery time and data divergence were measured.",
+    "results": "The distributed database maintained availability during node failures with minimal divergence. Consensus protocols ensured strong consistency when partitions healed. The system met high availability targets for transactional workloads.",
+    "category": "Databases"
+  },
+  {
+    "id": 19,
+    "title": "Data Warehousing and OLAP for Business Analytics",
+    "abstract": "Data warehousing consolidates enterprise data for analytical processing and reporting. This paper designs a data warehouse with online analytical processing for business analytics. We model star schemas and materialized views for fast database queries. The work enables decision support at scale.",
+    "methodology": "We constructed a star schema data warehouse and populated it from operational source systems. Online analytical processing cubes and materialized views accelerated aggregation queries. Refresh performance was benchmarked against a normalized database.",
+    "results": "The data warehouse answered aggregation queries in seconds using materialized views. Star schemas simplified analytical reporting for business users. The OLAP design supported interactive business analytics dashboards.",
+    "category": "Databases"
+  },
+  {
+    "id": 20,
+    "title": "AI-Powered Bug Investigation and Resolution in Software Repositories",
+    "abstract": "Software bug investigation requires tracing errors across logs, code commits, and issue tickets. This paper builds an AI powered platform for bug investigation and resolution over software repositories. We retrieve relevant evidence items such as logs and commits to diagnose bugs. The work combines software engineering with information retrieval and artificial intelligence.",
+    "methodology": "We collected software evidence items including error logs, code chunks, commits, and issue tickets from open source repositories. An information retrieval module indexed the evidence and ranked items relevant to each bug. Bug resolution accuracy was evaluated with precision and recall metrics.",
+    "results": "The AI powered platform ranked the correct evidence within the top five results for 80 percent of bugs. Retrieval over logs and commits accelerated bug investigation time. The system improved developer resolution of software defects.",
+    "category": "SoftwareEngineering"
+  },
+  {
+    "id": 21,
+    "title": "Automated Bug Localization using Information Retrieval",
+    "abstract": "Bug localization pinpoints the source code responsible for a reported defect. This paper applies information retrieval to automated bug localization from bug reports. We index source code and rank files by similarity to the bug description. The work links software engineering with information retrieval research.",
+    "methodology": "We indexed source files with an inverted index and represented bug reports as search queries. A ranking model scored source files by textual similarity to each bug report. Evaluation used the bug localization benchmark with mean reciprocal rank.",
+    "results": "The information retrieval approach localized bugs in the top ten files for 75 percent of reports. Bug reports sharing terms with source comments ranked most accurately. The automated method reduced manual code inspection effort.",
+    "category": "SoftwareEngineering"
+  },
+  {
+    "id": 22,
+    "title": "Code Review Automation for Software Quality Assurance",
+    "abstract": "Code review improves software quality but is time consuming for large teams. This paper automates code review using machine learning to detect quality issues in commits. We analyze code changes and reviewer comments for software engineering. The work supports quality assurance in modern development workflows.",
+    "methodology": "We trained a machine learning model on historical code reviews labeled with quality issues. Features captured code complexity, commit size, and prior defect history. The model flagged risky changes for human reviewer attention.",
+    "results": "Automated code review flagged 70 percent of risky commits before merge. Reviewer comments helped the model learn recurring quality patterns. The tool reduced review effort while maintaining software quality.",
+    "category": "SoftwareEngineering"
+  },
+  {
+    "id": 23,
+    "title": "Learning to Rank for Document Search",
+    "abstract": "Learning to rank trains models to order search results by relevance using feature based scoring. This paper applies learning to rank to document search engines. We compare pointwise, pairwise, and listwise ranking objectives for information retrieval. The research improves ranking quality for web search.",
+    "methodology": "We trained learning to rank models on document search datasets with relevance labels. Features included term frequency, document length, and BM25 scores. Ranking quality was measured with normalized discounted cumulative gain.",
+    "results": "Listwise learning to rank improved nDCG by eight percent over the BM25 baseline. Pairwise models reduced ranking errors on ambiguous queries. The approach advanced information retrieval ranking quality.",
+    "category": "IR"
+  },
+  {
+    "id": 24,
+    "title": "Document Clustering for Search Result Organization",
+    "abstract": "Search result clustering organizes documents into thematic groups to help users navigate results. This paper applies document clustering to information retrieval search outputs. We compare k-means and hierarchical clustering for search result organization. The work enhances the user search experience.",
+    "methodology": "We represented search results as TF-IDF vectors and clustered them with k-means and hierarchical methods. Cluster labels were generated from top terms in each group. Evaluation measured cluster coherence and user satisfaction.",
+    "results": "Document clustering improved user task completion time on search result pages. K-means produced coherent topical groups for most queries. The clustering improved navigation of information retrieval results.",
+    "category": "IR"
+  },
+  {
+    "id": 25,
+    "title": "Query Expansion using Word Embeddings",
+    "abstract": "Query expansion adds related terms to a search query to improve recall. This paper uses word embeddings to expand queries in information retrieval systems. We evaluate semantic expansion against pseudo relevance feedback for search. The work addresses vocabulary mismatch in information retrieval.",
+    "methodology": "We trained word embeddings on a large corpus and expanded each query with semantically similar terms. Expanded queries were run against an inverted index and ranked with BM25. Evaluation compared precision and recall with and without expansion.",
+    "results": "Query expansion using embeddings improved recall by 12 percent with minimal precision loss. Semantic neighbors expanded queries more effectively than pseudo relevance feedback. The approach reduced vocabulary mismatch in information retrieval.",
+    "category": "IR"
+  }
+]
