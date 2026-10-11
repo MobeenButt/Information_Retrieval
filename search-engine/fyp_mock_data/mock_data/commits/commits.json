@@ -1,0 +1,611 @@
+[
+  {
+    "sha": "5f90aed",
+    "author": "Ayesha Khan",
+    "date": "2026-10-01T19:00:00.000Z",
+    "message": "Add pagination to product listing",
+    "files_changed": [
+      "api/products.py"
+    ]
+  },
+  {
+    "sha": "e66b513",
+    "author": "Mariam Iqbal",
+    "date": "2026-10-03T21:00:00.000Z",
+    "message": "Update README with local setup steps",
+    "files_changed": [
+      "README.md"
+    ]
+  },
+  {
+    "sha": "ec221ed",
+    "author": "Hamza Tariq",
+    "date": "2026-10-05T18:00:00.000Z",
+    "message": "Bump flask to 3.0.3",
+    "files_changed": [
+      "requirements.txt"
+    ]
+  },
+  {
+    "sha": "5ddb7b2",
+    "author": "Mariam Iqbal",
+    "date": "2026-10-06T06:00:00.000Z",
+    "message": "Add unit tests for cart service",
+    "files_changed": [
+      "tests/test_cart.py"
+    ]
+  },
+  {
+    "sha": "be3e528",
+    "author": "Mariam Iqbal",
+    "date": "2026-10-08T05:00:00.000Z",
+    "message": "Fix typo in order confirmation email template",
+    "files_changed": [
+      "templates/order_confirmation.html"
+    ]
+  },
+  {
+    "sha": "57bb3b3",
+    "author": "Usman Raza",
+    "date": "2026-10-09T16:00:00.000Z",
+    "message": "Add product image zoom on detail page",
+    "files_changed": [
+      "static/js/zoom.js"
+    ]
+  },
+  {
+    "sha": "78cde71",
+    "author": "Mariam Iqbal",
+    "date": "2026-10-12T03:00:00.000Z",
+    "message": "Add health check endpoint",
+    "files_changed": [
+      "api/health.py"
+    ]
+  },
+  {
+    "sha": "08025f4",
+    "author": "Sana Malik",
+    "date": "2026-10-13T23:00:00.000Z",
+    "message": "Configure structured JSON logging",
+    "files_changed": [
+      "core/logging.py"
+    ]
+  },
+  {
+    "sha": "8d01232",
+    "author": "Daniyal Shah",
+    "date": "2026-10-16T05:00:00.000Z",
+    "message": "Add Dockerfile for checkout-service",
+    "files_changed": [
+      "Dockerfile"
+    ]
+  },
+  {
+    "sha": "d73208b",
+    "author": "Daniyal Shah",
+    "date": "2026-10-17T18:00:00.000Z",
+    "message": "Improve product search ranking",
+    "files_changed": [
+      "search/ranking.py"
+    ]
+  },
+  {
+    "sha": "6734803",
+    "author": "Daniyal Shah",
+    "date": "2026-10-19T09:00:00.000Z",
+    "message": "Add wishlist model and endpoints",
+    "files_changed": [
+      "models/wishlist.py",
+      "api/wishlist.py"
+    ]
+  },
+  {
+    "sha": "ccc88d2",
+    "author": "Daniyal Shah",
+    "date": "2026-10-21T02:00:00.000Z",
+    "message": "Upgrade psycopg2 to 2.9.9",
+    "files_changed": [
+      "requirements.txt"
+    ]
+  },
+  {
+    "sha": "3039a5e",
+    "author": "Ayesha Khan",
+    "date": "2026-10-23T03:00:00.000Z",
+    "message": "Add rate limiting to login endpoint",
+    "files_changed": [
+      "auth/limits.py"
+    ]
+  },
+  {
+    "sha": "e608632",
+    "author": "Hamza Tariq",
+    "date": "2026-10-23T19:00:00.000Z",
+    "message": "Refactor email sending into notification module",
+    "files_changed": [
+      "notify/email.py"
+    ]
+  },
+  {
+    "sha": "ea0620d",
+    "author": "Ayesha Khan",
+    "date": "2026-10-25T13:00:00.000Z",
+    "message": "Add database index on orders.created_at",
+    "files_changed": [
+      "migrations/0042_orders_index.py"
+    ]
+  },
+  {
+    "sha": "f7abf3f",
+    "author": "Sana Malik",
+    "date": "2026-10-26T05:00:00.000Z",
+    "message": "Add CSV export for admin order report",
+    "files_changed": [
+      "admin/reports.py"
+    ]
+  },
+  {
+    "sha": "53dc912",
+    "author": "Sana Malik",
+    "date": "2026-10-27T19:00:00.000Z",
+    "message": "Update CI workflow to run on pull requests",
+    "files_changed": [
+      ".github/workflows/ci.yml"
+    ]
+  },
+  {
+    "sha": "aa68b8e",
+    "author": "Mariam Iqbal",
+    "date": "2026-10-28T16:00:00.000Z",
+    "message": "Remove unused imports",
+    "files_changed": [
+      "api/products.py",
+      "api/cart.py"
+    ]
+  },
+  {
+    "sha": "f406f4a",
+    "author": "Mariam Iqbal",
+    "date": "2026-10-31T02:00:00.000Z",
+    "message": "Add Grafana dashboard config",
+    "files_changed": [
+      "ops/grafana/checkout.json"
+    ]
+  },
+  {
+    "sha": "d3c6fa0",
+    "author": "Usman Raza",
+    "date": "2026-11-01T10:00:00.000Z",
+    "message": "Document environment variables",
+    "files_changed": [
+      "docs/config.md"
+    ]
+  },
+  {
+    "sha": "3087743",
+    "author": "Mariam Iqbal",
+    "date": "2026-11-01T19:06:00.000Z",
+    "message": "Refactor discount handling to simplify checkout flow",
+    "files_changed": [
+      "pricing/discounts.py",
+      "checkout/views.py"
+    ]
+  },
+  {
+    "sha": "2d10267",
+    "author": "Daniyal Shah",
+    "date": "2026-11-02T03:31:00.000Z",
+    "message": "Fix: restore None check for coupon in calculate_total (BUG-201)",
+    "files_changed": [
+      "pricing/discounts.py",
+      "checkout/views.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "315f07c",
+    "author": "Daniyal Shah",
+    "date": "2026-11-02T15:00:00.000Z",
+    "message": "Add retry to warehouse sync job",
+    "files_changed": [
+      "inventory/sync.py"
+    ]
+  },
+  {
+    "sha": "06d7e80",
+    "author": "Usman Raza",
+    "date": "2026-11-02T21:57:00.000Z",
+    "message": "Simplify cart item validation and remove duplicate checks",
+    "files_changed": [
+      "checkout/validators.py",
+      "services/orders.py"
+    ]
+  },
+  {
+    "sha": "5da846a",
+    "author": "Sana Malik",
+    "date": "2026-11-03T13:47:00.000Z",
+    "message": "Fix: reject quantity <= 0 in validate_cart_item (BUG-202)",
+    "files_changed": [
+      "checkout/validators.py",
+      "services/orders.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "32c3bb8",
+    "author": "Hamza Tariq",
+    "date": "2026-11-04T10:22:00.000Z",
+    "message": "Use cached cart total when creating orders to speed up checkout",
+    "files_changed": [
+      "services/orders.py",
+      "models/order.py"
+    ]
+  },
+  {
+    "sha": "1e3c29b",
+    "author": "Sana Malik",
+    "date": "2026-11-04T19:17:00.000Z",
+    "message": "Fix: compute order total from line items in create_order (BUG-203)",
+    "files_changed": [
+      "services/orders.py",
+      "models/order.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "6217927",
+    "author": "Hamza Tariq",
+    "date": "2026-11-04T19:37:00.000Z",
+    "message": "Switch checkout payload parsing to pydantic models",
+    "files_changed": [
+      "api/handlers.py",
+      "schemas/checkout.py"
+    ]
+  },
+  {
+    "sha": "cbfc21b",
+    "author": "Hamza Tariq",
+    "date": "2026-11-04T22:00:00.000Z",
+    "message": "Translate error messages to Urdu",
+    "files_changed": [
+      "i18n/ur.json"
+    ]
+  },
+  {
+    "sha": "3c8eb5b",
+    "author": "Hamza Tariq",
+    "date": "2026-11-05T11:23:00.000Z",
+    "message": "Fix: return 422 for invalid checkout payloads (BUG-204)",
+    "files_changed": [
+      "api/handlers.py",
+      "schemas/checkout.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "b682575",
+    "author": "Sana Malik",
+    "date": "2026-11-05T18:12:00.000Z",
+    "message": "Refactor coupon engine into smaller functions",
+    "files_changed": [
+      "pricing/coupons.py"
+    ]
+  },
+  {
+    "sha": "56fb96a",
+    "author": "Daniyal Shah",
+    "date": "2026-11-06T15:00:00.000Z",
+    "message": "Add seed data script for local development",
+    "files_changed": [
+      "scripts/seed.py"
+    ]
+  },
+  {
+    "sha": "ec87a17",
+    "author": "Sana Malik",
+    "date": "2026-11-06T15:27:00.000Z",
+    "message": "Fix: apply coupon once per cart in apply_coupons (BUG-205)",
+    "files_changed": [
+      "pricing/coupons.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "f13a5d0",
+    "author": "Sana Malik",
+    "date": "2026-11-08T07:00:00.000Z",
+    "message": "Fix flaky test in search ranking",
+    "files_changed": [
+      "tests/test_search.py"
+    ]
+  },
+  {
+    "sha": "c6a6f8e",
+    "author": "Mariam Iqbal",
+    "date": "2026-11-09T11:00:00.000Z",
+    "message": "Add cache layer for product reviews",
+    "files_changed": [
+      "api/reviews.py"
+    ]
+  },
+  {
+    "sha": "1ac826a",
+    "author": "Mariam Iqbal",
+    "date": "2026-11-09T13:02:00.000Z",
+    "message": "Remove row lock in reserve_stock to reduce contention",
+    "files_changed": [
+      "inventory/reserve.py"
+    ]
+  },
+  {
+    "sha": "78dcb74",
+    "author": "Usman Raza",
+    "date": "2026-11-09T13:22:00.000Z",
+    "message": "Move payment settings to environment based config",
+    "files_changed": [
+      "config/settings.py",
+      "payments/client.py"
+    ]
+  },
+  {
+    "sha": "6fce484",
+    "author": "Hamza Tariq",
+    "date": "2026-11-09T17:55:00.000Z",
+    "message": "Fix: use atomic UPDATE with stock >= qty guard (BUG-206)",
+    "files_changed": [
+      "inventory/reserve.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "cca2998",
+    "author": "Daniyal Shah",
+    "date": "2026-11-10T04:00:00.000Z",
+    "message": "Add pagination to product listing",
+    "files_changed": [
+      "api/products.py"
+    ]
+  },
+  {
+    "sha": "f21345d",
+    "author": "Daniyal Shah",
+    "date": "2026-11-10T08:35:00.000Z",
+    "message": "Fix: fail fast when PAYMENT_API_KEY is missing and restore env var (BUG-207)",
+    "files_changed": [
+      "config/settings.py",
+      "payments/client.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "7563483",
+    "author": "Daniyal Shah",
+    "date": "2026-11-10T15:00:00.000Z",
+    "message": "Update README with local setup steps",
+    "files_changed": [
+      "README.md"
+    ]
+  },
+  {
+    "sha": "2cce803",
+    "author": "Mariam Iqbal",
+    "date": "2026-11-11T02:57:00.000Z",
+    "message": "Switch payment client to requests session",
+    "files_changed": [
+      "payments/client.py"
+    ]
+  },
+  {
+    "sha": "f84a3bc",
+    "author": "Daniyal Shah",
+    "date": "2026-11-11T11:00:00.000Z",
+    "message": "Bump flask to 3.0.3",
+    "files_changed": [
+      "requirements.txt"
+    ]
+  },
+  {
+    "sha": "0853964",
+    "author": "Hamza Tariq",
+    "date": "2026-11-11T13:52:00.000Z",
+    "message": "Simplify order lookup endpoint",
+    "files_changed": [
+      "api/orders.py"
+    ]
+  },
+  {
+    "sha": "8a39d5e",
+    "author": "Mariam Iqbal",
+    "date": "2026-11-11T19:47:00.000Z",
+    "message": "Fix: add timeout, retry with backoff and graceful error in authorize (BUG-208)",
+    "files_changed": [
+      "payments/client.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "b50af03",
+    "author": "Mariam Iqbal",
+    "date": "2026-11-12T14:37:00.000Z",
+    "message": "Fix: enforce order ownership in get_order (BUG-209)",
+    "files_changed": [
+      "api/orders.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "a4f6e50",
+    "author": "Daniyal Shah",
+    "date": "2026-11-12T16:00:00.000Z",
+    "message": "Add unit tests for cart service",
+    "files_changed": [
+      "tests/test_cart.py"
+    ]
+  },
+  {
+    "sha": "b971722",
+    "author": "Hamza Tariq",
+    "date": "2026-11-13T06:32:00.000Z",
+    "message": "Parse courier webhook payloads in a single function",
+    "files_changed": [
+      "webhooks/parser.py"
+    ]
+  },
+  {
+    "sha": "d68583a",
+    "author": "Usman Raza",
+    "date": "2026-11-13T09:00:00.000Z",
+    "message": "Fix typo in order confirmation email template",
+    "files_changed": [
+      "templates/order_confirmation.html"
+    ]
+  },
+  {
+    "sha": "f244f58",
+    "author": "Sana Malik",
+    "date": "2026-11-13T17:39:00.000Z",
+    "message": "Fix: validate webhook payload and date format, return 400 on bad input (BUG-210)",
+    "files_changed": [
+      "webhooks/parser.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "10c0cf0",
+    "author": "Mariam Iqbal",
+    "date": "2026-11-14T13:00:00.000Z",
+    "message": "Add product image zoom on detail page",
+    "files_changed": [
+      "static/js/zoom.js"
+    ]
+  },
+  {
+    "sha": "d669cbe",
+    "author": "Usman Raza",
+    "date": "2026-11-15T15:52:00.000Z",
+    "message": "Return items together with orders in list endpoint",
+    "files_changed": [
+      "repositories/orders.py"
+    ]
+  },
+  {
+    "sha": "e3772a0",
+    "author": "Daniyal Shah",
+    "date": "2026-11-16T17:43:00.000Z",
+    "message": "Fix: fetch items with a single joined query in list_orders (BUG-211)",
+    "files_changed": [
+      "repositories/orders.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "fc48046",
+    "author": "Hamza Tariq",
+    "date": "2026-11-16T20:00:00.000Z",
+    "message": "Add health check endpoint",
+    "files_changed": [
+      "api/health.py"
+    ]
+  },
+  {
+    "sha": "7702172",
+    "author": "Usman Raza",
+    "date": "2026-11-17T00:17:00.000Z",
+    "message": "Make correlation id optional in request logging",
+    "files_changed": [
+      "middleware/logging.py",
+      "payments/webhook.py"
+    ]
+  },
+  {
+    "sha": "1a278f6",
+    "author": "Mariam Iqbal",
+    "date": "2026-11-17T19:22:00.000Z",
+    "message": "Fix: always generate correlation id when header is missing (BUG-212)",
+    "files_changed": [
+      "middleware/logging.py",
+      "payments/webhook.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "4f7fd63",
+    "author": "Hamza Tariq",
+    "date": "2026-11-18T06:42:00.000Z",
+    "message": "Speed up money formatting helpers",
+    "files_changed": [
+      "utils/money.py",
+      "billing/invoice.py"
+    ]
+  },
+  {
+    "sha": "3dbdde1",
+    "author": "Usman Raza",
+    "date": "2026-11-18T12:05:00.000Z",
+    "message": "Fix: restore Decimal ROUND_HALF_UP in money helpers (BUG-213)",
+    "files_changed": [
+      "utils/money.py",
+      "billing/invoice.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "105f67a",
+    "author": "Hamza Tariq",
+    "date": "2026-11-18T22:00:00.000Z",
+    "message": "Configure structured JSON logging",
+    "files_changed": [
+      "core/logging.py"
+    ]
+  },
+  {
+    "sha": "31ca376",
+    "author": "Hamza Tariq",
+    "date": "2026-11-19T17:02:00.000Z",
+    "message": "Add maximum quantity per item rule",
+    "files_changed": [
+      "cart/validators.py"
+    ]
+  },
+  {
+    "sha": "72e3102",
+    "author": "Sana Malik",
+    "date": "2026-11-19T18:32:00.000Z",
+    "message": "Enable new tax engine behind feature flag",
+    "files_changed": [
+      "deploy/config.py",
+      "billing/tax.py"
+    ]
+  },
+  {
+    "sha": "6e4d58e",
+    "author": "Ayesha Khan",
+    "date": "2026-11-19T20:26:00.000Z",
+    "message": "Fix: coerce quantity to int before limit check (BUG-214)",
+    "files_changed": [
+      "cart/validators.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "75dff6c",
+    "author": "Daniyal Shah",
+    "date": "2026-11-20T07:45:00.000Z",
+    "message": "Fix: point TAX_SERVICE_URL to production and add config check (BUG-215)",
+    "files_changed": [
+      "deploy/config.py",
+      "billing/tax.py",
+      "tests/regression"
+    ]
+  },
+  {
+    "sha": "5af04cf",
+    "author": "Hamza Tariq",
+    "date": "2026-11-20T19:00:00.000Z",
+    "message": "Add Dockerfile for checkout-service",
+    "files_changed": [
+      "Dockerfile"
+    ]
+  }
+]

@@ -1,0 +1,9 @@
+benchmark_name,year,domain,num_queries,num_documents,metrics_used,description
+TREC Ad Hoc,1992,News,50,741856,MAP NDCG P@10,The original TREC ad hoc retrieval benchmark using TIPSTER news corpus. Queries are topic descriptions and relevance judgments are pooled from multiple systems.
+CLEF,2000,Multilingual,100,varies,MAP Recall,Cross Language Evaluation Forum benchmark for multilingual and cross-lingual information retrieval systems across European languages.
+MS MARCO,2018,Web,1000000,8841823,MRR NDCG,Microsoft Machine Reading Comprehension dataset for passage retrieval and ranking. Real queries from Bing with human annotated relevant passages.
+BEIR,2021,Multi-domain,varies,varies,NDCG@10,Heterogeneous benchmark for zero-shot evaluation of retrieval models across 18 datasets including BioASQ FEVER NFCorpus and DBPedia.
+MIRACL,2022,Multilingual,varies,varies,NDCG@10 Recall@100,Multilingual Information Retrieval Across a Continuum of Languages benchmark covering 18 languages for dense retrieval evaluation.
+Natural Questions,2019,Wikipedia QA,3610,21015324,Recall@k,Open domain question answering benchmark from Google using real questions from Google Search with Wikipedia passages as corpus.
+HotpotQA,2018,Multi-hop QA,7405,5233329,F1 Exact Match,Multi-hop question answering requiring reasoning over multiple Wikipedia paragraphs. Tests complex retrieval and reasoning chains.
+FEVER,2018,Fact Verification,185445,5416537,Label Accuracy,Fact Extraction and VERification benchmark requiring retrieval of evidence from Wikipedia to verify claims as supported refuted or not enough info.

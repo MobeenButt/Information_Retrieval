@@ -1,0 +1,15 @@
+{"_id": "Q-B01", "text": "checkout returns 500 for orders without a coupon after deployment"}
+{"_id": "Q-B02", "text": "orders accepted with zero or negative item quantity"}
+{"_id": "Q-B03", "text": "order total does not match sum of line items constraint violation"}
+{"_id": "Q-B04", "text": "invalid checkout payload returns 500 instead of 422 validation error"}
+{"_id": "Q-B05", "text": "coupon discount applied more than once after refactor"}
+{"_id": "Q-B06", "text": "inventory stock goes negative with concurrent orders"}
+{"_id": "Q-B07", "text": "payments failing with 401 invalid api key after config change"}
+{"_id": "Q-B08", "text": "payment gateway read timeout not handled requests hanging"}
+{"_id": "Q-B09", "text": "user can view another user's order"}
+{"_id": "Q-B10", "text": "webhook crashes on malformed json or invalid date"}
+{"_id": "Q-B11", "text": "orders list endpoint very slow too many sql queries"}
+{"_id": "Q-B12", "text": "error logs missing trace id cannot correlate payment webhook failure"}
+{"_id": "Q-B13", "text": "invoice total off by one paisa rounding changed"}
+{"_id": "Q-B14", "text": "type error comparing string and int quantity from mobile app"}
+{"_id": "Q-B15", "text": "tax service unreachable production pointing to staging url"}

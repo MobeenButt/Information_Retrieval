@@ -1,0 +1,2902 @@
+{
+  "expand": "mock",
+  "total": 45,
+  "issues": [
+    {
+      "key": "BUG-201",
+      "fields": {
+        "summary": "Checkout fails with HTTP 500 for orders without a coupon",
+        "description": "Since the release deployed around 02:06 UTC, customers who check out without entering a coupon code get a generic 'Something went wrong' page. Support has received 14 complaints in the last hour.\n\nSteps to reproduce:\n1. Add any item to the cart\n2. Go to checkout without entering a coupon code\n3. Click Place Order\n\nExpected: order is created and the payment page opens.\nActual: POST /api/checkout returns HTTP 500.\n\nEnvironment: production, checkout-service v1.4.1\nImpact: roughly 40% of checkouts are failing; orders with a coupon still work.",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "Critical"
+        },
+        "status": {
+          "name": "Resolved"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "created": "2026-11-02T02:34:00.000Z",
+        "updated": "2026-11-02T05:19:00.000Z",
+        "resolutiondate": "2026-11-02T03:56:00.000Z",
+        "labels": [
+          "checkout",
+          "production",
+          "regression"
+        ],
+        "components": [
+          {
+            "name": "Checkout"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.2"
+          }
+        ],
+        "comment": {
+          "total": 4,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-11-02T03:17:00.000Z",
+              "body": "Reproduced on staging. The traceback points to calculate_total in pricing/discounts.py: order.coupon is None when no code is entered."
+            },
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-11-02T04:03:00.000Z",
+              "body": "Error rate alert fired at 02:24. Rolling back checkout-service to the previous version now."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-11-02T04:36:00.000Z",
+              "body": "Root cause: commit 3087743 (discount refactor) removed the None check on order.coupon. Hotfix 2d10267 restores the guard and adds a regression test."
+            },
+            {
+              "author": {
+                "displayName": "Ayesha Khan",
+                "emailAddress": "ayesha.khan@shopco.example.com"
+              },
+              "created": "2026-11-02T05:19:00.000Z",
+              "body": "Verified on staging and production, no more 500 errors. Closing."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.1"
+          }
+        ]
+      }
+    },
+    {
+      "key": "BUG-202",
+      "fields": {
+        "summary": "Orders accepted with zero or negative item quantity",
+        "description": "While testing the mobile app I was able to add an item with quantity -3 and complete checkout. The order was created with a negative line total and the payment service later issued an automatic refund.\n\nSteps to reproduce:\n1. Send POST /api/cart/items with quantity -3\n2. Proceed to checkout\n\nExpected: request rejected with a validation error.\nActual: item accepted, order build fails later with 'negative line total'.\n\nEnvironment: production v1.4.3",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "High"
+        },
+        "status": {
+          "name": "Closed"
+        },
+        "reporter": {
+          "displayName": "Ayesha Khan",
+          "emailAddress": "ayesha.khan@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-11-03T11:33:00.000Z",
+        "updated": "2026-11-03T14:11:00.000Z",
+        "resolutiondate": "2026-11-03T14:12:00.000Z",
+        "labels": [
+          "validation",
+          "checkout"
+        ],
+        "components": [
+          {
+            "name": "Checkout"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.4"
+          }
+        ],
+        "comment": {
+          "total": 4,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-11-03T12:24:00.000Z",
+              "body": "validate_cart_item only checks that qty is not None. Zero and negative values are never rejected."
+            },
+            {
+              "author": {
+                "displayName": "Sana Malik",
+                "emailAddress": "sana.malik@shopco.example.com"
+              },
+              "created": "2026-11-03T13:03:00.000Z",
+              "body": "Please also block quantities above the per-item limit in the same change."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-11-03T13:30:00.000Z",
+              "body": "Fix 5da846a rejects qty <= 0 and adds tests for boundary values. Released in the next deployment."
+            },
+            {
+              "author": {
+                "displayName": "Ayesha Khan",
+                "emailAddress": "ayesha.khan@shopco.example.com"
+              },
+              "created": "2026-11-03T14:11:00.000Z",
+              "body": "Boundary cases pass: 0, -1, 1, max. Closing."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.3"
+          }
+        ]
+      }
+    },
+    {
+      "key": "BUG-203",
+      "fields": {
+        "summary": "Order total does not match sum of line items (DB constraint violation)",
+        "description": "Order creation fails intermittently with an IntegrityError on constraint ck_order_total_matches_items. About 1 in 10 orders is affected, mostly carts where the user changed an item quantity before checkout.\n\nObserved in order-service logs: total=4999.00 but items_sum=5499.00.\n\nExpected: total equals the sum of line items.\nEnvironment: production v1.4.5",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "High"
+        },
+        "status": {
+          "name": "Resolved"
+        },
+        "reporter": {
+          "displayName": "Mariam Iqbal",
+          "emailAddress": "mariam.iqbal@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "created": "2026-11-04T15:44:00.000Z",
+        "updated": "2026-11-04T18:21:00.000Z",
+        "resolutiondate": "2026-11-04T19:37:00.000Z",
+        "labels": [
+          "database",
+          "orders"
+        ],
+        "components": [
+          {
+            "name": "Orders"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.6"
+          }
+        ],
+        "comment": {
+          "total": 4,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Daniyal Shah",
+                "emailAddress": "daniyal.shah@shopco.example.com"
+              },
+              "created": "2026-11-04T16:34:00.000Z",
+              "body": "The new code uses cart.cached_total, which is not refreshed after quantity updates."
+            },
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-11-04T17:16:00.000Z",
+              "body": "The nightly reconciliation job also reported several mismatching orders."
+            },
+            {
+              "author": {
+                "displayName": "Daniyal Shah",
+                "emailAddress": "daniyal.shah@shopco.example.com"
+              },
+              "created": "2026-11-04T17:53:00.000Z",
+              "body": "Fix 1e3c29b computes the total from line items again. I also added a test that updates quantity before checkout."
+            },
+            {
+              "author": {
+                "displayName": "Ayesha Khan",
+                "emailAddress": "ayesha.khan@shopco.example.com"
+              },
+              "created": "2026-11-04T18:21:00.000Z",
+              "body": "Verified with quantity changes. Closing."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.5"
+          }
+        ]
+      }
+    },
+    {
+      "key": "BUG-204",
+      "fields": {
+        "summary": "Invalid checkout payload returns 500 instead of 422",
+        "description": "Sending a checkout request without shipping_address.postal_code returns HTTP 500. The API contract says validation errors must return 422 with a JSON error body. The mobile app shows a crash screen instead of a form error.\n\nExpected: 422 with field errors.\nActual: 500 Internal Server Error.\nEnvironment: production v1.4.7",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "Resolved"
+        },
+        "reporter": {
+          "displayName": "Ayesha Khan",
+          "emailAddress": "ayesha.khan@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "created": "2026-11-05T10:15:00.000Z",
+        "updated": "2026-11-05T12:13:00.000Z",
+        "resolutiondate": "2026-11-05T11:52:00.000Z",
+        "labels": [
+          "api",
+          "validation"
+        ],
+        "components": [
+          {
+            "name": "Checkout"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.8"
+          }
+        ],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-11-05T10:57:00.000Z",
+              "body": "After the switch to pydantic models the handler still catches only ValueError, so ValidationError is unhandled."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-11-05T11:52:00.000Z",
+              "body": "Fix 3c8eb5b: handler now converts ValidationError to a 422 response with field-level errors."
+            },
+            {
+              "author": {
+                "displayName": "Ayesha Khan",
+                "emailAddress": "ayesha.khan@shopco.example.com"
+              },
+              "created": "2026-11-05T12:13:00.000Z",
+              "body": "Contract tests pass for all required fields."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.7"
+          }
+        ]
+      }
+    },
+    {
+      "key": "BUG-205",
+      "fields": {
+        "summary": "Coupon discount applied multiple times after coupon refactor",
+        "description": "Finance noticed orders where the discount is far larger than expected. A SAVE20 coupon on a cart with three items gave 600.00 off instead of 200.00, and some orders failed with 'discount exceeds subtotal'.\n\nSteps: add three items, apply SAVE20, checkout.\nExpected: 200.00 discount once per cart.\nActual: discount multiplied by number of items.\nEnvironment: production v1.4.9",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "High"
+        },
+        "status": {
+          "name": "Resolved"
+        },
+        "reporter": {
+          "displayName": "Sana Malik",
+          "emailAddress": "sana.malik@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-11-06T13:51:00.000Z",
+        "updated": "2026-11-06T15:58:00.000Z",
+        "resolutiondate": "2026-11-06T15:57:00.000Z",
+        "labels": [
+          "coupons",
+          "pricing",
+          "regression"
+        ],
+        "components": [
+          {
+            "name": "Pricing"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.10"
+          }
+        ],
+        "comment": {
+          "total": 4,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-11-06T14:42:00.000Z",
+              "body": "The coupon engine refactor moved the coupon loop inside the item loop."
+            },
+            {
+              "author": {
+                "displayName": "Sana Malik",
+                "emailAddress": "sana.malik@shopco.example.com"
+              },
+              "created": "2026-11-06T15:02:00.000Z",
+              "body": "How many orders were affected? Finance needs the list."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-11-06T15:16:00.000Z",
+              "body": "41 orders in the window. Fix ec87a17 applies coupons once per cart; the list is attached."
+            },
+            {
+              "author": {
+                "displayName": "Ayesha Khan",
+                "emailAddress": "ayesha.khan@shopco.example.com"
+              },
+              "created": "2026-11-06T15:58:00.000Z",
+              "body": "Regression test added and passing."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.9"
+          }
+        ]
+      }
+    },
+    {
+      "key": "BUG-206",
+      "fields": {
+        "summary": "Inventory goes negative under concurrent orders",
+        "description": "During the flash sale several SKUs were oversold. Stock levels became negative and some orders could not be fulfilled.\n\nLogs show 'Stock level became negative' with sku SKU-1042 and lost update suspicion.\n\nExpected: stock never below zero.\nEnvironment: production v1.4.11",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "High"
+        },
+        "status": {
+          "name": "Resolved"
+        },
+        "reporter": {
+          "displayName": "Mariam Iqbal",
+          "emailAddress": "mariam.iqbal@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "created": "2026-11-09T16:40:00.000Z",
+        "updated": "2026-11-09T18:40:00.000Z",
+        "resolutiondate": "2026-11-09T18:17:00.000Z",
+        "labels": [
+          "inventory",
+          "concurrency"
+        ],
+        "components": [
+          {
+            "name": "Inventory"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.12"
+          }
+        ],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Daniyal Shah",
+                "emailAddress": "daniyal.shah@shopco.example.com"
+              },
+              "created": "2026-11-09T17:03:00.000Z",
+              "body": "reserve_stock reads the stock and then writes stock - qty. Two requests can read the same value."
+            },
+            {
+              "author": {
+                "displayName": "Daniyal Shah",
+                "emailAddress": "daniyal.shah@shopco.example.com"
+              },
+              "created": "2026-11-09T17:53:00.000Z",
+              "body": "The row lock was removed in the contention optimization commit. Fix 6fce484 uses an atomic UPDATE with a stock >= qty guard."
+            },
+            {
+              "author": {
+                "displayName": "Ayesha Khan",
+                "emailAddress": "ayesha.khan@shopco.example.com"
+              },
+              "created": "2026-11-09T18:40:00.000Z",
+              "body": "Ran the 50-thread reservation test, no oversell."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.11"
+          }
+        ]
+      }
+    },
+    {
+      "key": "BUG-207",
+      "fields": {
+        "summary": "All payments failing with 401 invalid API key after deployment",
+        "description": "Right after the 07:22 deployment every payment attempt fails. Customers see 'Payment could not be processed'.\n\nLogs show a warning that PAYMENT_API_KEY is not set and that PAYMENT_API_URL fell back to the sandbox default, followed by 401 from the provider.\n\nImpact: 100% of payments failing.\nEnvironment: production v1.4.13",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "Critical"
+        },
+        "status": {
+          "name": "Resolved"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Mariam Iqbal",
+          "emailAddress": "mariam.iqbal@shopco.example.com"
+        },
+        "created": "2026-11-10T07:40:00.000Z",
+        "updated": "2026-11-10T09:46:00.000Z",
+        "resolutiondate": "2026-11-10T08:52:00.000Z",
+        "labels": [
+          "payments",
+          "config",
+          "production"
+        ],
+        "components": [
+          {
+            "name": "Payments"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.14"
+          }
+        ],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-11-10T08:35:00.000Z",
+              "body": "The new deployment manifest dropped PAYMENT_API_KEY. Restoring the secret now."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-11-10T09:30:00.000Z",
+              "body": "The settings loader silently accepts an empty key. Fix f21345d makes the service fail fast at startup if it is missing."
+            },
+            {
+              "author": {
+                "displayName": "Bilal Ahmed",
+                "emailAddress": "bilal.ahmed@shopco.example.com"
+              },
+              "created": "2026-11-10T09:46:00.000Z",
+              "body": "Payments are working again, thank you."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.13"
+          }
+        ]
+      }
+    },
+    {
+      "key": "BUG-208",
+      "fields": {
+        "summary": "Payment gateway timeouts hang checkout requests",
+        "description": "p99 latency for POST /api/checkout rose to 30 seconds and worker threads are saturated. payment-service logs show ReadTimeout from api.paygate.example.com.\n\nThe gateway status page reports partial degradation, but our service should not hang for 30 seconds.\n\nExpected: fast failure with a clear error and retry.\nEnvironment: production v1.4.15",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "High"
+        },
+        "status": {
+          "name": "Resolved"
+        },
+        "reporter": {
+          "displayName": "Mariam Iqbal",
+          "emailAddress": "mariam.iqbal@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "created": "2026-11-11T18:17:00.000Z",
+        "updated": "2026-11-11T20:17:00.000Z",
+        "resolutiondate": "2026-11-11T20:02:00.000Z",
+        "labels": [
+          "payments",
+          "timeout",
+          "production"
+        ],
+        "components": [
+          {
+            "name": "Payments"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.16"
+          }
+        ],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-11-11T18:45:00.000Z",
+              "body": "authorize() posts without a timeout and has no retry or error handling."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-11-11T19:38:00.000Z",
+              "body": "Fix 8a39d5e adds a 5s timeout, two retries with backoff, and returns a retryable error to checkout."
+            },
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-11-11T20:17:00.000Z",
+              "body": "Worker pool usage back to normal."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.15"
+          }
+        ]
+      }
+    },
+    {
+      "key": "BUG-209",
+      "fields": {
+        "summary": "Any logged-in user can view other users' orders",
+        "description": "Security finding: GET /api/orders/{id} returns the order even if it belongs to another user. I changed the id in the URL and saw another customer's address and items. The security scanner also flagged sequential id enumeration.\n\nExpected: 403 or 404 for orders that are not yours.\nEnvironment: production v1.4.17",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "Critical"
+        },
+        "status": {
+          "name": "Resolved"
+        },
+        "reporter": {
+          "displayName": "Ayesha Khan",
+          "emailAddress": "ayesha.khan@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-11-12T10:17:00.000Z",
+        "updated": "2026-11-12T12:12:00.000Z",
+        "resolutiondate": "2026-11-12T15:07:00.000Z",
+        "labels": [
+          "security",
+          "authorization",
+          "production"
+        ],
+        "components": [
+          {
+            "name": "Orders"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.18"
+          }
+        ],
+        "comment": {
+          "total": 4,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-11-12T11:05:00.000Z",
+              "body": "The ownership check was dropped in the lookup simplification commit; there is a TODO left in get_order."
+            },
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-11-12T11:22:00.000Z",
+              "body": "Blocked the enumerating IP at the gateway. We need to check access logs for earlier misuse."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-11-12T11:30:00.000Z",
+              "body": "Fix b50af03 enforces ownership and returns 404. Access log review attached to the security ticket."
+            },
+            {
+              "author": {
+                "displayName": "Ayesha Khan",
+                "emailAddress": "ayesha.khan@shopco.example.com"
+              },
+              "created": "2026-11-12T12:12:00.000Z",
+              "body": "Verified: other users' orders return 404."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.17"
+          }
+        ]
+      }
+    },
+    {
+      "key": "BUG-210",
+      "fields": {
+        "summary": "Courier webhook crashes on malformed JSON or invalid date",
+        "description": "The courier partner reports that delivery update webhooks fail with HTTP 500 for some payloads and keep retrying. Examples: truncated JSON body and a timestamp like 12/31/2026 25:00.\n\nExpected: 400 with a clear error so the partner stops retrying invalid payloads.\nEnvironment: production v1.4.19",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "Resolved"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "created": "2026-11-13T14:56:00.000Z",
+        "updated": "2026-11-13T16:36:00.000Z",
+        "resolutiondate": "2026-11-13T18:07:00.000Z",
+        "labels": [
+          "webhooks",
+          "validation"
+        ],
+        "components": [
+          {
+            "name": "Orders"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.20"
+          }
+        ],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Daniyal Shah",
+                "emailAddress": "daniyal.shah@shopco.example.com"
+              },
+              "created": "2026-11-13T15:48:00.000Z",
+              "body": "parse_event calls json.loads and strptime without handling errors."
+            },
+            {
+              "author": {
+                "displayName": "Daniyal Shah",
+                "emailAddress": "daniyal.shah@shopco.example.com"
+              },
+              "created": "2026-11-13T16:22:00.000Z",
+              "body": "Fix f244f58 validates payload and date format and returns 400. Added tests with malformed inputs."
+            },
+            {
+              "author": {
+                "displayName": "Bilal Ahmed",
+                "emailAddress": "bilal.ahmed@shopco.example.com"
+              },
+              "created": "2026-11-13T16:36:00.000Z",
+              "body": "Partner confirms the retry storm has stopped."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.19"
+          }
+        ]
+      }
+    },
+    {
+      "key": "BUG-211",
+      "fields": {
+        "summary": "Orders list page very slow, database pool exhausted",
+        "description": "Customers with many orders wait 5 to 9 seconds on 'My Orders'. Monitoring shows p95 latency of 4.8s and database connection pool usage above 90%.\n\nLogs show one request executing 187 queries on order_items.\n\nExpected: constant number of queries per request.\nEnvironment: production v1.4.21",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "High"
+        },
+        "status": {
+          "name": "In Progress"
+        },
+        "reporter": {
+          "displayName": "Sana Malik",
+          "emailAddress": "sana.malik@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "created": "2026-11-16T12:33:00.000Z",
+        "updated": "2026-11-16T14:16:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "performance",
+          "database"
+        ],
+        "components": [
+          {
+            "name": "Orders"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.22"
+          }
+        ],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-11-16T13:05:00.000Z",
+              "body": "Classic N+1: list_orders runs one query per order to load items."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-11-16T13:57:00.000Z",
+              "body": "Working on a joined query. Fix e3772a0 in review."
+            },
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-11-16T14:16:00.000Z",
+              "body": "Pool usage dropped from 98% to 35% on the preview environment."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.21"
+          }
+        ]
+      }
+    },
+    {
+      "key": "BUG-212",
+      "fields": {
+        "summary": "Payment webhook errors have no trace id, cannot correlate requests",
+        "description": "When the payment webhook handler fails we get a log line without trace_id, so we cannot find the matching request in other services. It took two hours to link a failed webhook to an order.\n\nExpected: every log entry carries a correlation id.\nEnvironment: production v1.4.23",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "Resolved"
+        },
+        "reporter": {
+          "displayName": "Mariam Iqbal",
+          "emailAddress": "mariam.iqbal@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-11-17T17:39:00.000Z",
+        "updated": "2026-11-17T19:42:00.000Z",
+        "resolutiondate": "2026-11-17T20:02:00.000Z",
+        "labels": [
+          "observability",
+          "logging"
+        ],
+        "components": [
+          {
+            "name": "Payments"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.24"
+          }
+        ],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-11-17T18:19:00.000Z",
+              "body": "The middleware sets the context only if the X-Correlation-ID header exists. Webhooks from the provider do not send it."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-11-17T18:57:00.000Z",
+              "body": "Fix 1a278f6 generates an id when the header is missing."
+            },
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-11-17T19:42:00.000Z",
+              "body": "Confirmed in staging logs."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.23"
+          }
+        ]
+      }
+    },
+    {
+      "key": "BUG-213",
+      "fields": {
+        "summary": "Invoice totals off by one paisa after money helper change",
+        "description": "Finance reports invoices where the total differs from the line items by 0.01, for example 19.995 became 19.99 instead of 20.00. Some invoices failed validation.\n\nA nightly test (test_rounding_half_up) is also failing on main.\n\nExpected: round half up to two decimals.\nEnvironment: production v1.4.25",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "Resolved"
+        },
+        "reporter": {
+          "displayName": "Sana Malik",
+          "emailAddress": "sana.malik@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "created": "2026-11-18T09:09:00.000Z",
+        "updated": "2026-11-18T10:22:00.000Z",
+        "resolutiondate": "2026-11-18T12:37:00.000Z",
+        "labels": [
+          "billing",
+          "rounding",
+          "regression"
+        ],
+        "components": [
+          {
+            "name": "Billing"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.26"
+          }
+        ],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Daniyal Shah",
+                "emailAddress": "daniyal.shah@shopco.example.com"
+              },
+              "created": "2026-11-18T09:47:00.000Z",
+              "body": "The helper now uses Python round() on a float, which rounds half to even and has float error."
+            },
+            {
+              "author": {
+                "displayName": "Daniyal Shah",
+                "emailAddress": "daniyal.shah@shopco.example.com"
+              },
+              "created": "2026-11-18T10:09:00.000Z",
+              "body": "Fix 3dbdde1 restores Decimal with ROUND_HALF_UP."
+            },
+            {
+              "author": {
+                "displayName": "Sana Malik",
+                "emailAddress": "sana.malik@shopco.example.com"
+              },
+              "created": "2026-11-18T10:22:00.000Z",
+              "body": "Finance confirms the sample invoices are correct now."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.25"
+          }
+        ]
+      }
+    },
+    {
+      "key": "BUG-214",
+      "fields": {
+        "summary": "Android app cart crashes: TypeError comparing str and int",
+        "description": "Android app version 3.2.1 sends quantity as a string. The new maximum-quantity rule compares it with an integer, which raises TypeError and returns 500.\n\nSteps: add an item from the Android app.\nExpected: item added.\nActual: 500 on POST /api/cart/items.\nEnvironment: production v1.4.27",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "Resolved"
+        },
+        "reporter": {
+          "displayName": "Ayesha Khan",
+          "emailAddress": "ayesha.khan@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "created": "2026-11-19T19:22:00.000Z",
+        "updated": "2026-11-19T20:15:00.000Z",
+        "resolutiondate": "2026-11-19T20:47:00.000Z",
+        "labels": [
+          "mobile",
+          "validation"
+        ],
+        "components": [
+          {
+            "name": "Cart"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.28"
+          }
+        ],
+        "comment": {
+          "total": 2,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-11-19T19:30:00.000Z",
+              "body": "Payload quantity can be a string for older clients. We need to coerce before comparing."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-11-19T20:15:00.000Z",
+              "body": "Fix 6e4d58e coerces to int and returns 422 for non-numeric values."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.27"
+          }
+        ]
+      }
+    },
+    {
+      "key": "BUG-215",
+      "fields": {
+        "summary": "Tax service unreachable in production after new tax engine rollout",
+        "description": "Checkout fails with TaxServiceUnavailable. The new tax engine feature flag is on in production, but TAX_SERVICE_URL still points to the staging host (tax.staging.internal.example.com), which is not resolvable from production.\n\nImpact: about 30% of checkouts fail (those with taxable items).\nEnvironment: production v1.4.29",
+        "issuetype": {
+          "name": "Bug"
+        },
+        "priority": {
+          "name": "High"
+        },
+        "status": {
+          "name": "In Review"
+        },
+        "reporter": {
+          "displayName": "Mariam Iqbal",
+          "emailAddress": "mariam.iqbal@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-11-20T06:06:00.000Z",
+        "updated": "2026-11-20T06:59:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "config",
+          "deployment",
+          "production"
+        ],
+        "components": [
+          {
+            "name": "Billing"
+          }
+        ],
+        "fixVersions": [
+          {
+            "name": "v1.4.30"
+          }
+        ],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-11-20T06:22:00.000Z",
+              "body": "The deployment config was copied from staging. Updating TAX_SERVICE_URL to the production host."
+            },
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-11-20T06:33:00.000Z",
+              "body": "We need a startup check that rejects staging URLs in production."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-11-20T06:59:00.000Z",
+              "body": "Fix 75dff6c adds the config validation. Waiting for review."
+            }
+          ]
+        },
+        "environment": "production",
+        "affectsVersions": [
+          {
+            "name": "v1.4.29"
+          }
+        ]
+      }
+    },
+    {
+      "key": "INC-101",
+      "fields": {
+        "summary": "Checkout returned 500 when no discount was present",
+        "description": "A customer without a discount code could not check out. Error rate on /api/checkout reached 35% for about an hour.",
+        "issuetype": {
+          "name": "Incident"
+        },
+        "priority": {
+          "name": "Critical"
+        },
+        "status": {
+          "name": "Closed"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "created": "2026-08-14T09:30:00.000Z",
+        "updated": "2026-08-14T11:00:00.000Z",
+        "resolutiondate": "2026-08-14T13:30:00.000Z",
+        "labels": [
+          "incident",
+          "postmortem"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-08-14T10:11:00.000Z",
+              "body": "Investigating. Collecting logs and recent deployments."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-08-14T10:26:00.000Z",
+              "body": "Root cause identified: Discount calculation accessed order.discount.amount without checking for None."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-08-14T11:00:00.000Z",
+              "body": "Resolution: Added guard clause for missing discount and a regression test. Hotfix released same day."
+            }
+          ]
+        },
+        "rootCause": "Discount calculation accessed order.discount.amount without checking for None.",
+        "resolutionNotes": "Added guard clause for missing discount and a regression test. Hotfix released same day."
+      }
+    },
+    {
+      "key": "INC-087",
+      "fields": {
+        "summary": "Payment page slow because external gateway timeout was not handled",
+        "description": "Payment page took more than 30 seconds during a gateway degradation. Worker threads were exhausted.",
+        "issuetype": {
+          "name": "Incident"
+        },
+        "priority": {
+          "name": "High"
+        },
+        "status": {
+          "name": "Closed"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "created": "2026-07-22T16:05:00.000Z",
+        "updated": "2026-07-22T17:23:00.000Z",
+        "resolutiondate": "2026-07-23T11:05:00.000Z",
+        "labels": [
+          "incident",
+          "postmortem"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-07-22T16:25:00.000Z",
+              "body": "Investigating. Collecting logs and recent deployments."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-07-22T16:48:00.000Z",
+              "body": "Root cause identified: HTTP calls to the payment gateway had no timeout and no retry policy."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-07-22T17:23:00.000Z",
+              "body": "Resolution: Added 5 second timeout and retry with exponential backoff. Added alert on payment p99 latency."
+            }
+          ]
+        },
+        "rootCause": "HTTP calls to the payment gateway had no timeout and no retry policy.",
+        "resolutionNotes": "Added 5 second timeout and retry with exponential backoff. Added alert on payment p99 latency."
+      }
+    },
+    {
+      "key": "INC-066",
+      "fields": {
+        "summary": "User could view another user's order",
+        "description": "A customer reported seeing another customer's order after editing the order id in the URL.",
+        "issuetype": {
+          "name": "Incident"
+        },
+        "priority": {
+          "name": "Critical"
+        },
+        "status": {
+          "name": "Closed"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-06-30T11:10:00.000Z",
+        "updated": "2026-06-30T13:39:00.000Z",
+        "resolutiondate": "2026-07-01T04:10:00.000Z",
+        "labels": [
+          "incident",
+          "postmortem"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-06-30T11:53:00.000Z",
+              "body": "Investigating. Collecting logs and recent deployments."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-06-30T12:44:00.000Z",
+              "body": "Root cause identified: Missing ownership check in the order endpoint."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-06-30T13:39:00.000Z",
+              "body": "Resolution: Added authorization check and tests. Reviewed access logs; no other exposure found."
+            }
+          ]
+        },
+        "rootCause": "Missing ownership check in the order endpoint.",
+        "resolutionNotes": "Added authorization check and tests. Reviewed access logs; no other exposure found."
+      }
+    },
+    {
+      "key": "INC-054",
+      "fields": {
+        "summary": "Inventory oversold during flash sale",
+        "description": "Several SKUs went below zero stock during the Eid sale.",
+        "issuetype": {
+          "name": "Incident"
+        },
+        "priority": {
+          "name": "High"
+        },
+        "status": {
+          "name": "Closed"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-06-02T19:20:00.000Z",
+        "updated": "2026-06-02T20:34:00.000Z",
+        "resolutiondate": "2026-06-03T14:20:00.000Z",
+        "labels": [
+          "incident",
+          "postmortem"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-06-02T20:09:00.000Z",
+              "body": "Investigating. Collecting logs and recent deployments."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-06-02T20:20:00.000Z",
+              "body": "Root cause identified: Stock reservation was not atomic under concurrent requests."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-06-02T20:34:00.000Z",
+              "body": "Resolution: Introduced row locking in reserve_stock and added a concurrency test."
+            }
+          ]
+        },
+        "rootCause": "Stock reservation was not atomic under concurrent requests.",
+        "resolutionNotes": "Introduced row locking in reserve_stock and added a concurrency test."
+      }
+    },
+    {
+      "key": "INC-072",
+      "fields": {
+        "summary": "Courier webhook failed on bad payloads",
+        "description": "Webhook endpoint returned 500 for payloads from the courier partner containing invalid dates.",
+        "issuetype": {
+          "name": "Incident"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "Closed"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-07-08T13:00:00.000Z",
+        "updated": "2026-07-08T15:15:00.000Z",
+        "resolutiondate": "2026-07-08T18:00:00.000Z",
+        "labels": [
+          "incident",
+          "postmortem"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-07-08T13:55:00.000Z",
+              "body": "Investigating. Collecting logs and recent deployments."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-07-08T14:41:00.000Z",
+              "body": "Root cause identified: Date parsing had no error handling."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-07-08T15:15:00.000Z",
+              "body": "Resolution: Return 400 on invalid payloads; partner notified."
+            }
+          ]
+        },
+        "rootCause": "Date parsing had no error handling.",
+        "resolutionNotes": "Return 400 on invalid payloads; partner notified."
+      }
+    },
+    {
+      "key": "INC-095",
+      "fields": {
+        "summary": "Orders list endpoint timing out for power users",
+        "description": "Users with more than 100 orders saw timeouts on the orders page.",
+        "issuetype": {
+          "name": "Incident"
+        },
+        "priority": {
+          "name": "High"
+        },
+        "status": {
+          "name": "Closed"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "created": "2026-09-04T12:40:00.000Z",
+        "updated": "2026-09-04T14:28:00.000Z",
+        "resolutiondate": "2026-09-05T10:40:00.000Z",
+        "labels": [
+          "incident",
+          "postmortem"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-09-04T13:24:00.000Z",
+              "body": "Investigating. Collecting logs and recent deployments."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-09-04T13:58:00.000Z",
+              "body": "Root cause identified: N+1 query when loading order items."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-09-04T14:28:00.000Z",
+              "body": "Resolution: Replaced per-order queries with one joined query."
+            }
+          ]
+        },
+        "rootCause": "N+1 query when loading order items.",
+        "resolutionNotes": "Replaced per-order queries with one joined query."
+      }
+    },
+    {
+      "key": "INC-110",
+      "fields": {
+        "summary": "Production service called staging URL after config change",
+        "description": "Tax lookups failed after a deployment because production used a staging endpoint.",
+        "issuetype": {
+          "name": "Incident"
+        },
+        "priority": {
+          "name": "High"
+        },
+        "status": {
+          "name": "Closed"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "created": "2026-09-18T06:15:00.000Z",
+        "updated": "2026-09-18T08:02:00.000Z",
+        "resolutiondate": "2026-09-18T08:15:00.000Z",
+        "labels": [
+          "incident",
+          "postmortem"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-09-18T06:50:00.000Z",
+              "body": "Investigating. Collecting logs and recent deployments."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-09-18T07:39:00.000Z",
+              "body": "Root cause identified: Environment configuration copied from staging without review."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-09-18T08:02:00.000Z",
+              "body": "Resolution: Corrected config; added deployment checklist for environment variables."
+            }
+          ]
+        },
+        "rootCause": "Environment configuration copied from staging without review.",
+        "resolutionNotes": "Corrected config; added deployment checklist for environment variables."
+      }
+    },
+    {
+      "key": "INC-033",
+      "fields": {
+        "summary": "Invoice totals wrong by one paisa",
+        "description": "Rounding differences between invoice and line items reported by finance.",
+        "issuetype": {
+          "name": "Incident"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "Closed"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-05-12T10:25:00.000Z",
+        "updated": "2026-05-12T12:07:00.000Z",
+        "resolutiondate": "2026-05-13T07:25:00.000Z",
+        "labels": [
+          "incident",
+          "postmortem"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-05-12T10:43:00.000Z",
+              "body": "Investigating. Collecting logs and recent deployments."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-05-12T11:33:00.000Z",
+              "body": "Root cause identified: Floating point rounding instead of Decimal."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-05-12T12:07:00.000Z",
+              "body": "Resolution: Switched money helpers to Decimal with ROUND_HALF_UP."
+            }
+          ]
+        },
+        "rootCause": "Floating point rounding instead of Decimal.",
+        "resolutionNotes": "Switched money helpers to Decimal with ROUND_HALF_UP."
+      }
+    },
+    {
+      "key": "INC-120",
+      "fields": {
+        "summary": "Validation errors returned as 500 on order API",
+        "description": "Invalid requests to the order API returned 500 instead of 422.",
+        "issuetype": {
+          "name": "Incident"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "Closed"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "created": "2026-10-06T08:50:00.000Z",
+        "updated": "2026-10-06T10:02:00.000Z",
+        "resolutiondate": "2026-10-07T06:50:00.000Z",
+        "labels": [
+          "incident",
+          "postmortem"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-10-06T09:31:00.000Z",
+              "body": "Investigating. Collecting logs and recent deployments."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-10-06T09:41:00.000Z",
+              "body": "Root cause identified: Validation exception was not mapped to an HTTP response."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-10-06T10:02:00.000Z",
+              "body": "Resolution: Added global exception handler for validation errors."
+            }
+          ]
+        },
+        "rootCause": "Validation exception was not mapped to an HTTP response.",
+        "resolutionNotes": "Added global exception handler for validation errors."
+      }
+    },
+    {
+      "key": "INC-041",
+      "fields": {
+        "summary": "Order confirmation emails delayed",
+        "description": "Customers received confirmation emails up to 40 minutes late.",
+        "issuetype": {
+          "name": "Incident"
+        },
+        "priority": {
+          "name": "Low"
+        },
+        "status": {
+          "name": "Closed"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "created": "2026-04-20T14:30:00.000Z",
+        "updated": "2026-04-20T16:51:00.000Z",
+        "resolutiondate": "2026-04-21T10:30:00.000Z",
+        "labels": [
+          "incident",
+          "postmortem"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-04-20T15:21:00.000Z",
+              "body": "Investigating. Collecting logs and recent deployments."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-04-20T15:57:00.000Z",
+              "body": "Root cause identified: SMTP relay rate limiting during a marketing campaign."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-04-20T16:51:00.000Z",
+              "body": "Resolution: Increased relay quota and added queue monitoring."
+            }
+          ]
+        },
+        "rootCause": "SMTP relay rate limiting during a marketing campaign.",
+        "resolutionNotes": "Increased relay quota and added queue monitoring."
+      }
+    },
+    {
+      "key": "INC-060",
+      "fields": {
+        "summary": "Product images not loading",
+        "description": "Product images returned 404 for part of the catalog.",
+        "issuetype": {
+          "name": "Incident"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "Closed"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-05-28T17:45:00.000Z",
+        "updated": "2026-05-28T20:18:00.000Z",
+        "resolutiondate": "2026-05-29T08:45:00.000Z",
+        "labels": [
+          "incident",
+          "postmortem"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-05-28T18:40:00.000Z",
+              "body": "Investigating. Collecting logs and recent deployments."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-05-28T19:34:00.000Z",
+              "body": "Root cause identified: CDN cache purge removed objects before the new build was uploaded."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-05-28T20:18:00.000Z",
+              "body": "Resolution: Re-uploaded assets and changed the release order."
+            }
+          ]
+        },
+        "rootCause": "CDN cache purge removed objects before the new build was uploaded.",
+        "resolutionNotes": "Re-uploaded assets and changed the release order."
+      }
+    },
+    {
+      "key": "INC-078",
+      "fields": {
+        "summary": "Login rate limit locked out legitimate users",
+        "description": "Users behind a shared office network could not log in.",
+        "issuetype": {
+          "name": "Incident"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "Closed"
+        },
+        "reporter": {
+          "displayName": "Bilal Ahmed",
+          "emailAddress": "bilal.ahmed@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "created": "2026-06-15T09:05:00.000Z",
+        "updated": "2026-06-15T10:40:00.000Z",
+        "resolutiondate": "2026-06-16T05:05:00.000Z",
+        "labels": [
+          "incident",
+          "postmortem"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 3,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-06-15T09:37:00.000Z",
+              "body": "Investigating. Collecting logs and recent deployments."
+            },
+            {
+              "author": {
+                "displayName": "Usman Raza",
+                "emailAddress": "usman.raza@shopco.example.com"
+              },
+              "created": "2026-06-15T09:56:00.000Z",
+              "body": "Root cause identified: Rate limit was applied per IP address only."
+            },
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-06-15T10:40:00.000Z",
+              "body": "Resolution: Rate limit now uses account and IP together."
+            }
+          ]
+        },
+        "rootCause": "Rate limit was applied per IP address only.",
+        "resolutionNotes": "Rate limit now uses account and IP together."
+      }
+    },
+    {
+      "key": "SHOP-310",
+      "fields": {
+        "summary": "Add product image zoom on detail page",
+        "description": "Customers want to zoom product photos on mobile and desktop.",
+        "issuetype": {
+          "name": "Task"
+        },
+        "priority": {
+          "name": "Low"
+        },
+        "status": {
+          "name": "Done"
+        },
+        "reporter": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "created": "2026-09-05T12:00:00.000Z",
+        "updated": "2026-09-05T12:42:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 1,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Ayesha Khan",
+                "emailAddress": "ayesha.khan@shopco.example.com"
+              },
+              "created": "2026-09-05T12:42:00.000Z",
+              "body": "Estimated at 3 story points."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "SHOP-311",
+      "fields": {
+        "summary": "Upgrade Flask to 3.0.3",
+        "description": "Upgrade the web framework and fix deprecation warnings.",
+        "issuetype": {
+          "name": "Story"
+        },
+        "priority": {
+          "name": "Low"
+        },
+        "status": {
+          "name": "Done"
+        },
+        "reporter": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-09-23T15:00:00.000Z",
+        "updated": "2026-09-23T15:00:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 0,
+          "comments": []
+        }
+      }
+    },
+    {
+      "key": "SHOP-312",
+      "fields": {
+        "summary": "Write API documentation for /api/orders",
+        "description": "Document request and response formats, error codes and examples.",
+        "issuetype": {
+          "name": "Task"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "Done"
+        },
+        "reporter": {
+          "displayName": "Sana Malik",
+          "emailAddress": "sana.malik@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Mariam Iqbal",
+          "emailAddress": "mariam.iqbal@shopco.example.com"
+        },
+        "created": "2026-09-12T11:00:00.000Z",
+        "updated": "2026-09-12T11:23:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 2,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Sana Malik",
+                "emailAddress": "sana.malik@shopco.example.com"
+              },
+              "created": "2026-09-12T11:09:00.000Z",
+              "body": "Started working on this."
+            },
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-09-12T11:23:00.000Z",
+              "body": "Estimated at 3 story points."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "SHOP-313",
+      "fields": {
+        "summary": "Set up Grafana dashboard for checkout latency",
+        "description": "Create dashboards for request rate, error rate and p95 latency per service.",
+        "issuetype": {
+          "name": "Task"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "In Progress"
+        },
+        "reporter": {
+          "displayName": "Mariam Iqbal",
+          "emailAddress": "mariam.iqbal@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "created": "2026-09-02T16:00:00.000Z",
+        "updated": "2026-09-02T17:04:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 2,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-09-02T16:43:00.000Z",
+              "body": "Estimated at 3 story points."
+            },
+            {
+              "author": {
+                "displayName": "Sana Malik",
+                "emailAddress": "sana.malik@shopco.example.com"
+              },
+              "created": "2026-09-02T17:04:00.000Z",
+              "body": "Added to the next sprint."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "SHOP-314",
+      "fields": {
+        "summary": "Implement wishlist feature",
+        "description": "Logged-in users can save products to a wishlist.",
+        "issuetype": {
+          "name": "Story"
+        },
+        "priority": {
+          "name": "Low"
+        },
+        "status": {
+          "name": "Done"
+        },
+        "reporter": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Sana Malik",
+          "emailAddress": "sana.malik@shopco.example.com"
+        },
+        "created": "2026-09-10T09:00:00.000Z",
+        "updated": "2026-09-10T09:39:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 2,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Daniyal Shah",
+                "emailAddress": "daniyal.shah@shopco.example.com"
+              },
+              "created": "2026-09-10T09:14:00.000Z",
+              "body": "Added to the next sprint."
+            },
+            {
+              "author": {
+                "displayName": "Daniyal Shah",
+                "emailAddress": "daniyal.shah@shopco.example.com"
+              },
+              "created": "2026-09-10T09:39:00.000Z",
+              "body": "Added to the next sprint."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "SHOP-315",
+      "fields": {
+        "summary": "Rotate staging database credentials",
+        "description": "Quarterly credential rotation for the staging database.",
+        "issuetype": {
+          "name": "Task"
+        },
+        "priority": {
+          "name": "Low"
+        },
+        "status": {
+          "name": "Done"
+        },
+        "reporter": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-10-18T11:00:00.000Z",
+        "updated": "2026-10-18T11:00:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 0,
+          "comments": []
+        }
+      }
+    },
+    {
+      "key": "SHOP-316",
+      "fields": {
+        "summary": "Migrate CI from Travis to GitHub Actions",
+        "description": "Move build and test pipelines and remove the old configuration.",
+        "issuetype": {
+          "name": "Story"
+        },
+        "priority": {
+          "name": "Low"
+        },
+        "status": {
+          "name": "To Do"
+        },
+        "reporter": {
+          "displayName": "Sana Malik",
+          "emailAddress": "sana.malik@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Ayesha Khan",
+          "emailAddress": "ayesha.khan@shopco.example.com"
+        },
+        "created": "2026-10-22T14:00:00.000Z",
+        "updated": "2026-10-22T15:03:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 2,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Ayesha Khan",
+                "emailAddress": "ayesha.khan@shopco.example.com"
+              },
+              "created": "2026-10-22T14:37:00.000Z",
+              "body": "Added to the next sprint."
+            },
+            {
+              "author": {
+                "displayName": "Sana Malik",
+                "emailAddress": "sana.malik@shopco.example.com"
+              },
+              "created": "2026-10-22T15:03:00.000Z",
+              "body": "Added to the next sprint."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "SHOP-317",
+      "fields": {
+        "summary": "Add Urdu translations for error messages",
+        "description": "Provide Urdu text for user-facing error and validation messages.",
+        "issuetype": {
+          "name": "Task"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "To Do"
+        },
+        "reporter": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "created": "2026-09-27T17:00:00.000Z",
+        "updated": "2026-09-27T17:25:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 1,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Bilal Ahmed",
+                "emailAddress": "bilal.ahmed@shopco.example.com"
+              },
+              "created": "2026-09-27T17:25:00.000Z",
+              "body": "Started working on this."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "SHOP-318",
+      "fields": {
+        "summary": "Improve search ranking for product titles",
+        "description": "Boost exact title matches and tune synonyms.",
+        "issuetype": {
+          "name": "Task"
+        },
+        "priority": {
+          "name": "Low"
+        },
+        "status": {
+          "name": "Done"
+        },
+        "reporter": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Mariam Iqbal",
+          "emailAddress": "mariam.iqbal@shopco.example.com"
+        },
+        "created": "2026-09-24T11:00:00.000Z",
+        "updated": "2026-09-24T11:49:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 1,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-09-24T11:49:00.000Z",
+              "body": "Estimated at 3 story points."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "SHOP-319",
+      "fields": {
+        "summary": "Add CSV export to admin order report",
+        "description": "Admins can export filtered orders as CSV.",
+        "issuetype": {
+          "name": "Story"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "In Progress"
+        },
+        "reporter": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "created": "2026-09-03T10:00:00.000Z",
+        "updated": "2026-09-03T10:43:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 2,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Daniyal Shah",
+                "emailAddress": "daniyal.shah@shopco.example.com"
+              },
+              "created": "2026-09-03T10:31:00.000Z",
+              "body": "Started working on this."
+            },
+            {
+              "author": {
+                "displayName": "Sana Malik",
+                "emailAddress": "sana.malik@shopco.example.com"
+              },
+              "created": "2026-09-03T10:43:00.000Z",
+              "body": "Added to the next sprint."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "SHOP-320",
+      "fields": {
+        "summary": "Document environment variables in README",
+        "description": "List all required and optional environment variables with examples.",
+        "issuetype": {
+          "name": "Story"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "In Progress"
+        },
+        "reporter": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-10-19T11:00:00.000Z",
+        "updated": "2026-10-19T12:21:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 2,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Sana Malik",
+                "emailAddress": "sana.malik@shopco.example.com"
+              },
+              "created": "2026-10-19T11:33:00.000Z",
+              "body": "Estimated at 3 story points."
+            },
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-10-19T12:21:00.000Z",
+              "body": "Started working on this."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "SHOP-321",
+      "fields": {
+        "summary": "Add index on orders.created_at",
+        "description": "Speed up date range queries in the admin reports.",
+        "issuetype": {
+          "name": "Task"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "To Do"
+        },
+        "reporter": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Sana Malik",
+          "emailAddress": "sana.malik@shopco.example.com"
+        },
+        "created": "2026-10-04T13:00:00.000Z",
+        "updated": "2026-10-04T13:21:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 1,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Daniyal Shah",
+                "emailAddress": "daniyal.shah@shopco.example.com"
+              },
+              "created": "2026-10-04T13:21:00.000Z",
+              "body": "Added to the next sprint."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "SHOP-322",
+      "fields": {
+        "summary": "Review dependency licenses",
+        "description": "Check that all dependencies have licenses compatible with our policy.",
+        "issuetype": {
+          "name": "Story"
+        },
+        "priority": {
+          "name": "Low"
+        },
+        "status": {
+          "name": "Done"
+        },
+        "reporter": {
+          "displayName": "Sana Malik",
+          "emailAddress": "sana.malik@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "created": "2026-09-25T17:00:00.000Z",
+        "updated": "2026-09-25T18:09:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 2,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Daniyal Shah",
+                "emailAddress": "daniyal.shah@shopco.example.com"
+              },
+              "created": "2026-09-25T17:36:00.000Z",
+              "body": "Added to the next sprint."
+            },
+            {
+              "author": {
+                "displayName": "Sana Malik",
+                "emailAddress": "sana.malik@shopco.example.com"
+              },
+              "created": "2026-09-25T18:09:00.000Z",
+              "body": "Estimated at 3 story points."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "SHOP-323",
+      "fields": {
+        "summary": "Add dark mode to admin dashboard",
+        "description": "Optional dark theme for the admin pages.",
+        "issuetype": {
+          "name": "Story"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "Done"
+        },
+        "reporter": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-09-26T09:00:00.000Z",
+        "updated": "2026-09-26T09:00:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 0,
+          "comments": []
+        }
+      }
+    },
+    {
+      "key": "SHOP-324",
+      "fields": {
+        "summary": "Set up weekly database backups verification",
+        "description": "Restore a backup to a scratch database every week and run sanity checks.",
+        "issuetype": {
+          "name": "Task"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "Done"
+        },
+        "reporter": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Mariam Iqbal",
+          "emailAddress": "mariam.iqbal@shopco.example.com"
+        },
+        "created": "2026-09-22T15:00:00.000Z",
+        "updated": "2026-09-22T16:04:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 2,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Hamza Tariq",
+                "emailAddress": "hamza.tariq@shopco.example.com"
+              },
+              "created": "2026-09-22T15:19:00.000Z",
+              "body": "Started working on this."
+            },
+            {
+              "author": {
+                "displayName": "Bilal Ahmed",
+                "emailAddress": "bilal.ahmed@shopco.example.com"
+              },
+              "created": "2026-09-22T16:04:00.000Z",
+              "body": "Estimated at 3 story points."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "SHOP-325",
+      "fields": {
+        "summary": "Add retry to warehouse sync job",
+        "description": "Warehouse sync should retry on transient HTTP errors.",
+        "issuetype": {
+          "name": "Story"
+        },
+        "priority": {
+          "name": "Low"
+        },
+        "status": {
+          "name": "To Do"
+        },
+        "reporter": {
+          "displayName": "Daniyal Shah",
+          "emailAddress": "daniyal.shah@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-09-22T16:00:00.000Z",
+        "updated": "2026-09-22T16:00:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 0,
+          "comments": []
+        }
+      }
+    },
+    {
+      "key": "SHOP-326",
+      "fields": {
+        "summary": "Evaluate new payment provider",
+        "description": "Compare fees, APIs and settlement times of two additional providers.",
+        "issuetype": {
+          "name": "Task"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "To Do"
+        },
+        "reporter": {
+          "displayName": "Sana Malik",
+          "emailAddress": "sana.malik@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Ayesha Khan",
+          "emailAddress": "ayesha.khan@shopco.example.com"
+        },
+        "created": "2026-10-08T16:00:00.000Z",
+        "updated": "2026-10-08T16:00:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 0,
+          "comments": []
+        }
+      }
+    },
+    {
+      "key": "SHOP-327",
+      "fields": {
+        "summary": "Reduce Docker image size of checkout-service",
+        "description": "Use a slimmer base image and multi-stage build.",
+        "issuetype": {
+          "name": "Task"
+        },
+        "priority": {
+          "name": "Medium"
+        },
+        "status": {
+          "name": "To Do"
+        },
+        "reporter": {
+          "displayName": "Usman Raza",
+          "emailAddress": "usman.raza@shopco.example.com"
+        },
+        "assignee": {
+          "displayName": "Hamza Tariq",
+          "emailAddress": "hamza.tariq@shopco.example.com"
+        },
+        "created": "2026-09-28T10:00:00.000Z",
+        "updated": "2026-09-28T10:49:00.000Z",
+        "resolutiondate": null,
+        "labels": [
+          "backlog"
+        ],
+        "components": [
+          {
+            "name": "Platform"
+          }
+        ],
+        "fixVersions": [],
+        "comment": {
+          "total": 1,
+          "comments": [
+            {
+              "author": {
+                "displayName": "Mariam Iqbal",
+                "emailAddress": "mariam.iqbal@shopco.example.com"
+              },
+              "created": "2026-09-28T10:49:00.000Z",
+              "body": "Started working on this."
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

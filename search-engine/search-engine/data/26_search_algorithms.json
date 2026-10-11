@@ -1,0 +1,23 @@
+{
+  "title": "Search Algorithms and Data Structures",
+  "category": "Computer Science",
+  "topics": [
+    {
+      "name": "Hash Tables",
+      "description": "A hash table uses a hash function to map keys to array indices enabling O(1) average-case lookup. Collisions are resolved by chaining or open addressing. Hash tables underpin inverted indexes in search engines for fast term lookup."
+    },
+    {
+      "name": "Binary Search Trees",
+      "description": "A binary search tree stores elements in sorted order allowing O(log n) search insert and delete operations. Balanced variants like AVL trees and Red-Black trees guarantee worst-case O(log n) performance."
+    },
+    {
+      "name": "Trie",
+      "description": "A trie also called prefix tree is a tree data structure for storing strings. Each node represents a character prefix. Tries are used in autocomplete systems and spell checkers in search engines."
+    },
+    {
+      "name": "Skip Lists",
+      "description": "A skip list is a probabilistic data structure that allows O(log n) search within an ordered sequence. It is used in some IR systems like Apache Lucene for storing postings lists efficiently."
+    }
+  ],
+  "applications": "These data structures are fundamental to building efficient inverted indexes, query processors, and ranking systems in information retrieval."
+}

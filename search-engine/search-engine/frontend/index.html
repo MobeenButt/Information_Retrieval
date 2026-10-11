@@ -2,201 +2,1044 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mini Search Engine</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IR Search Engine</title>
 <style>
-  :root {
-    --ink: #16233a;
-    --muted: #5b6b82;
-    --paper: #f2f5f9;
-    --card: #ffffff;
-    --rule: #cdd7e3;
-    --blue: #2f5d8c;
-    --mark: #f6d28b;
-    --serif: Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
-    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.55 var(--sans); }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 64px; }
-  h1 { font: 600 2rem/1.2 var(--serif); margin: 0 0 4px; }
-  .sub { color: var(--muted); margin: 0 0 24px; }
+/* ═══════════════════════════════════════════════
+   ROOT TOKENS  –  Black / Yellow theme
+═══════════════════════════════════════════════ */
+:root{
+  --bg:        #0a0a0a;
+  --surface:   #111111;
+  --surface2:  #1a1a1a;
+  --border:    #2a2a2a;
+  --border2:   #333333;
+  --yellow:    #f5c518;
+  --yellow2:   #ffd740;
+  --yellow3:   #ffe57f;
+  --yellow-dim:#a88200;
+  --text:      #f0f0f0;
+  --text2:     #aaaaaa;
+  --text3:     #666666;
+  --red:       #ff5252;
+  --green:     #69ff47;
+  --blue:      #40c4ff;
+  --radius:    6px;
+  --shadow:    0 8px 32px rgba(0,0,0,.7);
+  --glow:      0 0 24px rgba(245,197,24,.18);
+  --glow2:     0 0 48px rgba(245,197,24,.35);
+  --font:      'Segoe UI',system-ui,-apple-system,sans-serif;
+  --mono:      ui-monospace,Consolas,'Courier New',monospace;
+}
 
-  form { display: flex; gap: 8px; }
-  input[type=search] { flex: 1; font: inherit; padding: 12px 14px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); border-radius: 3px; }
-  button, select { font: inherit; }
-  .go { padding: 12px 22px; border: 0; background: var(--blue); color: #fff; border-radius: 3px; cursor: pointer; font-weight: 600; }
-  .go:hover { background: #254b73; }
-  :focus-visible { outline: 3px solid #e9a23b; outline-offset: 2px; }
+/* ═══════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font:15px/1.6 var(--font);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+a{color:var(--yellow);text-decoration:none}
+:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}
 
-  .opts { display: flex; flex-wrap: wrap; gap: 16px 24px; margin: 14px 0 6px; color: var(--muted); font-size: .92rem; align-items: center; }
-  .opts select { padding: 4px 8px; border: 1px solid var(--rule); background: var(--card); color: var(--ink); border-radius: 3px; }
-  .opts label { display: inline-flex; gap: 6px; align-items: center; }
+/* ═══════════════════════════════════════════════
+   3-D PARTICLE CANVAS  (background)
+═══════════════════════════════════════════════ */
+#canvas3d{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  z-index:0;pointer-events:none;
+}
 
-  .examples { margin: 10px 0 0; font-size: .92rem; color: var(--muted); }
-  .examples button { background: none; border: 0; padding: 0 2px; color: var(--blue); text-decoration: underline; cursor: pointer; margin-right: 8px; }
+/* ═══════════════════════════════════════════════
+   LAYOUT WRAPPER
+═══════════════════════════════════════════════ */
+.app{
+  position:relative;z-index:1;
+  max-width:1280px;margin:0 auto;
+  padding:0 16px 80px;
+}
 
-  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 32px; margin-top: 28px; align-items: start; }
-  @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } .trace { order: -1; position: static !important; } }
+/* ═══════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════ */
+header{
+  padding:36px 0 20px;
+  display:flex;flex-wrap:wrap;align-items:center;gap:16px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:24px;
+}
+.logo{
+  display:flex;align-items:center;gap:12px;
+}
+.logo-icon{
+  width:44px;height:44px;
+  background:var(--yellow);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  box-shadow:var(--glow2);
+  transform-style:preserve-3d;
+  animation:logoSpin 8s linear infinite;
+}
+@keyframes logoSpin{
+  0%  {transform:rotateY(0deg)  rotateX(5deg)}
+  50% {transform:rotateY(180deg) rotateX(-5deg)}
+  100%{transform:rotateY(360deg) rotateX(5deg)}
+}
+.logo-text h1{
+  font-size:1.55rem;font-weight:700;line-height:1.1;
+  background:linear-gradient(90deg,var(--yellow),var(--yellow3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.logo-text p{font-size:.8rem;color:var(--text3);margin-top:2px}
+.header-stats{
+  margin-left:auto;display:flex;gap:16px;flex-wrap:wrap;
+}
+.stat-pill{
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:20px;padding:4px 14px;font-size:.78rem;color:var(--text2);
+  display:flex;align-items:center;gap:6px;
+}
+.stat-pill span{color:var(--yellow);font-weight:600}
 
-  .summary { color: var(--muted); font-size: .92rem; margin: 0 0 12px; }
-  .hit { background: var(--card); border: 1px solid var(--rule); border-left: 4px solid var(--blue); padding: 14px 16px 12px; margin-bottom: 12px; }
-  .hit h2 { font: 600 1.15rem/1.3 var(--serif); margin: 0; }
-  .hit h2 button { all: unset; cursor: pointer; color: var(--blue); }
-  .hit h2 button:hover { text-decoration: underline; }
-  .hit h2 button:focus-visible { outline: 3px solid #e9a23b; outline-offset: 2px; }
-  .bar { height: 3px; background: var(--rule); margin: 8px 0; }
-  .bar span { display: block; height: 100%; background: var(--blue); }
-  .snippet { margin: 0 0 8px; }
-  mark { background: var(--mark); color: inherit; padding: 0 1px; }
-  .meta { font-size: .85rem; color: var(--muted); }
-  .full { margin: 10px 0 4px; padding-top: 10px; border-top: 1px dashed var(--rule); }
-  .empty { background: var(--card); border: 1px dashed var(--rule); padding: 20px; color: var(--muted); }
+/* ═══════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════ */
+.tabs{
+  display:flex;gap:4px;margin-bottom:20px;
+  border-bottom:2px solid var(--border);
+  padding-bottom:0;
+}
+.tab{
+  background:none;border:none;
+  padding:10px 22px;font:inherit;font-size:.9rem;
+  color:var(--text3);cursor:pointer;
+  border-bottom:3px solid transparent;margin-bottom:-2px;
+  transition:color .2s,border-color .2s;
+  border-radius:var(--radius) var(--radius) 0 0;
+}
+.tab:hover{color:var(--yellow2)}
+.tab.active{
+  color:var(--yellow);
+  border-bottom-color:var(--yellow);
+  background:rgba(245,197,24,.06);
+}
 
-  .trace { position: sticky; top: 16px; background: var(--card); border: 1px solid var(--rule); padding: 16px 18px; }
-  .trace h3 { font: 600 1.05rem/1.3 var(--serif); margin: 0 0 4px; }
-  .trace p.note { font-size: .85rem; color: var(--muted); margin: 0 0 12px; }
-  .trace ol { margin: 0; padding-left: 20px; }
-  .trace li { margin-bottom: 12px; font-size: .9rem; }
-  .trace li b { display: block; font-weight: 600; }
-  .trace code { font: .88rem/1.5 ui-monospace, Consolas, monospace; background: var(--paper); padding: 1px 5px; border-radius: 2px; word-break: break-word; }
-  .trace .none { color: var(--muted); }
-  .lookup { display: block; margin: 2px 0; }
+/* ═══════════════════════════════════════════════
+   SEARCH BAR
+═══════════════════════════════════════════════ */
+.search-wrap{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:10px;
+  padding:16px 18px 14px;
+  margin-bottom:16px;
+  box-shadow:var(--shadow);
+  transition:box-shadow .3s;
+}
+.search-wrap:focus-within{box-shadow:var(--glow2),var(--shadow)}
+.search-row{display:flex;gap:10px}
+input[type=search]{
+  flex:1;background:var(--bg);
+  border:1px solid var(--border2);border-radius:var(--radius);
+  color:var(--text);font:inherit;font-size:1rem;
+  padding:11px 16px;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+input[type=search]:focus{
+  border-color:var(--yellow);
+  box-shadow:0 0 0 3px rgba(245,197,24,.15);
+}
+input[type=search]::placeholder{color:var(--text3)}
+.btn-search{
+  background:var(--yellow);color:#000;
+  border:none;border-radius:var(--radius);
+  padding:11px 26px;font:inherit;font-size:.95rem;font-weight:700;
+  cursor:pointer;
+  transition:background .2s,transform .1s,box-shadow .2s;
+  box-shadow:0 4px 16px rgba(245,197,24,.3);
+  white-space:nowrap;
+}
+.btn-search:hover{background:var(--yellow2);box-shadow:var(--glow2)}
+.btn-search:active{transform:scale(.97)}
+
+/* ── option rows ── */
+.opts-row{
+  display:flex;flex-wrap:wrap;gap:10px 20px;
+  margin-top:12px;align-items:center;
+}
+.opt-group{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--text2)}
+.opt-group label{white-space:nowrap}
+select{
+  background:var(--bg);border:1px solid var(--border2);
+  color:var(--text);border-radius:var(--radius);
+  padding:5px 10px;font:inherit;font-size:.85rem;cursor:pointer;
+  transition:border-color .2s;
+}
+select:focus{border-color:var(--yellow);outline:none}
+.mode-radio-group{display:flex;gap:4px}
+.mode-radio-group label{
+  padding:4px 12px;border-radius:20px;font-size:.8rem;
+  border:1px solid var(--border2);cursor:pointer;
+  transition:all .2s;color:var(--text2);
+}
+.mode-radio-group input[type=radio]{display:none}
+.mode-radio-group input:checked+span{color:#000}
+.mode-radio-group label:has(input:checked){
+  background:var(--yellow);border-color:var(--yellow);color:#000;font-weight:600;
+}
+.model-desc-badge{
+  margin-left:auto;font-size:.76rem;color:var(--yellow-dim);
+  background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.2);
+  border-radius:4px;padding:3px 10px;white-space:nowrap;
+}
+
+/* ── examples ── */
+.examples{
+  font-size:.8rem;color:var(--text3);margin-top:10px;
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+}
+.examples span{color:var(--text3)}
+.ex-btn{
+  background:var(--surface2);border:1px solid var(--border2);
+  color:var(--text2);border-radius:12px;padding:3px 10px;
+  font:inherit;font-size:.78rem;cursor:pointer;
+  transition:all .2s;
+}
+.ex-btn:hover{border-color:var(--yellow);color:var(--yellow)}
+
+/* ═══════════════════════════════════════════════
+   TWO-COLUMN RESULTS LAYOUT
+═══════════════════════════════════════════════ */
+.results-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 300px;
+  gap:20px;align-items:start;
+  margin-top:4px;
+}
+@media(max-width:880px){
+  .results-layout{grid-template-columns:1fr}
+  .trace-panel{display:none}
+}
+
+/* ═══════════════════════════════════════════════
+   RESULT CARDS  (3-D lift on hover)
+═══════════════════════════════════════════════ */
+.summary-line{
+  font-size:.82rem;color:var(--text3);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.summary-line .model-tag{
+  background:rgba(245,197,24,.12);border:1px solid rgba(245,197,24,.3);
+  border-radius:4px;padding:1px 8px;color:var(--yellow);font-size:.76rem;
+}
+
+.hit{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:8px;
+  padding:16px 18px 14px;
+  margin-bottom:12px;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .25s,box-shadow .25s,border-color .25s;
+  cursor:default;
+}
+.hit:hover{
+  transform:translateY(-3px) rotateX(1deg);
+  box-shadow:0 12px 36px rgba(0,0,0,.6),var(--glow);
+  border-color:rgba(245,197,24,.35);
+}
+.hit-rank{
+  position:absolute;top:14px;right:16px;
+  font-size:.72rem;color:var(--text3);
+  background:var(--surface2);
+  border-radius:4px;padding:2px 7px;
+  border:1px solid var(--border);
+}
+.hit h2{
+  font-size:1rem;font-weight:600;line-height:1.3;margin-bottom:6px;padding-right:60px;
+}
+.hit h2 button{
+  all:unset;cursor:pointer;
+  color:var(--yellow2);
+  transition:color .2s;
+}
+.hit h2 button:hover{color:var(--yellow3)}
+
+/* score bar */
+.score-bar{height:2px;background:var(--border);border-radius:2px;margin:8px 0}
+.score-bar-fill{height:100%;background:linear-gradient(90deg,var(--yellow),var(--yellow3));border-radius:2px;transition:width .4s ease}
+
+.hit-snippet{font-size:.87rem;color:var(--text2);line-height:1.55;margin-bottom:8px}
+mark{background:rgba(245,197,24,.28);color:var(--yellow3);padding:0 2px;border-radius:2px}
+.hit-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.75rem;color:var(--text3)}
+.badge{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:2px 8px;border-radius:10px;font-size:.72rem;
+  border:1px solid var(--border2);background:var(--surface2);
+}
+.badge.ft-txt  {border-color:#444;color:#aaa}
+.badge.ft-pdf  {border-color:#c44;color:#f88}
+.badge.ft-json {border-color:#4a4;color:#8f8}
+.badge.ft-csv  {border-color:#48a;color:#7cf}
+.badge.ft-xml  {border-color:#a74;color:#fc8}
+.score-val{color:var(--yellow);font-weight:600}
+.missing-terms{
+  margin-top:6px;font-size:.78rem;color:var(--red);
+  display:flex;align-items:center;gap:4px;
+}
+.proximity-info{
+  margin-top:6px;font-size:.78rem;color:var(--blue);
+  background:rgba(64,196,255,.07);border:1px solid rgba(64,196,255,.2);
+  border-radius:4px;padding:4px 10px;
+  display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;
+}
+.hit-full{
+  margin-top:12px;padding-top:12px;
+  border-top:1px dashed var(--border2);
+  font-size:.83rem;color:var(--text2);
+  white-space:pre-wrap;line-height:1.6;
+  max-height:300px;overflow-y:auto;
+}
+.hit-full::-webkit-scrollbar{width:4px}
+.hit-full::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+.empty-state{
+  background:var(--surface);border:1px dashed var(--border2);
+  border-radius:8px;padding:40px 24px;text-align:center;
+  color:var(--text3);
+}
+.empty-state .big-icon{font-size:2.5rem;margin-bottom:8px}
+
+/* ═══════════════════════════════════════════════
+   TRACE PANEL (sticky sidebar)
+═══════════════════════════════════════════════ */
+.trace-panel{
+  position:sticky;top:16px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:8px;padding:16px;
+  font-size:.82rem;
+}
+.trace-panel h3{
+  font-size:.9rem;color:var(--yellow);margin-bottom:4px;
+  display:flex;align-items:center;gap:6px;
+}
+.trace-panel .note{color:var(--text3);font-size:.75rem;margin-bottom:12px}
+.trace-panel ol{padding-left:18px}
+.trace-panel li{margin-bottom:10px;color:var(--text2)}
+.trace-panel li b{display:block;color:var(--text);font-size:.8rem;margin-bottom:2px}
+.trace-panel code{
+  font:inherit;font-family:var(--mono);font-size:.76rem;
+  background:var(--surface2);border:1px solid var(--border);
+  padding:2px 6px;border-radius:4px;color:var(--yellow3);
+  word-break:break-word;display:inline-block;margin:1px 0;
+}
+.trace-lookup{display:block;margin:2px 0}
+.trace-none{color:var(--text3);font-style:italic}
+
+/* ═══════════════════════════════════════════════
+   METRICS TAB
+═══════════════════════════════════════════════ */
+.metrics-intro{font-size:.85rem;color:var(--text2);margin-bottom:16px}
+.eval-controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;align-items:center}
+.btn{
+  padding:8px 18px;border-radius:var(--radius);
+  font:inherit;font-size:.85rem;cursor:pointer;
+  transition:all .2s;border:none;font-weight:600;
+}
+.btn-primary{background:var(--yellow);color:#000;box-shadow:0 4px 16px rgba(245,197,24,.25)}
+.btn-primary:hover{background:var(--yellow2);box-shadow:var(--glow2)}
+.btn-secondary{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+.btn-secondary:hover{border-color:var(--yellow);color:var(--yellow)}
+.btn-sm{padding:5px 12px;font-size:.78rem}
+.eval-status{
+  font-size:.82rem;color:var(--text3);margin-bottom:14px;min-height:1.4em;
+  display:flex;align-items:center;gap:8px;
+}
+.spinner{
+  width:14px;height:14px;border:2px solid var(--border2);
+  border-top-color:var(--yellow);border-radius:50%;
+  animation:spin .6s linear infinite;display:none;
+}
+.spinner.active{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* best model banner */
+.best-banner{
+  background:linear-gradient(135deg,rgba(245,197,24,.12),rgba(245,197,24,.04));
+  border:1px solid rgba(245,197,24,.3);
+  border-radius:8px;padding:12px 18px;
+  margin-bottom:16px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.best-banner .trophy{font-size:1.5rem}
+.best-banner .label{font-size:.8rem;color:var(--text3)}
+.best-banner .name{font-size:1.1rem;font-weight:700;color:var(--yellow)}
+.best-banner .score{font-size:.82rem;color:var(--text2);margin-left:auto}
+
+/* metrics table */
+.metrics-table-wrap{overflow-x:auto;margin-bottom:24px}
+.metrics-table{
+  width:100%;border-collapse:collapse;font-size:.83rem;
+  min-width:600px;
+}
+.metrics-table th{
+  background:var(--surface2);color:var(--yellow);
+  padding:10px 14px;text-align:left;font-weight:600;
+  border-bottom:2px solid var(--border2);
+  white-space:nowrap;
+}
+.metrics-table td{
+  padding:9px 14px;border-bottom:1px solid var(--border);
+  color:var(--text2);
+  transition:background .15s;
+}
+.metrics-table tr:hover td{background:var(--surface2)}
+.metrics-table tr.best-row td{background:rgba(245,197,24,.06)}
+.metrics-table tr.best-row td:first-child{
+  color:var(--yellow);font-weight:600;
+}
+.val-high{color:var(--green);font-weight:600}
+.val-mid {color:var(--yellow2)}
+.val-low {color:var(--red)}
+
+.per-query-section h3{
+  font-size:.9rem;color:var(--yellow);margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;
+}
+
+/* ═══════════════════════════════════════════════
+   WINDOW SIZE CONTROL (Proximal model)
+═══════════════════════════════════════════════ */
+.window-control{
+  display:none;align-items:center;gap:8px;font-size:.82rem;color:var(--text2);
+}
+.window-control.visible{display:flex}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;
+  width:100px;height:4px;
+  background:var(--border2);border-radius:2px;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+  background:var(--yellow);cursor:pointer;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media(max-width:640px){
+  header{padding:20px 0 14px}
+  .logo-text h1{font-size:1.2rem}
+  .header-stats{display:none}
+  .tabs .tab{padding:8px 14px;font-size:.82rem}
+  .search-wrap{padding:12px}
+  .btn-search{padding:11px 16px}
+  .opts-row{gap:8px 14px}
+  .model-desc-badge{display:none}
+}
 </style>
 </head>
+
 <body>
-<div class="wrap">
-  <h1>Mini Search Engine</h1>
-  <p class="sub" id="stats">Loading collection…</p>
+<!-- 3-D background canvas -->
+<canvas id="canvas3d"></canvas>
 
-  <form id="form" role="search">
-    <input type="search" id="q" placeholder="Try: how do search engines rank results" aria-label="Search query" autocomplete="off" autofocus>
-    <button class="go" type="submit">Search</button>
-  </form>
+<div class="app">
 
-  <div class="opts">
-    <label>Ranking model
-      <select id="model"><option value="tfidf">TF-IDF</option><option value="bm25">BM25</option></select>
-    </label>
-    <label><input type="radio" name="mode" value="any" checked> Match any word</label>
-    <label><input type="radio" name="mode" value="all"> Match all words</label>
+  <!-- ══ HEADER ══ -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🔍</div>
+      <div class="logo-text">
+        <h1>IR Search Engine</h1>
+        <p>Information Retrieval — All Models</p>
+      </div>
+    </div>
+    <div class="header-stats" id="header-stats">
+      <div class="stat-pill">Docs <span id="stat-docs">…</span></div>
+      <div class="stat-pill">Terms <span id="stat-terms">…</span></div>
+      <div class="stat-pill">Types <span id="stat-types">…</span></div>
+    </div>
+  </header>
+
+  <!-- ══ TABS ══ -->
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-tab="search" role="tab">🔍 Search</button>
+    <button class="tab" data-tab="metrics" role="tab">📊 Model Metrics</button>
   </div>
-  <p class="examples">Examples:
-    <button type="button" data-q="machine learning">machine learning</button>
-    <button type="button" data-q="inverted index">inverted index</button>
-    <button type="button" data-q="how do search engines rank results">how do search engines rank results</button>
-    <button type="button" data-q="precision recall">precision recall</button>
-  </p>
 
-  <div class="layout">
-    <section aria-live="polite">
-      <p class="summary" id="summary"></p>
-      <div id="results"><div class="empty">Type a query to search the collection. Select a result title to read the full document.</div></div>
-    </section>
+  <!-- ══════════════════════════════════
+       SEARCH TAB
+  ══════════════════════════════════ -->
+  <div id="tab-search">
 
-    <aside class="trace" id="trace">
-      <h3>What the engine did</h3>
-      <p class="note">Each search runs through the same pipeline you studied in Week 1.</p>
-      <p class="none">Run a search to see the steps.</p>
-    </aside>
-  </div>
-</div>
+    <div class="search-wrap">
+      <form id="search-form" role="search">
+        <div class="search-row">
+          <input type="search" id="q" placeholder="e.g.  inverted index postings list"
+            aria-label="Search query" autocomplete="off" autofocus spellcheck="false">
+          <button class="btn-search" type="submit">Search</button>
+        </div>
+      </form>
 
+      <div class="opts-row">
+        <!-- Model -->
+        <div class="opt-group">
+          <label for="model-sel">Model</label>
+          <select id="model-sel">
+            <option value="tfidf">TF-IDF (Vector Space)</option>
+            <option value="bm25">BM25</option>
+            <option value="boolean">Boolean</option>
+            <option value="overlap">Overlap</option>
+            <option value="nonoverlap">Non-Overlap</option>
+            <option value="bim">BIM</option>
+            <option value="proximal">Proximal Nodes</option>
+          </select>
+        </div>
+
+        <!-- Mode -->
+        <div class="opt-group">
+          <label>Mode</label>
+          <div class="mode-radio-group">
+            <label><input type="radio" name="mode" value="any" checked><span>OR</span></label>
+            <label><input type="radio" name="mode" value="all"><span>AND</span></label>
+            <label><input type="radio" name="mode" value="not"><span>NOT</span></label>
+          </div>
+        </div>
+
+        <!-- Window size (proximal only) -->
+        <div class="window-control" id="window-ctrl">
+          <label for="window-range">Window</label>
+          <input type="range" id="window-range" min="3" max="30" value="10" step="1">
+          <span id="window-val">10</span>
+        </div>
+
+        <!-- Results count -->
+        <div class="opt-group">
+          <label for="k-sel">Top</label>
+          <select id="k-sel">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+          </select>
+        </div>
+
+        <span class="model-desc-badge" id="model-badge"></span>
+      </div>
+
+      <div class="examples">
+        <span>Try:</span>
+        <button class="ex-btn" data-q="inverted index postings">inverted index</button>
+        <button class="ex-btn" data-q="BM25 ranking function">BM25 ranking</button>
+        <button class="ex-btn" data-q="precision recall evaluation">precision recall</button>
+        <button class="ex-btn" data-q="web crawling link analysis">web crawling</button>
+        <button class="ex-btn" data-q="semantic search embeddings">semantic search</button>
+        <button class="ex-btn" data-q="query processing optimization">query processing</button>
+      </div>
+    </div><!-- /search-wrap -->
+
+    <!-- Results + Trace -->
+    <div class="results-layout">
+
+      <section aria-live="polite" id="results-col">
+        <div class="summary-line" id="summary-line" style="display:none"></div>
+        <div id="results">
+          <div class="empty-state">
+            <div class="big-icon">🔎</div>
+            <p>Type a query above to search the collection.</p>
+            <p style="margin-top:6px;font-size:.8rem">Choose any model from the dropdown.</p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="trace-panel" id="trace-panel">
+        <h3>⚙ Pipeline trace</h3>
+        <p class="note">Watch the query flow through preprocessing → index lookup → ranking.</p>
+        <p class="trace-none">Run a search to see each step.</p>
+      </aside>
+
+    </div><!-- /results-layout -->
+  </div><!-- /tab-search -->
+
+  <!-- ══════════════════════════════════
+       METRICS TAB
+  ══════════════════════════════════ -->
+  <div id="tab-metrics" style="display:none">
+    <p class="metrics-intro">
+      Evaluate any model against 12 labelled test queries and compare all models side-by-side.<br>
+      Metrics: Precision@10, Recall@10, F1@10, MRR, AP, nDCG@10.
+    </p>
+
+    <div class="eval-controls">
+      <button class="btn btn-primary" id="run-all-btn">▶ Evaluate all 7 models</button>
+      <span style="color:var(--text3);font-size:.82rem">or individually:</span>
+      <div id="single-btns" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
+
+    <div class="eval-status" id="eval-status">
+      <div class="spinner" id="spinner"></div>
+      <span id="eval-msg">Click a button to run evaluation.</span>
+    </div>
+
+    <div id="best-banner-wrap"></div>
+    <div class="metrics-table-wrap" id="metrics-table-wrap">
+      <p style="color:var(--text3);font-size:.85rem">No results yet. Run an evaluation above.</p>
+    </div>
+    <div class="per-query-section" id="per-query-section"></div>
+  </div><!-- /tab-metrics -->
+
+</div><!-- /app -->
+
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════ -->
 <script>
-const $ = (s) => document.querySelector(s);
-const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
-const list = (a) => a.length ? a.join(", ") : "(none)";
+/* ─── 3-D PARTICLE BACKGROUND ─────────────────── */
+(function(){
+  const C = document.getElementById('canvas3d');
+  const ctx = C.getContext('2d');
+  let W, H, particles=[], mouse={x:0,y:0};
+  const N_PARTS = 90;
+  const YELLOW  = 'rgba(245,197,24,';
+  const GREY    = 'rgba(50,50,50,';
 
-fetch("/stats").then(r => r.json()).then(s => {
-  $("#stats").textContent = `Searching ${s.documents} documents with ${s.terms} indexed terms.`;
+  function resize(){
+    W = C.width  = window.innerWidth;
+    H = C.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  document.addEventListener('mousemove', e => { mouse.x=e.clientX; mouse.y=e.clientY; });
+
+  class Particle{
+    constructor(){this.reset(true)}
+    reset(init=false){
+      this.x  = Math.random()*W;
+      this.y  = init ? Math.random()*H : -10;
+      this.z  = Math.random()*1.5+0.2;      // depth  (fake 3-D)
+      this.r  = (Math.random()*1.8+0.5)*this.z;
+      this.vx = (Math.random()-0.5)*0.4*this.z;
+      this.vy = (Math.random()*0.5+0.2)*this.z;
+      this.alpha= Math.random()*0.5+0.15;
+      this.yellow= Math.random()<0.3;        // 30% yellow dots
+      this.conn = [];
+    }
+    update(){
+      // gentle mouse repulsion
+      const dx=this.x-mouse.x, dy=this.y-mouse.y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<120){ this.vx+=dx/dist*0.15; this.vy+=dy/dist*0.15; }
+      // damping
+      this.vx*=0.98; this.vy*=0.98;
+      this.x+=this.vx; this.y+=this.vy;
+      if(this.y>H+10) this.reset();
+      if(this.x<-10||this.x>W+10){ this.vx*=-1; }
+    }
+    draw(){
+      const a = this.alpha*(0.5+this.z*0.35);
+      ctx.beginPath();
+      ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+      ctx.fillStyle = this.yellow ? YELLOW+a+')' : GREY+a+')';
+      ctx.fill();
+    }
+  }
+
+  for(let i=0;i<N_PARTS;i++) particles.push(new Particle());
+
+  function drawConnections(){
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const a=particles[i], b=particles[j];
+        const dx=a.x-b.x, dy=a.y-b.y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<130){
+          const alpha=(1-dist/130)*0.18*Math.min(a.z,b.z);
+          ctx.beginPath();
+          ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+          const useYellow = a.yellow||b.yellow;
+          ctx.strokeStyle = useYellow ? YELLOW+alpha+')' : GREY+(alpha*1.5)+')';
+          ctx.lineWidth   = useYellow ? 0.8 : 0.4;
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>p.update());
+    drawConnections();
+    particles.forEach(p=>p.draw());
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ─── UTILITIES ────────────────────────────────── */
+const $  = s => document.querySelector(s);
+const el = (tag,cls,txt) => {
+  const e=document.createElement(tag);
+  if(cls) e.className=cls;
+  if(txt!==undefined) e.textContent=txt;
+  return e;
+};
+
+const MODEL_DESC = {
+  tfidf:      'TF-IDF cosine similarity',
+  bm25:       'Okapi BM25 – length-normalised ranking',
+  boolean:    'Boolean AND / OR / NOT – exact set matching',
+  overlap:    'Overlap  |Q ∩ D| – keyword overlap count',
+  nonoverlap: 'Non-Overlap – shows missing query terms',
+  bim:        'Binary Independence Model – RSJ weights',
+  proximal:   'Proximal Nodes – rewards close term proximity',
+};
+
+/* ─── STATS ─────────────────────────────────────── */
+fetch('/stats').then(r=>r.json()).then(s=>{
+  $('#stat-docs').textContent  = s.documents;
+  $('#stat-terms').textContent = s.terms;
+  const types = Object.entries(s.file_types||{}).map(([k,v])=>v+' '+k).join(', ');
+  $('#stat-types').textContent = types || 'txt';
 });
 
-function renderTrace(t, query) {
-  const box = $("#trace");
-  box.replaceChildren();
-  box.append(el("h3", "", "What the engine did"));
-  box.append(el("p", "note", "Each search runs through the same pipeline you studied in Week 1."));
-  const ol = el("ol");
-  const step = (title, content) => { const li = el("li"); li.append(el("b", "", title)); li.append(content); ol.append(li); };
-  const code = (txt) => el("code", "", txt);
-
-  step("You typed", code(query));
-  step("Split into words", code(list(t.tokens)));
-  step("Common words removed", code(list(t.no_stop)));
-  step("Reduced to stems", code(list(t.stems)));
-  const lk = el("div");
-  if (!t.lookups.length) lk.append(el("span", "none", "No searchable terms in this query."));
-  t.lookups.forEach(l => {
-    const row = el("span", "lookup");
-    row.append(code(l.term), document.createTextNode(l.df ? ` found in ${l.df} document${l.df > 1 ? "s" : ""}` : " not in the index"));
-    lk.append(row);
+/* ─── TABS ───────────────────────────────────────── */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>{t.classList.remove('active');t.setAttribute('aria-selected','false');});
+    tab.classList.add('active'); tab.setAttribute('aria-selected','true');
+    document.querySelectorAll('.app > div[id^=tab-]').forEach(p=>p.style.display='none');
+    const panel = $('#tab-'+tab.dataset.tab);
+    if(panel) panel.style.display='';
+    if(tab.dataset.tab==='metrics') loadMetrics();
   });
-  step("Looked up in the index", lk);
-  step("Ranked by relevance", el("span", "", "Documents sharing more, and rarer, terms with the query score higher."));
+});
+
+/* ─── MODEL BADGE + WINDOW CONTROL ─────────────────── */
+function updateModelUI(){
+  const v = $('#model-sel').value;
+  $('#model-badge').textContent = MODEL_DESC[v]||'';
+  const wc = $('#window-ctrl');
+  if(v==='proximal') wc.classList.add('visible');
+  else wc.classList.remove('visible');
+}
+$('#model-sel').addEventListener('change', ()=>{ updateModelUI(); doSearch(); });
+$('#window-range').addEventListener('input', e=>{
+  $('#window-val').textContent = e.target.value;
+  doSearch();
+});
+updateModelUI();
+
+/* ─── TRACE PANEL ─────────────────────────────────── */
+function renderTrace(t, query){
+  const box = $('#trace-panel');
+  box.replaceChildren();
+
+  const h3 = el('h3','','⚙ Pipeline trace');
+  const note = el('p','note','Each step is the same as in your IR coursework.');
+  box.append(h3, note);
+
+  const ol = el('ol');
+  const step = (title, content)=>{
+    const li = el('li');
+    li.append(el('b','',title)); li.append(content); ol.append(li);
+  };
+  const code = txt => { const c=el('code','',txt); return c; };
+
+  step('You typed', code(query));
+  step('Tokenised', code(t.tokens.join(', ')||'(none)'));
+  step('Stop-words removed', code(t.no_stop.join(', ')||'(none)'));
+  step('Stemmed', code(t.stems.join(', ')||'(none)'));
+
+  const lkDiv = el('div');
+  if(!t.lookups.length){ lkDiv.append(el('span','trace-none','No searchable terms.')); }
+  t.lookups.forEach(l=>{
+    const row = el('span','trace-lookup');
+    const c   = el('code','',l.term);
+    const msg = document.createTextNode(l.df ? ` → ${l.df} doc${l.df>1?'s':''}` : ' → not in index');
+    row.append(c, msg); lkDiv.append(row);
+  });
+  step('Index lookup', lkDiv);
+  step('Ranked by', code(MODEL_DESC[$('#model-sel').value]||'model'));
   box.append(ol);
 }
 
-function renderHits(data) {
-  const res = $("#results");
+/* ─── RENDER HITS ──────────────────────────────────── */
+function renderHits(data){
+  const res   = $('#results');
+  const sumEl = $('#summary-line');
   res.replaceChildren();
-  const n = data.total;
-  $("#summary").textContent = n
-    ? `${n} result${n > 1 ? "s" : ""} in ${data.took_ms} ms. Showing the top ${data.hits.length}.`
-    : "";
-  if (!n) {
-    const e = el("div", "empty");
-    e.textContent = data.trace.stems.length
-      ? "No documents match. Try fewer words, or switch to “Match any word”."
-      : "Your query contains only common words. Add a more specific term.";
-    res.append(e);
+
+  if(!data.total){
+    sumEl.style.display='none';
+    const e = el('div','empty-state');
+    const icon = el('div','big-icon','😕'); e.append(icon);
+    const p1 = el('p','',data.trace.stems.length
+      ? 'No documents match. Try fewer words or switch to OR mode.'
+      : 'Query contains only common words. Add a specific term.');
+    e.append(p1); res.append(e);
     return;
   }
+
+  sumEl.style.display='flex';
+  const tag = el('span','model-tag', data.model);
+  sumEl.replaceChildren(
+    document.createTextNode(`${data.total} result${data.total>1?'s':''} in ${data.took_ms} ms — `),
+    tag
+  );
+
   const top = data.hits[0].score || 1;
-  data.hits.forEach((h, i) => {
-    const card = el("article", "hit");
-    const title = el("h2");
-    const btn = el("button", "", `${i + 1}. ${h.title}`);
-    btn.type = "button";
-    btn.setAttribute("aria-expanded", "false");
-    title.append(btn);
+  data.hits.forEach((h,i)=>{
+    const card = el('article','hit');
 
-    const bar = el("div", "bar"); const fill = el("span"); fill.style.width = Math.max(4, (h.score / top) * 100) + "%"; bar.append(fill);
-    const snip = el("p", "snippet"); snip.innerHTML = h.snippet;  // server-escaped; only <mark> tags added
-    const meta = el("div", "meta", `Score ${h.score} · matched ${h.matched.length} of ${data.trace.lookups.length} terms`);
-    card.append(title, bar, snip, meta);
+    const rank = el('div','hit-rank','#'+(i+1));
+    card.append(rank);
 
-    let full = null;
-    btn.addEventListener("click", async () => {
-      if (full) { full.remove(); full = null; btn.setAttribute("aria-expanded", "false"); return; }
-      const doc = await (await fetch(`/doc?id=${h.id}`)).json();
-      full = el("p", "full", doc.text);
-      card.append(full);
-      btn.setAttribute("aria-expanded", "true");
+    const h2  = el('h2');
+    const btn = el('button','',h.title);
+    btn.type = 'button'; btn.setAttribute('aria-expanded','false');
+    h2.append(btn);
+    card.append(h2);
+
+    // score bar
+    const bar = el('div','score-bar');
+    const fill= el('div','score-bar-fill');
+    fill.style.width = Math.max(4, (h.score/top)*100)+'%';
+    bar.append(fill); card.append(bar);
+
+    // snippet
+    const snip = el('p','hit-snippet');
+    snip.innerHTML = h.snippet||'';
+    card.append(snip);
+
+    // meta row
+    const meta = el('div','hit-meta');
+    const ft   = h.file_type||'txt';
+    const ftBadge = el('span','badge ft-'+ft, ft.toUpperCase());
+    const sc   = el('span','badge');
+    sc.innerHTML = 'Score <span class="score-val">'+h.score+'</span>';
+    const matched = el('span','badge', h.matched.length+'/'+data.trace.lookups.length+' terms');
+    meta.append(ftBadge, sc, matched);
+    if(h.source){ meta.append(el('span','badge',h.source)); }
+    card.append(meta);
+
+    // non-overlap: missing terms
+    if(data.model==='nonoverlap' && h.missing && h.missing.length){
+      const miss = el('div','missing-terms','⚠ Missing: '+h.missing.join(', '));
+      card.append(miss);
+    }
+
+    // proximal: proximity info
+    if(data.model==='proximal' && h.proximity){
+      const prox = h.proximity;
+      const pDiv = el('div','proximity-info');
+      const icon = el('span','','📍 ');
+      pDiv.append(icon);
+      const terms = prox.best_window_terms&&prox.best_window_terms.length
+        ? 'Best window ['+prox.window_size+' tokens] contains: '+prox.best_window_terms.join(', ')
+          +(prox.span ? '  (span '+prox.span+' tokens)' : '')
+        : 'Proximity window analysis available';
+      pDiv.append(document.createTextNode(terms));
+      card.append(pDiv);
+    }
+
+    // expand full text on click
+    let fullEl = null;
+    btn.addEventListener('click', async()=>{
+      if(fullEl){ fullEl.remove(); fullEl=null; btn.setAttribute('aria-expanded','false'); card.style.transform=''; return; }
+      const doc = await (await fetch('/doc?id='+h.id)).json();
+      fullEl = el('pre','hit-full', doc.text);
+      card.append(fullEl);
+      btn.setAttribute('aria-expanded','true');
+      card.style.transform = 'translateY(-4px)';
     });
+
+    // 3-D hover tilt per card
+    card.addEventListener('mousemove', e=>{
+      const r = card.getBoundingClientRect();
+      const x = ((e.clientX-r.left)/r.width  - 0.5)*6;
+      const y = ((e.clientY-r.top )/r.height - 0.5)*(-6);
+      card.style.transform = `translateY(-3px) rotateX(${y}deg) rotateY(${x}deg)`;
+    });
+    card.addEventListener('mouseleave',()=>{
+      card.style.transform = '';
+    });
+
     res.append(card);
   });
 }
 
-async function search(q) {
-  q = q.trim();
-  if (!q) return;
-  const mode = document.querySelector("input[name=mode]:checked").value;
-  const url = `/search?q=${encodeURIComponent(q)}&model=${$("#model").value}&mode=${mode}&k=10`;
+/* ─── SEARCH ─────────────────────────────────────── */
+async function doSearch(){
+  const q = $('#q').value.trim();
+  if(!q) return;
+  const model  = $('#model-sel').value;
+  const mode   = document.querySelector('input[name=mode]:checked')?.value||'any';
+  const k      = $('#k-sel').value;
+  const window = $('#window-range').value;
+  const url    = `/search?q=${encodeURIComponent(q)}&model=${model}&mode=${mode}&k=${k}&window=${window}`;
+
   const resp = await fetch(url);
   const data = await resp.json();
-  if (!resp.ok) { $("#results").replaceChildren(el("div", "empty", data.error || "Search failed.")); return; }
-  history.replaceState(null, "", `?q=${encodeURIComponent(q)}`);
+  if(!resp.ok){
+    $('#results').replaceChildren(el('div','empty-state',data.error||'Search failed.'));
+    return;
+  }
+  history.replaceState(null,'',`?q=${encodeURIComponent(q)}&model=${model}`);
   renderTrace(data.trace, q);
   renderHits(data);
 }
 
-$("#form").addEventListener("submit", (e) => { e.preventDefault(); search($("#q").value); });
-document.querySelectorAll(".examples button").forEach(b => b.addEventListener("click", () => { $("#q").value = b.dataset.q; search(b.dataset.q); }));
-$("#model").addEventListener("change", () => search($("#q").value));
-document.querySelectorAll("input[name=mode]").forEach(r => r.addEventListener("change", () => search($("#q").value)));
+$('#search-form').addEventListener('submit', e=>{ e.preventDefault(); doSearch(); });
+document.querySelectorAll('input[name=mode]').forEach(r=>r.addEventListener('change',()=>doSearch()));
+document.querySelectorAll('.ex-btn').forEach(b=>b.addEventListener('click',()=>{
+  $('#q').value=b.dataset.q; doSearch();
+}));
 
-const initial = new URLSearchParams(location.search).get("q");
-if (initial) { $("#q").value = initial; search(initial); }
+const sp = new URLSearchParams(location.search);
+if(sp.get('q')){ $('#q').value=sp.get('q'); if(sp.get('model')) $('#model-sel').value=sp.get('model'); doSearch(); }
+
+/* ─── METRICS ───────────────────────────────────── */
+const ALL_MODELS = ['tfidf','bm25','boolean','overlap','nonoverlap','bim','proximal'];
+
+(function buildSingleBtns(){
+  const box = $('#single-btns');
+  ALL_MODELS.forEach(m=>{
+    const b = el('button','btn btn-secondary btn-sm', m);
+    b.addEventListener('click', ()=>runEval(m));
+    box.append(b);
+  });
+})();
+
+function setEvalStatus(msg, loading=false){
+  $('#eval-msg').textContent = msg;
+  $('#spinner').classList.toggle('active', loading);
+}
+
+async function runEval(model){
+  setEvalStatus('Evaluating '+model+'…', true);
+  const resp = await fetch('/evaluate?model='+model+'&k=10',{method:'POST'});
+  const data = await resp.json();
+  if(!resp.ok){ setEvalStatus('Error: '+(data.error||'unknown')); return; }
+  setEvalStatus('Done: '+model+' — MRR '+data.mean_metrics.mrr+', nDCG@10 '+data.mean_metrics['ndcg@10']);
+  loadMetrics();
+}
+
+async function runAllModels(){
+  for(const m of ALL_MODELS){
+    setEvalStatus('Evaluating '+m+'…', true);
+    await fetch('/evaluate?model='+m+'&k=10',{method:'POST'});
+  }
+  setEvalStatus('All 7 models evaluated.', false);
+  loadMetrics();
+}
+$('#run-all-btn').addEventListener('click', runAllModels);
+
+function colorVal(v){
+  if(v===undefined||v===null) return '-';
+  const n = parseFloat(v);
+  if(isNaN(n)) return v;
+  if(n>=0.90) return '<span class="val-high">'+v+'</span>';
+  if(n>=0.70) return '<span class="val-mid">'+v+'</span>';
+  return '<span class="val-low">'+v+'</span>';
+}
+
+async function loadMetrics(){
+  const [allResp, bestResp] = await Promise.all([
+    fetch('/metrics'),
+    fetch('/metrics/best?metric=mrr'),
+  ]);
+  const all  = await allResp.json();
+  const best = await bestResp.json();
+
+  // best model banner
+  const bw = $('#best-banner-wrap');
+  bw.replaceChildren();
+  if(best.best_model){
+    const banner = el('div','best-banner');
+    banner.innerHTML = `
+      <span class="trophy">🏆</span>
+      <div>
+        <div class="label">Best Model by MRR</div>
+        <div class="name">${best.best_model.toUpperCase()}</div>
+      </div>
+      <div class="score">${MODEL_DESC[best.best_model]||''}</div>`;
+    bw.append(banner);
+  }
+
+  const wrap = $('#metrics-table-wrap');
+  wrap.replaceChildren();
+  if(!all.length){ wrap.textContent='No results yet.'; return; }
+
+  // latest run per model
+  const latest={};
+  all.forEach(r=>{ latest[r.model]=r; });
+  const rows = Object.values(latest);
+  if(!rows.length) return;
+
+  const mkeys = Object.keys(rows[0].mean_metrics);
+
+  const tbl = document.createElement('table');
+  tbl.className='metrics-table';
+
+  // header
+  const thead = tbl.createTHead().insertRow();
+  ['Model','Queries','Time (ms)',...mkeys].forEach(h=>{
+    const th=el('th','',h); thead.append(th);
+  });
+
+  // body — sorted by MRR descending
+  const tbody = tbl.createTBody();
+  rows.sort((a,b)=>(b.mean_metrics.mrr||0)-(a.mean_metrics.mrr||0));
+  rows.forEach(r=>{
+    const tr = tbody.insertRow();
+    if(r.model===best.best_model) tr.className='best-row';
+    tr.insertCell().textContent = r.model;
+    tr.insertCell().textContent = (r.per_query||[]).length;
+    tr.insertCell().textContent = r.took_ms;
+    mkeys.forEach(k=>{
+      const td = tr.insertCell();
+      td.innerHTML = colorVal(r.mean_metrics[k]);
+    });
+  });
+  wrap.append(tbl);
+
+  // per-query breakdown for best model
+  const bestData = latest[best.best_model];
+  const pqs = $('#per-query-section');
+  pqs.replaceChildren();
+  if(bestData&&bestData.per_query&&bestData.per_query.length){
+    const h3 = el('h3','','📋 Per-query breakdown — '+bestData.model.toUpperCase());
+    pqs.append(h3);
+
+    const tbl2 = document.createElement('table');
+    tbl2.className='metrics-table';
+    const th2 = tbl2.createTHead().insertRow();
+    ['Query',...mkeys].forEach(h=>{ th2.append(el('th','',h)); });
+    const tb2 = tbl2.createTBody();
+    bestData.per_query.forEach(pq=>{
+      const tr = tb2.insertRow();
+      tr.insertCell().textContent = pq.query;
+      mkeys.forEach(k=>{
+        const td = tr.insertCell();
+        td.innerHTML = colorVal(pq[k]);
+      });
+    });
+    const w2 = el('div','metrics-table-wrap');
+    w2.append(tbl2);
+    pqs.append(w2);
+  }
+}
 </script>
 </body>
 </html>

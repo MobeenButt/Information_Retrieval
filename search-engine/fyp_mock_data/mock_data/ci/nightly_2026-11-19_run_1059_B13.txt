@@ -1,0 +1,28 @@
+2026-11-19T01:30:00.0000000Z ##[group]Run actions/checkout@v4
+2026-11-19T01:30:01.0000000Z Syncing repository: shop/backend
+2026-11-19T01:30:03.0000000Z Checking out the ref
+2026-11-19T01:30:04.0000000Z HEAD is now at 4f7fd63 on main
+2026-11-19T01:30:04.0000000Z ##[endgroup]
+2026-11-19T01:30:06.0000000Z ##[group]Run pip install -r requirements.txt
+2026-11-19T01:30:31.0000000Z Successfully installed Flask-3.0.3 SQLAlchemy-2.0.30 pytest-8.2.0
+2026-11-19T01:30:31.0000000Z ##[endgroup]
+2026-11-19T01:30:33.0000000Z ##[group]Run pytest -q --maxfail=5
+2026-11-19T01:30:33.0000000Z pytest -q --maxfail=5
+2026-11-19T01:30:34.0000000Z ============================= test session starts ==============================
+2026-11-19T01:30:34.0000000Z platform linux -- Python 3.12.3, pytest-8.2.0, pluggy-1.5.0
+2026-11-19T01:30:35.0000000Z collected 128 items
+2026-11-19T01:30:36.0000000Z
+2026-11-19T01:30:41.0000000Z tests/test_cart.py ........                                                [  6%]
+2026-11-19T01:30:48.0000000Z tests/test_orders.py ..........                                             [ 14%]
+2026-11-19T01:31:00.0000000Z tests/test_money.py ..........F.....                                    [ 62%]
+2026-11-19T01:31:15.0000000Z =================================== FAILURES ===================================
+2026-11-19T01:31:15.0000000Z ____________ test_rounding_half_up ____________
+2026-11-19T01:31:15.0000000Z     def test_rounding_half_up():
+2026-11-19T01:31:15.0000000Z >       assert format_currency('19.995') == Decimal('20.00')
+2026-11-19T01:31:15.0000000Z E       assert 19.99 == Decimal('20.00')
+2026-11-19T01:31:15.0000000Z 
+2026-11-19T01:31:15.0000000Z tests/test_money.py:9: AssertionError
+2026-11-19T01:31:16.0000000Z =========================== short test summary info ============================
+2026-11-19T01:31:16.0000000Z FAILED tests/test_money.py::test_rounding_half_up - assert 19.99 == Decimal('20.00')
+2026-11-19T01:31:16.0000000Z ======================== 1 failed, 127 passed in 41.52s =======================
+2026-11-19T01:31:17.0000000Z ##[error]Process completed with exit code 1.

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <title>Query Processing and Optimization in Search Engines</title>
+  <section name="introduction">
+    Query processing is the set of steps a search engine takes to transform a raw user query
+    into a ranked list of relevant documents. Efficient query processing is critical for
+    search engines handling millions of queries per second.
+  </section>
+  <section name="query_parsing">
+    Query parsing involves tokenizing the input text, removing stop words, applying stemming
+    or lemmatization, and identifying operators such as AND OR NOT and phrase quotes.
+    The parsed query is then mapped to index terms for posting list lookup.
+  </section>
+  <section name="query_types">
+    <type name="keyword_query">Single or multiple unstructured keywords. The most common form of web search query.</type>
+    <type name="phrase_query">Terms enclosed in quotes requiring exact adjacency in the document. Processed using positional inverted indexes.</type>
+    <type name="boolean_query">Explicit logical operators AND OR NOT for precise document filtering without ranking.</type>
+    <type name="proximity_query">Terms must appear within a specified word distance. Useful for finding related concepts near each other.</type>
+    <type name="wildcard_query">Queries with asterisk or question mark wildcards matched against permuterm or k-gram indexes.</type>
+  </section>
+  <section name="optimization">
+    Query optimization techniques include index compression using gamma and delta encoding,
+    skipping in postings list traversal, document-at-a-time versus term-at-a-time evaluation,
+    early termination using WAND and BMW algorithms, and caching frequent query results.
+    These optimizations enable sub-millisecond response times for typical web queries.
+  </section>
+  <section name="spell_correction">
+    Spell correction uses edit distance algorithms like Levenshtein distance and k-gram
+    jaccard similarity to suggest alternative query terms when no or few results are found.
+    Phonetic algorithms like Soundex handle phonetic misspellings.
+  </section>
+  <section name="query_expansion">
+    Automatic query expansion adds synonyms and related terms using thesauri, WordNet,
+    or pseudo-relevance feedback. Global analysis uses the entire corpus while local
+    analysis uses top-ranked documents to expand the query. Query expansion improves recall
+    at the risk of reducing precision if irrelevant terms are added.
+  </section>
+</document>
