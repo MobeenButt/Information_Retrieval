@@ -1,0 +1,94 @@
+{
+  "note": "Labels written by hand from the generated data. doc id formats: LOG:<start line in shopeasy_app.log>, C-<sha>, BUG-xxx, CODE:<file>::<function>, SCH-xx, PDF:<incident id>. PDF:SETUP_GUIDE is the long noisy appendix (never relevant).",
+  "queries": [
+    {
+      "id": "Q1",
+      "text": "checkout returns 500 error discount null",
+      "relevant": [
+        "LOG:15",
+        "LOG:20",
+        "LOG:30",
+        "LOG:31",
+        "LOG:34",
+        "C-a1b2c3d",
+        "C-b7c8d9e",
+        "BUG-214",
+        "CODE:pricing/calculator.py::calculate_total",
+        "CODE:pricing/discounts.py::apply_discount",
+        "SCH-01",
+        "PDF:INC-101"
+      ]
+    },
+    {
+      "id": "Q2",
+      "text": "payment gateway timeout",
+      "relevant": [
+        "LOG:35",
+        "LOG:55",
+        "C-e1f2a3b",
+        "BUG-198",
+        "CODE:payments/gateway.py::charge_card",
+        "PDF:INC-087"
+      ]
+    },
+    {
+      "id": "Q3",
+      "text": "user can see another user's order",
+      "relevant": [
+        "LOG:48",
+        "LOG:51",
+        "C-9f8e7d6",
+        "BUG-176",
+        "CODE:orders/api.py::get_order",
+        "PDF:INC-066"
+      ]
+    },
+    {
+      "id": "Q4",
+      "text": "order total mismatch line items",
+      "relevant": [
+        "LOG:43",
+        "C-5a6b7c8",
+        "BUG-221",
+        "CODE:orders/summary.py::build_order_summary",
+        "SCH-02",
+        "PDF:INC-094"
+      ]
+    },
+    {
+      "id": "Q5",
+      "text": "NoneType has no attribute price",
+      "relevant": [
+        "LOG:20",
+        "LOG:30",
+        "LOG:34",
+        "C-a1b2c3d",
+        "CODE:pricing/calculator.py::calculate_total"
+      ]
+    },
+    {
+      "id": "Q6",
+      "text": "payment service timeout error",
+      "relevant": [
+        "LOG:35",
+        "LOG:55",
+        "C-e1f2a3b",
+        "BUG-198",
+        "CODE:payments/gateway.py::charge_card",
+        "PDF:INC-087"
+      ]
+    },
+    {
+      "id": "Q7",
+      "text": "negative stock inventory oversell",
+      "relevant": [
+        "LOG:60",
+        "LOG:63",
+        "C-2b3c4d5",
+        "BUG-230",
+        "CODE:inventory/stock.py::reserve_stock",
+        "PDF:INC-112"
+      ]
+    }
+  ]
+}

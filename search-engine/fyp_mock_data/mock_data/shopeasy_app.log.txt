@@ -1,0 +1,79 @@
+2026-10-06 13:55:10,074 INFO  [inventory-service] Stock check sku=SKU-1791 available=24
+2026-10-06 13:55:34,374 INFO  [notification-service] Email queued template=order_confirmation order=2542
+2026-10-06 13:56:18,038 INFO  [notification-service] Email queued template=order_confirmation order=4517
+2026-10-06 13:56:31,428 INFO  [checkout-service] POST /checkout/confirm 200 212ms order=8104
+2026-10-06 13:57:02,060 INFO  [checkout-service] POST /checkout/confirm 200 212ms order=7955
+2026-10-06 13:57:37,126 INFO  [gateway] Health check OK upstream=checkout-service latency=3ms
+2026-10-06 13:58:07,596 INFO  [gateway] Health check OK upstream=payment-service latency=5ms
+2026-10-06 13:58:50,050 INFO  [checkout-service] GET /cart 200 41ms user=7499
+2026-10-06 13:59:07,296 INFO  [notification-service] Email queued template=order_confirmation order=3181
+2026-10-06 13:59:31,553 INFO  [inventory-service] Stock check sku=SKU-3363 available=24
+2026-10-06 14:00:03,595 INFO  [auth-service] Login success user=3961 ip=10.0.4.28
+2026-10-06 14:00:48,654 INFO  [gateway] Health check OK upstream=checkout-service latency=3ms
+2026-10-06 14:01:06,729 INFO  [checkout-service] POST /checkout/confirm 200 212ms order=9974
+2026-10-06 14:01:41,633 INFO  [checkout-service] POST /checkout/confirm 200 212ms order=1976
+2026-10-06 14:02:07,120 INFO  [deploy] Starting checkout-service v2.14.0 (commit a1b2c3d) rolling restart
+2026-10-06 14:02:19,300 INFO  [deploy] checkout-service v2.14.0 healthy, 3/3 pods ready
+2026-10-06 14:02:25,696 INFO  [order-service] Order 9133 status changed PENDING -> PAID
+2026-10-06 14:02:41,795 INFO  [notification-service] Email queued template=order_confirmation order=8005
+2026-10-06 14:02:55,599 INFO  [auth-service] Token refreshed for user=8628
+2026-10-06 14:03:13,482 ERROR [checkout-service] TypeError: 'NoneType' object has no attribute 'price' in calculate_total; discount_id is None (order 8841) -> HTTP 500
+Traceback (most recent call last):
+  File "checkout/views.py", line 88, in confirm_order
+    total = calculate_total(order)
+  File "pricing/calculator.py", line 42, in calculate_total
+    total -= order.discount.amount
+AttributeError: 'NoneType' object has no attribute 'amount'
+2026-10-06 14:03:20,306 INFO  [payment-service] Charge succeeded order=6924 amount=4599 currency=PKR
+2026-10-06 14:03:31,715 INFO  [order-service] Order 3945 status changed PENDING -> PAID
+2026-10-06 14:03:44,588 INFO  [order-service] Order 2341 status changed PENDING -> PAID
+2026-10-06 14:03:52,010 ERROR [checkout-service] POST /checkout/confirm failed 500 order=8850 error=TypeError NoneType object has no attribute price (no coupon applied)
+2026-10-06 14:04:03,640 WARN  [checkout-service] Error rate 18.2% on /checkout/confirm over last 60s (threshold 5%)
+2026-10-06 14:04:10,896 INFO  [auth-service] Login success user=9604 ip=10.0.4.128
+2026-10-06 14:04:22,294 INFO  [auth-service] Token refreshed for user=8353
+2026-10-06 14:04:40,905 ERROR [checkout-service] Unhandled exception: NoneType has no attribute price in calculate_total; discount_id is None (order 8863) returning 500 to client
+2026-10-06 14:05:02,000 WARN  [payment-service] timeout calling stripe gateway after 30s; retry exhausted (order 9102)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.stripe.example', port=443): Read timed out. (read timeout=30)
+  File "payments/gateway.py", line 57, in charge_card
+2026-10-06 14:05:15,074 INFO  [gateway] Health check OK upstream=checkout-service latency=3ms
+2026-10-06 14:05:30,428 INFO  [checkout-service] POST /checkout/confirm 200 212ms order=9387
+2026-10-06 14:05:48,155 INFO  [order-service] Order 6604 created status=PENDING items=3
+2026-10-06 14:06:05,222 INFO  [inventory-service] Cache MISS sku=SKU-3321 falling back to database
+2026-10-06 14:06:14,050 WARN  [inventory-service] Slow query 2840ms: SELECT stock FROM inventory WHERE sku='SKU-3321'
+2026-10-06 14:06:20,000 ERROR [order-service] database constraint violation: total does not match sum of line items (order 7310)
+psycopg2.errors.CheckViolation: new row for relation "orders" violates check constraint "orders_total_matches_items"
+DETAIL: Failing row contains (7310, 1299.99, 1299.98).
+2026-10-06 14:06:31,040 INFO  [payment-service] Charge succeeded order=7909 amount=4599 currency=PKR
+2026-10-06 14:06:44,079 INFO  [gateway] Health check OK upstream=payment-service latency=5ms
+2026-10-06 14:07:02,310 ERROR [auth-service] 403 Forbidden: user 17 tried to read order 5521 owned by user 42
+  File "orders/api.py", line 31, in get_order
+    # TODO: verify order.user_id == request.user.id
+2026-10-06 14:07:03,100 WARN  [auth-service] Suspicious access pattern: user 17 requested 14 orders owned by other users in 60s
+2026-10-06 14:07:20,348 INFO  [notification-service] Email queued template=order_confirmation order=6140
+2026-10-06 14:07:38,593 INFO  [auth-service] Token refreshed for user=9137
+2026-10-06 14:07:55,860 INFO  [payment-service] Charge succeeded order=2126 amount=4599 currency=PKR
+2026-10-06 14:08:15,000 ERROR [payment-service] timeout error calling stripe gateway after 30s; retry exhausted (order 9140) payment page stuck on spinner
+2026-10-06 14:08:22,000 WARN  [notification-service] SMTP connection reset by peer, retrying in 5s (attempt 2/5)
+2026-10-06 14:08:30,000 INFO  [notification-service] {"event":"email_sent","template":"order_confirmation","order":8870,"latency_ms":412}
+2026-10-06 14:08:41,000 ERROR [redis] Connection lost to cache-01:6379, reconnecting (attempt 1)
+2026-10-06 14:08:42,000 INFO  [redis] Reconnected to cache-01:6379 after 1.2s
+2026-10-06 14:09:05,000 ERROR [inventory-service] negative stock detected sku=SKU-3321 available=-3 after concurrent reservations (oversell)
+  File "inventory/stock.py", line 19, in reserve_stock
+    item.available -= qty  # no row lock
+2026-10-06 14:09:06,000 ERROR [inventory-service] negative stock detected sku=SKU-1180 available=-1 after concurrent reservations (oversell)
+2026-10-06 14:10:02,062 INFO  [payment-service] Charge succeeded order=2064 amount=4599 currency=PKR
+2026-10-06 14:10:38,733 INFO  [auth-service] Login success user=8301 ip=10.0.4.74
+2026-10-06 14:11:12,355 INFO  [gateway] Health check OK upstream=payment-service latency=5ms
+2026-10-06 14:11:58,363 INFO  [checkout-service] GET /cart 200 41ms user=8564
+2026-10-06 14:12:05,060 INFO  [checkout-service] POST /checkout/confirm 200 212ms order=9088
+2026-10-06 14:12:49,132 INFO  [order-service] Order 5709 status changed PENDING -> PAID
+2026-10-06 14:13:23,938 INFO  [inventory-service] Stock check sku=SKU-7405 available=24
+2026-10-06 14:13:37,170 INFO  [payment-service] Charge succeeded order=2320 amount=4599 currency=PKR
+2026-10-06 14:14:02,000 INFO  [deploy] Rollback checkout-service to v2.13.4 initiated by oncall
+2026-10-06 14:14:40,000 INFO  [checkout-service] Error rate back to 0.3% on /checkout/confirm
+2026-10-06 14:15:14,904 INFO  [notification-service] Email queued template=order_confirmation order=5552
+2026-10-06 14:15:42,884 INFO  [order-service] Order 8053 created status=PENDING items=3
+2026-10-06 14:16:17,699 INFO  [inventory-service] Stock check sku=SKU-6878 available=24
+2026-10-06 14:16:38,154 INFO  [inventory-service] Stock check sku=SKU-4780 available=24
+2026-10-06 14:17:02,674 INFO  [order-service] Order 4800 created status=PENDING items=3
+2026-10-06 14:17:35,496 INFO  [order-service] Order 1197 status changed PENDING -> PAID

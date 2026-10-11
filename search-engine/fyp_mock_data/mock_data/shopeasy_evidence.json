@@ -1,0 +1,278 @@
+{
+  "app": "ShopEasy",
+  "generated_for": "IR module demo (synthetic data)",
+  "commits": [
+    {
+      "id": "C-a1b2c3d",
+      "type": "commit",
+      "sha": "a1b2c3d",
+      "message": "Remove null check for discount_id in pricing module calculate_total",
+      "author": "Sara Khan",
+      "timestamp": "2026-10-05T17:42:00Z",
+      "files_changed": [
+        "pricing/calculator.py"
+      ]
+    },
+    {
+      "id": "C-b7c8d9e",
+      "type": "commit",
+      "sha": "b7c8d9e",
+      "message": "Refactor coupon validation, move discount lookup into DiscountService",
+      "author": "Ali Raza",
+      "timestamp": "2026-10-05T11:10:00Z",
+      "files_changed": [
+        "pricing/discounts.py",
+        "checkout/views.py"
+      ]
+    },
+    {
+      "id": "C-d4e5f6a",
+      "type": "commit",
+      "sha": "d4e5f6a",
+      "message": "Update README and add docker compose for local setup",
+      "author": "Hamza Tariq",
+      "timestamp": "2026-10-03T09:30:00Z",
+      "files_changed": [
+        "README.md",
+        "docker-compose.yml"
+      ]
+    },
+    {
+      "id": "C-e1f2a3b",
+      "type": "commit",
+      "sha": "e1f2a3b",
+      "message": "Add timeout and retry with exponential backoff to stripe gateway client",
+      "author": "Ali Raza",
+      "timestamp": "2026-08-19T15:05:00Z",
+      "files_changed": [
+        "payments/gateway.py"
+      ]
+    },
+    {
+      "id": "C-9f8e7d6",
+      "type": "commit",
+      "sha": "9f8e7d6",
+      "message": "Add ownership check to get_order endpoint (user_id must match owner)",
+      "author": "Sara Khan",
+      "timestamp": "2026-07-02T13:20:00Z",
+      "files_changed": [
+        "orders/api.py",
+        "tests/test_orders_api.py"
+      ]
+    },
+    {
+      "id": "C-3c4d5e6",
+      "type": "commit",
+      "sha": "3c4d5e6",
+      "message": "Bump stripe sdk to 7.2.1",
+      "author": "Bot",
+      "timestamp": "2026-09-28T04:00:00Z",
+      "files_changed": [
+        "requirements.txt"
+      ]
+    },
+    {
+      "id": "C-5a6b7c8",
+      "type": "commit",
+      "sha": "5a6b7c8",
+      "message": "Round line item totals to 2 decimals in order summary",
+      "author": "Ali Raza",
+      "timestamp": "2026-10-04T10:15:00Z",
+      "files_changed": [
+        "orders/summary.py"
+      ]
+    },
+    {
+      "id": "C-7d8e9f0",
+      "type": "commit",
+      "sha": "7d8e9f0",
+      "message": "Lazy load product images on cart page",
+      "author": "Hamza Tariq",
+      "timestamp": "2026-10-02T12:00:00Z",
+      "files_changed": [
+        "web/cart.js"
+      ]
+    },
+    {
+      "id": "C-2b3c4d5",
+      "type": "commit",
+      "sha": "2b3c4d5",
+      "message": "Add redis cache for inventory stock lookups",
+      "author": "Hamza Tariq",
+      "timestamp": "2026-09-30T16:45:00Z",
+      "files_changed": [
+        "inventory/stock.py",
+        "inventory/cache.py"
+      ]
+    },
+    {
+      "id": "C-c9d8e7f",
+      "type": "commit",
+      "sha": "c9d8e7f",
+      "message": "Update CI workflow to node 20 and python 3.12",
+      "author": "Bot",
+      "timestamp": "2026-10-01T08:00:00Z",
+      "files_changed": [
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
+      "id": "C-1a2b3c4",
+      "type": "commit",
+      "sha": "1a2b3c4",
+      "message": "Fix typo in checkout confirmation email template",
+      "author": "Sara Khan",
+      "timestamp": "2026-10-02T14:10:00Z",
+      "files_changed": [
+        "templates/order_confirmation.html"
+      ]
+    }
+  ],
+  "tickets": [
+    {
+      "id": "BUG-214",
+      "type": "ticket",
+      "title": "checkout crash 500 error after latest deploy; orders without coupon fail",
+      "severity": "Critical",
+      "status": "Open",
+      "created_at": "2026-10-06T14:12:00Z"
+    },
+    {
+      "id": "BUG-198",
+      "type": "ticket",
+      "title": "Payment page very slow, spinner never finishes; stripe gateway timeout not handled",
+      "severity": "High",
+      "status": "Closed",
+      "created_at": "2026-08-18T09:00:00Z"
+    },
+    {
+      "id": "BUG-176",
+      "type": "ticket",
+      "title": "Customer reports seeing another user's order details by changing the id in the URL",
+      "severity": "Critical",
+      "status": "Closed",
+      "created_at": "2026-06-30T18:30:00Z"
+    },
+    {
+      "id": "BUG-221",
+      "type": "ticket",
+      "title": "Order total differs from sum of line items by 0.01 on some orders, DB check constraint fails",
+      "severity": "High",
+      "status": "Open",
+      "created_at": "2026-10-06T14:40:00Z"
+    },
+    {
+      "id": "BUG-230",
+      "type": "ticket",
+      "title": "Inventory shows negative stock for popular items during flash sale",
+      "severity": "Medium",
+      "status": "Open",
+      "created_at": "2026-10-06T15:20:00Z"
+    },
+    {
+      "id": "BUG-205",
+      "type": "ticket",
+      "title": "Update footer links and social icons on the home page",
+      "severity": "Low",
+      "status": "Closed",
+      "created_at": "2026-09-25T10:00:00Z"
+    },
+    {
+      "id": "BUG-219",
+      "type": "ticket",
+      "title": "Add coupon code field with discount preview to checkout UI",
+      "severity": "Low",
+      "status": "In Progress",
+      "created_at": "2026-10-01T11:00:00Z"
+    },
+    {
+      "id": "BUG-223",
+      "type": "ticket",
+      "title": "Order confirmation emails delayed by several minutes",
+      "severity": "Medium",
+      "status": "Open",
+      "created_at": "2026-10-06T13:50:00Z"
+    }
+  ],
+  "code_chunks": [
+    {
+      "id": "CODE:pricing/calculator.py::calculate_total",
+      "type": "code",
+      "file": "pricing/calculator.py",
+      "symbol": "calculate_total",
+      "source": "def calculate_total(order):\n    total = sum(item.price * item.qty for item in order.items)\n    total -= order.discount.amount\n    return total"
+    },
+    {
+      "id": "CODE:pricing/discounts.py::apply_discount",
+      "type": "code",
+      "file": "pricing/discounts.py",
+      "symbol": "apply_discount",
+      "source": "def apply_discount(order, code):\n    discount = DiscountService.lookup(code)\n    if discount and discount.is_active():\n        order.discount = discount\n    return order"
+    },
+    {
+      "id": "CODE:orders/api.py::get_order",
+      "type": "code",
+      "file": "orders/api.py",
+      "symbol": "get_order",
+      "source": "def get_order(order_id, user):\n    # TODO: verify order.user_id == request.user.id\n    return Order.objects.get(id=order_id)"
+    },
+    {
+      "id": "CODE:payments/gateway.py::charge_card",
+      "type": "code",
+      "file": "payments/gateway.py",
+      "symbol": "charge_card",
+      "source": "def charge_card(order, token):\n    resp = requests.post(STRIPE_URL, json=build_payload(order, token), timeout=30)\n    return resp.json()"
+    },
+    {
+      "id": "CODE:orders/summary.py::build_order_summary",
+      "type": "code",
+      "file": "orders/summary.py",
+      "symbol": "build_order_summary",
+      "source": "def build_order_summary(order):\n    lines = [item.unit_price * item.qty for item in order.items]\n    return {'lines': lines, 'total': round(sum(lines), 2)}"
+    },
+    {
+      "id": "CODE:inventory/stock.py::reserve_stock",
+      "type": "code",
+      "file": "inventory/stock.py",
+      "symbol": "reserve_stock",
+      "source": "def reserve_stock(sku, qty):\n    item = Inventory.get(sku)\n    item.available -= qty  # no row lock\n    item.save()"
+    },
+    {
+      "id": "CODE:web/format.py::format_currency",
+      "type": "code",
+      "file": "web/format.py",
+      "symbol": "format_currency",
+      "source": "def format_currency(amount, currency='PKR'):\n    return f'{currency} {amount:,.2f}'"
+    },
+    {
+      "id": "CODE:checkout/views.py::render_checkout_page",
+      "type": "code",
+      "file": "checkout/views.py",
+      "symbol": "render_checkout_page",
+      "source": "def render_checkout_page(request):\n    cart = get_cart(request.user)\n    return render(request, 'checkout.html', {'cart': cart, 'discount_enabled': True})"
+    }
+  ],
+  "schema_changes": [
+    {
+      "id": "SCH-01",
+      "type": "schema_change",
+      "timestamp": "2026-10-05T16:30:00Z",
+      "table": "orders",
+      "change": "discount_id changed from NOT NULL to NULLABLE (migration 0042_make_discount_optional)"
+    },
+    {
+      "id": "SCH-02",
+      "type": "schema_change",
+      "timestamp": "2026-10-04T09:50:00Z",
+      "table": "order_items",
+      "change": "unit_price type changed from numeric(10,2) to double precision (migration 0041_unit_price_float)"
+    },
+    {
+      "id": "SCH-03",
+      "type": "schema_change",
+      "timestamp": "2026-09-29T12:00:00Z",
+      "table": "users",
+      "change": "added column last_login_ip varchar(45)"
+    }
+  ]
+}

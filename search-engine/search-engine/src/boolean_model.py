@@ -4,6 +4,20 @@ A full Boolean expression parser with the correct operator precedence
     NOT  >  AND  >  OR
 and support for parentheses. Documents are returned as an unranked set
 (score = 1 for every match) because the Boolean model is set-based.
+
+Default implicit operator
+--------------------------
+When the user types plain words with NO explicit operator (e.g. "machine learning"),
+the default is OR — the same behaviour as Google and every ranked model.
+Use AND or NOT explicitly to tighten the query:
+    "machine AND learning"    → docs containing BOTH stems
+    "machine OR learning"     → docs containing EITHER stem  (same as plain words)
+    "machine NOT learning"    → docs with machine but NOT learning
+
+The stemmer runs on every word before index lookup, so:
+    "information" -> stem "inform"
+    "retrieval"   -> stem "retriev"
+Both raw and stemmed forms of a word find the same documents.
 """
 from __future__ import annotations
 
@@ -15,6 +29,14 @@ from text_processing import preprocess
 # ─────────────────────────────────────────────
 #  Week 3 - Boolean Retrieval Model
 # ─────────────────────────────────────────────
+
+# DEFAULT_IMPLICIT_OP controls what happens when words are typed without
+# an explicit AND / OR between them.
+# "OR"  → union   (finds more documents, higher recall)  ← new default
+# "AND" → intersection (finds fewer documents, higher precision)
+DEFAULT_IMPLICIT_OP: str = "OR"
+
+
 def _tokenize_query(query: str) -> List[str]:
     """Split a query into tokens, treating parentheses as standalone tokens."""
     query = query.replace("(", " ( ").replace(")", " ) ")
@@ -71,11 +93,35 @@ class _Parser:
             if tok is None or tok.upper() in ("OR", ")"):
                 break
             if tok.upper() == "AND":
+                # explicit AND → intersection
                 self._next()
-            right, rexp = self._parse_not()
-            combined = left & right
-            lexp = f"({lexp} AND {rexp}) = {_fmt(combined)}"
-            left = combined
+                right, rexp = self._parse_not()
+                combined = left & right
+                lexp = f"({lexp} AND {rexp}) = {_fmt(combined)}"
+                left = combined
+            elif tok.upper() == "NOT":
+                # NOT at start of the next operand: don't consume, let _parse_not handle it
+                right, rexp = self._parse_not()
+                # implicit operator between left and NOT-phrase
+                if DEFAULT_IMPLICIT_OP == "AND":
+                    combined = left & right
+                    op_label = "AND"
+                else:
+                    combined = left | right
+                    op_label = "OR"
+                lexp = f"({lexp} {op_label} {rexp}) = {_fmt(combined)}"
+                left = combined
+            else:
+                # implicit operator between two plain words
+                if DEFAULT_IMPLICIT_OP == "AND":
+                    right, rexp = self._parse_not()
+                    combined = left & right
+                    lexp = f"({lexp} AND(implicit) {rexp}) = {_fmt(combined)}"
+                else:
+                    right, rexp = self._parse_not()
+                    combined = left | right
+                    lexp = f"({lexp} OR(implicit) {rexp}) = {_fmt(combined)}"
+                left = combined
         return left, lexp
 
     def _parse_not(self) -> Tuple[Set[int], str]:
@@ -116,6 +162,9 @@ def parse_and_execute(query_string: str, index) -> Tuple[Set[int], str]:
 
     Week 3 - Boolean Retrieval Model. Returns ``(matching_doc_ids, explanation)``
     where the explanation traces each operator and its intermediate result set.
+
+    Implicit operator between plain words is DEFAULT_IMPLICIT_OP (currently OR).
+    Use AND / OR / NOT explicitly to override.
     """
     tokens = _tokenize_query(query_string)
     if not tokens:
@@ -123,13 +172,14 @@ def parse_and_execute(query_string: str, index) -> Tuple[Set[int], str]:
     parser = _Parser(tokens, index)
     result, trace = parser.parse()
     lines = [
-        f"Query : {query_string}",
-        f"Tokens: {tokens}",
-        f"Trace : {trace}",
-        f"Result: {len(result)} document(s) -> {_fmt(result)}",
+        f"Query          : {query_string}",
+        f"Tokens         : {tokens}",
+        f"Implicit op    : {DEFAULT_IMPLICIT_OP}  (words without AND/OR use this)",
+        f"Trace          : {trace}",
+        f"Result         : {len(result)} document(s) -> {_fmt(result)}",
     ]
     if parser.pos != len(tokens):
-        lines.append(f"Note  : {len(tokens) - parser.pos} unconsumed token(s) ignored.")
+        lines.append(f"Note           : {len(tokens) - parser.pos} unconsumed token(s) ignored.")
     return result, "\n".join(lines)
 
 
