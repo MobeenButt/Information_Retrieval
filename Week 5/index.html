@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IR Browse — Week 5</title>
+
+  <!--
+    Browsing and Navigation Module — Single-Page Frontend
+    Task 9: layout, CSS tokens, and skeleton.
+    JS modules (Api, State, NavHistory, RecentlyViewed, CategoryMenu,
+    SearchBar, Breadcrumb, ResultsList, DocViewer) are added in Tasks 10-14.
+  -->
+  <style>
+    /* ===========================================================
+       CSS Custom Properties — Black / Yellow Theme  (Req 10.1)
+       =========================================================== */
+    :root {
+      --yellow:  #f5c518;
+      --bg:      #0a0a0a;
+      --surface: #111111;
+      --border:  #2a2a2a;
+      --text:    #e8e8e8;
+      --muted:   #888888;
+
+      --header-h: 56px;
+      --radius:   6px;
+      --font:     system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* ===========================================================
+       Reset
+       =========================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;          /* Req 10.2 — no horizontal scroll */
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ===========================================================
+       Accessibility helpers  (Req 10.3, 10.4)
+       =========================================================== */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      z-index: 1000;
+      padding: 0.5rem 1rem;
+      background: var(--yellow);
+      color: #000;
+      font-weight: 700;
+      border-radius: 0 0 var(--radius) 0;
+    }
+    .skip-link:focus {
+      left: 0;
+    }
+
+    /* Visible focus ring for keyboard users */
+    :focus-visible {
+      outline: 2px solid var(--yellow);
+      outline-offset: 2px;
+    }
+
+    /* ===========================================================
+       Header
+       =========================================================== */
+    .app-header {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      height: var(--header-h);
+      padding: 0 1rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex: 0 0 auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--yellow);
+      white-space: nowrap;
+    }
+
+    .logo-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--yellow);
+      color: #000;
+      border-radius: var(--radius);
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    /* Hamburger — hidden on desktop, shown on mobile */
+    .hamburger {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 1.2rem;
+      line-height: 1;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    /* Search form in the header */
+    .header-search {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      max-width: 560px;
+      min-width: 0;
+    }
+
+    #search-bar {
+      flex: 1 1 auto;
+      min-width: 0;
+      height: 36px;
+      padding: 0 0.75rem;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font: inherit;
+      font-size: 0.9rem;
+    }
+    #search-bar::placeholder { color: var(--muted); }
+    #search-bar:focus {
+      border-color: var(--yellow);
+    }
+
+    #mode-toggle {
+      flex: 0 0 auto;
+      height: 36px;
+      padding: 0 0.875rem;
+      background: transparent;
+      color: var(--yellow);
+      border: 1px solid var(--yellow);
+      border-radius: var(--radius);
+      font: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* Back / Forward navigation buttons */
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      flex: 0 0 auto;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* ===========================================================
+       Breadcrumb bar  (Req 10.4 — role="navigation")
+       =========================================================== */
+    .breadcrumb-bar {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+      flex-wrap: wrap;          /* wrap instead of horizontal scroll */
+      min-height: 40px;
+    }
+
+    /* ===========================================================
+       Content — three-column CSS Grid
+         sidebar 240px | main flex 1 | detail 360px
+       =========================================================== */
+    .content {
+      flex: 1 1 auto;
+      display: grid;
+      grid-template-columns: 240px 1fr 360px;
+      grid-template-areas: "sidebar main detail";
+      min-height: 0;          /* allow flex child to shrink */
+      overflow: hidden;
+    }
+
+    /* --- Sidebar column --- */
+    .sidebar-col {
+      grid-area: sidebar;
+      overflow-y: auto;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 1rem;
+    }
+
+    /* --- Main panel column --- */
+    .main-col {
+      grid-area: main;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    /* --- Detail panel column --- */
+    .detail-col {
+      grid-area: detail;
+      overflow-y: auto;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      padding: 1rem;
+    }
+
+    /* ===========================================================
+       Sidebar sections (category menu + recently viewed)
+       =========================================================== */
+    .sidebar-section {
+      margin-bottom: 1.5rem;
+    }
+    .sidebar-section h2 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    .sidebar-section ul {
+      list-style: none;
+    }
+
+    /* ===========================================================
+       Placeholder / empty-state text
+       =========================================================== */
+    .placeholder {
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding: 0.5rem 0;
+    }
+
+    .detail-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--muted);
+      padding: 3rem 1rem;
+      gap: 0.5rem;
+      min-height: 200px;
+    }
+    .detail-empty .icon {
+      font-size: 2rem;
+    }
+
+    /* ===========================================================
+       Sidebar overlay (mobile — catches taps outside menu)
+       =========================================================== */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 150;
+    }
+
+    /* ===========================================================
+       Responsive — max-width 768px  (Req 10.2)
+         • Sidebar collapses behind hamburger toggle
+         • Detail panel stacks below main panel
+       =========================================================== */
+    @media (max-width: 768px) {
+      body {
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;        /* page scrolls on mobile */
+      }
+
+      /* Keep header pinned while scrolling */
+      .app-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      /* Show the hamburger on mobile */
+      .hamburger {
+        display: inline-flex;
+      }
+
+      /* Single-column stack: main then detail; sidebar is off-canvas */
+      .content {
+        display: block;
+        overflow: visible;
+      }
+
+      .sidebar-col {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 240px;
+        max-width: 85vw;          /* safe on 360 px screens */
+        transform: translateX(-100%);
+        transition: transform 0.2s ease;
+        z-index: 200;
+      }
+      .sidebar-col.open {
+        transform: translateX(0);
+      }
+      /* Show overlay when sidebar is open */
+      .sidebar-col.open ~ .sidebar-overlay {
+        display: block;
+      }
+
+      .main-col {
+        overflow: visible;
+        min-height: 50vh;
+      }
+
+      /* Detail stacks below main */
+      .detail-col {
+        overflow: visible;
+        border-left: none;
+        border-top: 1px solid var(--border);
+      }
+    }
+
+    /* ===========================================================
+       Responsive — max-width 480px  (tight screens, down to 360px)
+         Tighten padding, hide logo text to save space
+       =========================================================== */
+    @media (max-width: 480px) {
+      .app-header {
+        gap: 0.5rem;
+        padding: 0 0.5rem;
+      }
+
+      .logo-text {
+        display: none;            /* keep just the mark on very narrow screens */
+      }
+
+      .breadcrumb-bar {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .main-col,
+      .detail-col,
+      .sidebar-col {
+        padding: 0.75rem;
+      }
+    }
+
+    /* ===========================================================
+       Filter bar  (Task 12.3)
+       =========================================================== */
+    .filter-bar {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      align-items: flex-end;
+    }
+    .filter-bar.hidden { display: none; }
+    .filter-bar label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .filter-bar select,
+    .filter-bar input {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.25rem 0.5rem;
+      font: inherit;
+      font-size: 0.85rem;
+      min-width: 100px;
+    }
+    .filter-bar select:focus,
+    .filter-bar input:focus { border-color: var(--yellow); }
+
+    /* Filter chips */
+    .filter-chips {
+      display: flex;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.8rem;
+    }
+    .chip button {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0;
+    }
+    .chip button:hover { color: var(--yellow); }
+
+    /* ===========================================================
+       Results list  (Task 13.1)
+       =========================================================== */
+    .results-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .result-card:hover,
+    .result-card:focus { border-color: var(--yellow); }
+    .result-card .card-title { font-weight: 600; color: var(--text); margin-bottom: 0.25rem; }
+    .result-card .card-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .result-card .card-snippet {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+    .result-card mark {
+      background: var(--yellow);
+      color: #000;
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+    .no-results {
+      color: var(--muted);
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+
+    /* Preview overlay */
+    .preview-overlay {
+      position: fixed;
+      z-index: 300;
+      max-width: 380px;
+      background: var(--surface);
+      border: 1px solid var(--yellow);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem 1.25rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    }
+    .preview-overlay .preview-close {
+      position: absolute;
+      top: 0.25rem;
+      right: 0.5rem;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+    .preview-overlay .preview-abstract {
+      font-size: 0.85rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .preview-overlay .preview-btn {
+      background: var(--yellow);
+      color: #000;
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.3rem 0.75rem;
+      font: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ===========================================================
+       Document viewer  (Task 13.2)
+       =========================================================== */
+    .doc-viewer h3 { color: var(--yellow); margin-bottom: 0.25rem; font-size: 1.1rem; }
+    .doc-viewer .doc-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+    .doc-viewer .doc-section { margin-bottom: 1rem; }
+    .doc-viewer .doc-section h4 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    .doc-viewer .doc-section p {
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+    .doc-viewer .related-list,
+    .doc-viewer .links-list { list-style: none; margin-top: 0.25rem; }
+    .doc-viewer .related-list li,
+    .doc-viewer .links-list li { padding: 0.2rem 0; }
+    .doc-viewer .related-list a,
+    .doc-viewer .links-list a {
+      color: var(--yellow);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .doc-viewer .related-list a:hover,
+    .doc-viewer .links-list a:hover { text-decoration: underline; }
+    .doc-viewer .related-score { color: var(--muted); font-size: 0.8rem; margin-left: 0.5rem; }
+
+    /* ===========================================================
+       Sidebar category / subcategory list styling
+       =========================================================== */
+    #category-menu ul { list-style: none; }
+    #category-menu > ul > li { padding: 0.25rem 0; }
+    #category-menu .cat-name {
+      color: var(--text);
+      font-weight: 500;
+      cursor: pointer;
+      display: block;
+    }
+    #category-menu .cat-name:hover { color: var(--yellow); }
+    #category-menu ul ul { padding-left: 1rem; }
+    #category-menu .subcat-name {
+      color: var(--muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: block;
+    }
+    #category-menu .subcat-name:hover { color: var(--yellow); }
+
+    /* Recently viewed list */
+    #recently-viewed { list-style: none; }
+    #recently-viewed li { padding: 0.2rem 0; }
+    #recently-viewed a {
+      color: var(--text);
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    #recently-viewed a:hover { color: var(--yellow); }
+  </style>
+</head>
+
+<body>
+  <!-- Skip link for keyboard users (Req 10.3) -->
+  <a href="#main-panel" class="skip-link">Skip to content</a>
+
+  <!-- =======================================================
+       Header: logo | search bar | mode toggle | Back / Forward
+       ======================================================= -->
+  <header class="app-header">
+    <div class="header-left">
+      <button id="hamburger" class="hamburger" type="button"
+              aria-label="Toggle sidebar menu" aria-expanded="false"
+              aria-controls="sidebar">
+        &#9776;
+      </button>
+      <span class="logo">
+        <span class="logo-mark" aria-hidden="true">IR</span>
+        <span class="logo-text">Browse</span>
+      </span>
+    </div>
+
+    <form class="header-search" role="search" id="search-form">
+      <input id="search-bar" type="search" name="q" autocomplete="off"
+             placeholder="Search documents&hellip;"
+             aria-label="Search documents" />
+      <button id="mode-toggle" type="button"
+              aria-label="Toggle between search and browse mode">
+        Browse
+      </button>
+    </form>
+
+    <div class="header-nav">
+      <button id="back-btn" class="nav-btn" type="button"
+              aria-label="Go back" disabled>
+        &larr;
+      </button>
+      <button id="forward-btn" class="nav-btn" type="button"
+              aria-label="Go forward" disabled>
+        &rarr;
+      </button>
+    </div>
+  </header>
+
+  <!-- =======================================================
+       Breadcrumb bar  (role="navigation")
+       ======================================================= -->
+  <nav id="breadcrumb" class="breadcrumb-bar" role="navigation"
+       aria-label="Breadcrumb">
+    <!-- Breadcrumb module populates this -->
+  </nav>
+
+  <!-- =======================================================
+       Content — three-column grid
+       ======================================================= -->
+  <div class="content">
+
+    <!-- Sidebar — role="navigation" (Req 10.4) -->
+    <aside id="sidebar" class="sidebar-col" role="navigation"
+           aria-label="Category menu and recently viewed documents">
+      <section class="sidebar-section" aria-labelledby="cat-heading">
+        <h2 id="cat-heading">Categories</h2>
+        <div id="category-menu">
+          <p class="placeholder">Loading categories&hellip;</p>
+        </div>
+      </section>
+
+      <section class="sidebar-section" aria-labelledby="rv-heading">
+        <h2 id="rv-heading">Recently Viewed</h2>
+        <ul id="recently-viewed">
+          <li class="placeholder">No recently viewed documents.</li>
+        </ul>
+      </section>
+    </aside>
+
+    <!-- Main panel — role="main" (Req 10.4) -->
+    <main id="main-panel" class="main-col" role="main">
+      <div id="filter-bar" class="filter-bar" aria-label="Filter controls">
+        <!-- Filter bar populated by SearchBar module -->
+      </div>
+      <div id="results-list" class="results-list">
+        <p class="placeholder">Start by searching or browsing the corpus.</p>
+      </div>
+    </main>
+
+    <!-- Detail panel — role="complementary" (Req 10.4) -->
+    <aside id="detail-panel" class="detail-col" role="complementary"
+           aria-label="Document viewer">
+      <div id="doc-viewer" class="doc-viewer">
+        <div class="detail-empty">
+          <span class="icon" aria-hidden="true">&#128196;</span>
+          <p>Select a document to view its full content.</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Overlay shown when sidebar is open on mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
+  </div><!-- /.content -->
+
+  <!-- =======================================================
+       JS Modules — implemented in Tasks 10-14
+       Api · State · NavHistory · RecentlyViewed · CategoryMenu
+       SearchBar · Breadcrumb · ResultsList · DocViewer
+       ======================================================= -->
+  <script>
+    "use strict";
+
+    /* ===========================================================
+       Api Module  (Task 10.1 — Req 11.6)
+       fetch() wrappers for all five JSON endpoints.  Each method
+       builds the request URL with URLSearchParams, calls fetch(),
+       and returns a promise that resolves to the parsed JSON body.
+       Network errors reject and propagate to callers — they are
+       NOT caught here so callers can handle them uniformly.
+       =========================================================== */
+    const Api = {
+      // GET /api/categories — no parameters
+      categories() {
+        return fetch("/api/categories").then(r => r.json());
+      },
+
+      // GET /api/browse?cat=&sub= — both optional
+      browse(cat, sub) {
+        const params = new URLSearchParams();
+        if (cat) params.set("cat", cat);
+        if (sub) params.set("sub", sub);
+        const qs = params.toString();
+        return fetch(qs ? "/api/browse?" + qs : "/api/browse").then(r => r.json());
+      },
+
+      // GET /api/search?q=&cat=&type=&k=
+      //   q required · cat optional · type optional · k optional (default 10)
+      search(q, cat, type, k) {
+        const params = new URLSearchParams();
+        params.set("q", q || "");
+        if (cat)  params.set("cat", cat);
+        if (type) params.set("type", type);
+        params.set("k", k || 10);
+        return fetch("/api/search?" + params.toString()).then(r => r.json());
+      },
+
+      // GET /api/doc?id= — id required
+      doc(id) {
+        const params = new URLSearchParams();
+        if (id != null) params.set("id", id);
+        return fetch("/api/doc?" + params.toString()).then(r => r.json());
+      },
+
+      // GET /api/stats — no parameters
+      stats() {
+        return fetch("/api/stats").then(r => r.json());
+      }
+    };
+
+    /* ===========================================================
+       State Module  (Task 10.2 — Req 11.2)
+       Single mutable state object. State.update(patch) performs a
+       shallow merge at the top level, but merges the "filters"
+       object as a nested object, then calls render().
+       =========================================================== */
+    const State = {
+      _state: {
+        mode: "browse",
+        currentCat: "",
+        currentSub: "",
+        currentDocId: null,
+        filters: {
+          cat: "",
+          fileType: "",
+          keyword: ""
+        }
+      },
+
+      get() {
+        return this._state;
+      },
+
+      update(patch) {
+        for (var key in patch) {
+          if (key === "filters" && typeof patch[key] === "object") {
+            for (var fkey in patch.filters) {
+              this._state.filters[fkey] = patch.filters[fkey];
+            }
+          } else {
+            this._state[key] = patch[key];
+          }
+        }
+        render();
+      }
+    };
+
+    /* ===========================================================
+       render() — top-level re-render entry point  (Task 14)
+       Inspects State and dispatches to each UI module.  No virtual
+       DOM — just direct DOM manipulation keyed on State.
+       =========================================================== */
+    function render() {
+      var state = State.get();
+
+      if (typeof Breadcrumb  !== "undefined") Breadcrumb.render();
+      if (typeof SearchBar   !== "undefined") SearchBar.render();
+      if (typeof ResultsList !== "undefined") ResultsList.render(state);
+      if (typeof DocViewer   !== "undefined") DocViewer.render(state);
+
+      updateRecentlyViewed();
+      updateNavButtons();
+    }
+
+    /* Update the Recently Viewed sidebar list from localStorage */
+    function updateRecentlyViewed() {
+      var container = document.getElementById("recently-viewed");
+      if (!container) return;
+      var list = RecentlyViewed.load();
+      if (list.length === 0) {
+        container.innerHTML =
+          '<li class="placeholder">No recently viewed documents.</li>';
+        return;
+      }
+      container.innerHTML = "";
+      list.forEach(function (item) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.textContent = item.title;
+        a.href = "#";
+        a.addEventListener("click", function (e) {
+          e.preventDefault();
+          NavHistory.push(State.get());
+          State.update({ currentDocId: item.id });
+        });
+        li.appendChild(a);
+        container.appendChild(li);
+      });
+    }
+
+    /* Enable / disable Back and Forward buttons */
+    function updateNavButtons() {
+      var backBtn = document.getElementById("back-btn");
+      var fwdBtn  = document.getElementById("forward-btn");
+      if (backBtn) backBtn.disabled = !NavHistory.canGoBack();
+      if (fwdBtn)  fwdBtn.disabled  = !NavHistory.canGoForward();
+    }
+
+    /* ===========================================================
+       NavHistory Module  (Task 11.1 — Req 11.4)
+       In-browser Back/Forward navigation backed by sessionStorage.
+         • push(snapshot)   — append to the back-stack and clear the
+                              forward-stack (new navigation invalidates
+                              any forward history).
+         • back()          — move one step back: pop from the back-stack,
+                              push onto the forward-stack, return the
+                              snapshot (or null when the back-stack is
+                              empty).
+         • forward()       — move one step forward: pop from the
+                              forward-stack, push onto the back-stack,
+                              return the snapshot (or null when the
+                              forward-stack is empty).
+         • canGoBack()     — true when the back-stack is non-empty.
+         • canGoForward()  — true when the forward-stack is non-empty.
+       Snapshots are plain objects describing the State at a given
+       navigation point and are JSON-serialised into sessionStorage.
+       =========================================================== */
+    const NavHistory = {
+      _key: "browse_nav",
+      _fwd: "browse_nav_fwd",
+
+      push(snapshot) {
+        const stack = JSON.parse(sessionStorage.getItem(this._key) || "[]");
+        stack.push(snapshot);
+        sessionStorage.setItem(this._key, JSON.stringify(stack));
+        sessionStorage.removeItem(this._fwd);  // clear forward on new navigation
+      },
+
+      back() {
+        const stack = JSON.parse(sessionStorage.getItem(this._key) || "[]");
+        if (stack.length === 0) return null;
+        const snapshot = stack.pop();
+        sessionStorage.setItem(this._key, JSON.stringify(stack));
+        const fwd = JSON.parse(sessionStorage.getItem(this._fwd) || "[]");
+        fwd.push(snapshot);
+        sessionStorage.setItem(this._fwd, JSON.stringify(fwd));
+        return snapshot;
+      },
+
+      forward() {
+        const fwd = JSON.parse(sessionStorage.getItem(this._fwd) || "[]");
+        if (fwd.length === 0) return null;
+        const snapshot = fwd.pop();
+        sessionStorage.setItem(this._fwd, JSON.stringify(fwd));
+        const stack = JSON.parse(sessionStorage.getItem(this._key) || "[]");
+        stack.push(snapshot);
+        sessionStorage.setItem(this._key, JSON.stringify(stack));
+        return snapshot;
+      },
+
+      canGoBack() {
+        const stack = JSON.parse(sessionStorage.getItem(this._key) || "[]");
+        return stack.length > 0;
+      },
+
+      canGoForward() {
+        const fwd = JSON.parse(sessionStorage.getItem(this._fwd) || "[]");
+        return fwd.length > 0;
+      }
+    };
+
+    /* ===========================================================
+       RecentlyViewed Module  (Task 11.3 — Req 11.5)
+       Tracks the last 10 viewed documents in localStorage so the
+       sidebar "Recently Viewed" list survives page reloads.
+         • load()            — return parsed list from localStorage.
+         • save(list)        — persist list to localStorage.
+         • record(id, title) — filter out any existing entry with the
+                               same id, prepend the new entry, and
+                               truncate to MAX (10) entries.
+       =========================================================== */
+    const RecentlyViewed = {
+      MAX: 10,
+      _key: "browse_rv",
+
+      load() {
+        return JSON.parse(localStorage.getItem(this._key) || "[]");
+      },
+
+      save(list) {
+        localStorage.setItem(this._key, JSON.stringify(list));
+      },
+
+      record(id, title) {
+        let list = this.load().filter(x => x.id !== id);  // remove duplicate
+        list.unshift({ id, title });                       // prepend
+        if (list.length > this.MAX) list = list.slice(0, this.MAX);
+        this.save(list);
+      }
+    };
+
+    /* ===========================================================
+       CategoryMenu Module  (Task 12.1 — Req 1.3, 2.3)
+       Builds a collapsible category / subcategory tree in the
+       sidebar from /api/categories.  Each top-level category is
+       expandable; clicking a category or subcategory switches to
+       browse mode through State.update().  The module also wires
+       the hamburger button and the sidebar overlay so the sidebar
+       slides in and out on narrow viewports.
+         • init()          — wire the hamburger + overlay and perform
+                              the first render (which fetches data).
+         • render()        — on first call fetch /api/categories, then
+                              build the tree; later calls rebuild the
+                              tree from the cached response.
+         • toggleSidebar() — open/close the sidebar on mobile and sync
+                              the hamburger's aria-expanded attribute.
+         • closeSidebar()  — close the sidebar (overlay tap).
+       =========================================================== */
+    const CategoryMenu = {
+      _data: null,        // cached /api/categories response
+      _loaded: false,
+      _expanded: {},      // { categoryName: true } expanded state
+
+      init() {
+        const hamburger = document.getElementById("hamburger");
+        const overlay = document.getElementById("sidebar-overlay");
+
+        if (hamburger && !hamburger.dataset.cmWired) {
+          hamburger.addEventListener("click", () => this.toggleSidebar());
+          hamburger.dataset.cmWired = "1";
+        }
+        if (overlay && !overlay.dataset.cmWired) {
+          overlay.addEventListener("click", () => this.closeSidebar());
+          overlay.dataset.cmWired = "1";
+        }
+
+        this.render();
+      },
+
+      render() {
+        const container = document.getElementById("category-menu");
+        if (!container) return;
+
+        if (!this._loaded) {
+          container.innerHTML =
+            '<p class="placeholder">Loading categories&hellip;</p>';
+          Api.categories()
+            .then(data => {
+              this._data = data || {};
+              this._loaded = true;
+              this.render();
+            })
+            .catch(() => {
+              container.innerHTML =
+                '<p class="placeholder">Failed to load categories.</p>';
+            });
+          return;
+        }
+
+        this._buildTree(container);
+      },
+
+      _buildTree(container) {
+        container.innerHTML = "";
+        const keys = this._data ? Object.keys(this._data) : [];
+        if (keys.length === 0) {
+          container.innerHTML =
+            '<p class="placeholder">No categories found.</p>';
+          return;
+        }
+
+        const ul = document.createElement("ul");
+        keys.forEach(catName => {
+          ul.appendChild(this._buildCategoryItem(catName, this._data[catName]));
+        });
+        container.appendChild(ul);
+      },
+
+      _buildCategoryItem(catName, catData) {
+        const li = document.createElement("li");
+
+        const header = document.createElement("span");
+        header.className = "cat-name";
+        header.textContent = catName + " (" + (catData.doc_count || 0) + ")";
+        header.style.cursor = "pointer";
+        li.appendChild(header);
+
+        const subs = catData.subcategories || {};
+        const subKeys = Object.keys(subs);
+
+        let subUl = null;
+        if (subKeys.length > 0) {
+          subUl = document.createElement("ul");
+          subKeys.forEach(subName => {
+            subUl.appendChild(
+              this._buildSubcategoryItem(catName, subName, subs[subName])
+            );
+          });
+          subUl.style.display = this._expanded[catName] ? "" : "none";
+          li.appendChild(subUl);
+        }
+
+        header.addEventListener("click", () => {
+          // Expand / collapse the subcategory list (if any).
+          if (subUl) {
+            this._expanded[catName] = !this._expanded[catName];
+            subUl.style.display = this._expanded[catName] ? "" : "none";
+          }
+          // Switch to browse mode for this category.
+          State.update({
+            mode: "browse",
+            currentCat: catName,
+            currentSub: ""
+          });
+        });
+
+        return li;
+      },
+
+      _buildSubcategoryItem(catName, subName, subData) {
+        const li = document.createElement("li");
+        const label = subName === "_unclassified" ? "Other" : subName;
+
+        const span = document.createElement("span");
+        span.className = "subcat-name";
+        span.textContent = label + " (" + (subData.doc_count || 0) + ")";
+        span.style.cursor = "pointer";
+        span.addEventListener("click", () => {
+          State.update({
+            mode: "browse",
+            currentCat: catName,
+            currentSub: subName
+          });
+        });
+        li.appendChild(span);
+        return li;
+      },
+
+      toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const hamburger = document.getElementById("hamburger");
+        if (!sidebar) return;
+        const willOpen = !sidebar.classList.contains("open");
+        if (willOpen) sidebar.classList.add("open");
+        else sidebar.classList.remove("open");
+        if (hamburger) {
+          hamburger.setAttribute("aria-expanded", willOpen ? "true" : "false");
+        }
+      },
+
+      closeSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const hamburger = document.getElementById("hamburger");
+        if (sidebar) sidebar.classList.remove("open");
+        if (hamburger) hamburger.setAttribute("aria-expanded", "false");
+      }
+    };
+
+    // Bootstrap the sidebar menu once the DOM is available.
+    CategoryMenu.init();
+
+    /* ===========================================================
+       Breadcrumb Module  (Task 12.2 — Req 3.1, 3.2, 3.3, 3.4)
+       Renders a breadcrumb trail in the #breadcrumb nav element that
+       reflects the current State.  Each non-terminal segment is an
+       <a> that calls State.update() with the corresponding ancestor
+       view; the current (last) segment is a <span aria-current="page">.
+         • render()    — read State.get() and (re)build the trail.
+         • _docTitle   — optional document title set externally by
+                          DocViewer (Task 13.2).  When empty, the
+                          document segment falls back to "Document #id".
+       Trail construction by current view:
+         Home (all docs)        → Home
+         Category listing       → Home › AI
+         Subcategory listing    → Home › AI › NLP
+         Document viewer        → Home › AI › NLP › <title>
+         Search results         → Home › Search: "<query>"
+       =========================================================== */
+    const Breadcrumb = {
+      _docTitle: "",            // set externally by DocViewer (Task 13.2)
+
+      render() {
+        const state = State.get();
+        const nav = document.getElementById("breadcrumb");
+        if (!nav) return;
+
+        // Build the ordered list of segments.
+        // Each segment: { label, view }
+        //   view === null  → terminal (current page)
+        //   view !== null  → link; clicking calls State.update(view)
+        const segments = this._buildSegments(state);
+
+        // Render segments into the nav element.
+        nav.innerHTML = "";
+        segments.forEach((seg, i) => {
+          if (i > 0) {
+            const sep = document.createElement("span");
+            sep.textContent = " › ";
+            sep.setAttribute("aria-hidden", "true");
+            nav.appendChild(sep);
+          }
+          if (seg.view === null) {
+            // Terminal segment — current page.
+            const span = document.createElement("span");
+            span.textContent = seg.label;
+            span.setAttribute("aria-current", "page");
+            nav.appendChild(span);
+          } else {
+            // Non-terminal segment — link to an ancestor view.
+            const a = document.createElement("a");
+            a.textContent = seg.label;
+            a.href = "#";
+            const view = seg.view;
+            a.addEventListener("click", function (e) {
+              e.preventDefault();
+              State.update(view);
+            });
+            nav.appendChild(a);
+          }
+        });
+      },
+
+      _buildSegments(state) {
+        const segments = [];
+        const homeView = {
+          mode: "browse",
+          currentCat: "",
+          currentSub: "",
+          currentDocId: null
+        };
+
+        if (state.mode === "search") {
+          // Home › Search: "<query>"
+          segments.push({ label: "Home", view: homeView });
+          const q = (state.filters && state.filters.keyword) || "";
+          segments.push({ label: 'Search: "' + q + '"', view: null });
+          return segments;
+        }
+
+        // Browse mode.
+        if (!state.currentCat) {
+          // Home (all docs) — single terminal segment.
+          segments.push({ label: "Home", view: null });
+          return segments;
+        }
+
+        // Home is a link (can navigate back to root).
+        segments.push({ label: "Home", view: homeView });
+
+        const catView = {
+          mode: "browse",
+          currentCat: state.currentCat,
+          currentSub: "",
+          currentDocId: null
+        };
+
+        if (!state.currentSub) {
+          if (state.currentDocId != null) {
+            // Home › Category › Document
+            segments.push({ label: state.currentCat, view: catView });
+            segments.push({
+              label: this._docTitle || ("Document #" + state.currentDocId),
+              view: null
+            });
+          } else {
+            // Home › Category (terminal)
+            segments.push({ label: state.currentCat, view: null });
+          }
+          return segments;
+        }
+
+        // Has subcategory — category is a link.
+        segments.push({ label: state.currentCat, view: catView });
+
+        const subView = {
+          mode: "browse",
+          currentCat: state.currentCat,
+          currentSub: state.currentSub,
+          currentDocId: null
+        };
+        const subLabel =
+          state.currentSub === "_unclassified"
+            ? "Other"
+            : state.currentSub;
+
+        if (state.currentDocId != null) {
+          // Home › Category › Subcategory › Document
+          segments.push({ label: subLabel, view: subView });
+          segments.push({
+            label: this._docTitle || ("Document #" + state.currentDocId),
+            view: null
+          });
+        } else {
+          // Home › Category › Subcategory (terminal)
+          segments.push({ label: subLabel, view: null });
+        }
+
+        return segments;
+      }
+    };
+
+    /* ===========================================================
+       SearchBar Module  (Task 12.3 — Req 2.1, 2.2, 2.4, 6.1–6.6)
+       Handles the search input, mode toggle, and filter bar with
+       removable chips for active filters.
+       =========================================================== */
+    const SearchBar = {
+      _debounceTimer: null,
+
+      init() {
+        // --- Mode toggle ---
+        var toggle = document.getElementById("mode-toggle");
+        if (toggle && !toggle.dataset.sbWired) {
+          toggle.addEventListener("click", () => {
+            var state = State.get();
+            var newMode = state.mode === "search" ? "browse" : "search";
+            State.update({ mode: newMode, currentDocId: null });
+          });
+          toggle.dataset.sbWired = "1";
+        }
+
+        // --- Search form submission ---
+        var form = document.getElementById("search-form");
+        if (form && !form.dataset.sbWired) {
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            var input = document.getElementById("search-bar");
+            var q = input ? input.value.trim() : "";
+            if (!q) return;
+            State.update({
+              mode: "search",
+              currentDocId: null,
+              filters: { keyword: q }
+            });
+          });
+          form.dataset.sbWired = "1";
+        }
+
+        this._buildFilterBar();
+      },
+
+      _buildFilterBar() {
+        var container = document.getElementById("filter-bar");
+        if (!container) return;
+        container.innerHTML = "";
+
+        // Category select
+        var catLabel = document.createElement("label");
+        catLabel.textContent = "Category";
+        var catSelect = document.createElement("select");
+        catSelect.id = "filter-cat";
+        catSelect.innerHTML = '<option value="">All</option>';
+        Api.categories().then(function (data) {
+          Object.keys(data).forEach(function (cat) {
+            var opt = document.createElement("option");
+            opt.value = cat;
+            opt.textContent = cat;
+            catSelect.appendChild(opt);
+          });
+        });
+        catSelect.addEventListener("change", function () {
+          State.update({ filters: { cat: catSelect.value } });
+        });
+        catLabel.appendChild(catSelect);
+        container.appendChild(catLabel);
+
+        // File type select
+        var ftLabel = document.createElement("label");
+        ftLabel.textContent = "File Type";
+        var ftSelect = document.createElement("select");
+        ftSelect.id = "filter-type";
+        ftSelect.innerHTML =
+          '<option value="">All</option>' +
+          '<option value="txt">txt</option>' +
+          '<option value="json">json</option>' +
+          '<option value="csv">csv</option>' +
+          '<option value="xml">xml</option>';
+        ftSelect.addEventListener("change", function () {
+          State.update({ filters: { fileType: ftSelect.value } });
+        });
+        ftLabel.appendChild(ftSelect);
+        container.appendChild(ftLabel);
+
+        // Keyword input (debounced 300 ms)
+        var kwLabel = document.createElement("label");
+        kwLabel.textContent = "Keyword";
+        var kwInput = document.createElement("input");
+        kwInput.type = "text";
+        kwInput.id = "filter-keyword";
+        kwInput.placeholder = "Filter results\u2026";
+        var self = this;
+        kwInput.addEventListener("input", function () {
+          clearTimeout(self._debounceTimer);
+          self._debounceTimer = setTimeout(function () {
+            State.update({ filters: { keyword: kwInput.value.trim() } });
+          }, 300);
+        });
+        kwLabel.appendChild(kwInput);
+        container.appendChild(kwLabel);
+      },
+
+      render() {
+        var state = State.get();
+
+        var toggle = document.getElementById("mode-toggle");
+        if (toggle) {
+          toggle.textContent = state.mode === "search" ? "Browse" : "Search";
+        }
+
+        var searchBar = document.getElementById("search-bar");
+        if (searchBar && state.mode === "search" &&
+            document.activeElement !== searchBar) {
+          searchBar.value = state.filters.keyword || "";
+        }
+
+        var filterBar = document.getElementById("filter-bar");
+        if (filterBar) {
+          filterBar.classList.toggle("hidden", state.mode !== "search");
+        }
+
+        var catSelect = document.getElementById("filter-cat");
+        if (catSelect) catSelect.value = state.filters.cat;
+        var ftSelect = document.getElementById("filter-type");
+        if (ftSelect) ftSelect.value = state.filters.fileType;
+        var kwInput = document.getElementById("filter-keyword");
+        if (kwInput && document.activeElement !== kwInput) {
+          kwInput.value = state.filters.keyword;
+        }
+
+        this._renderChips(state);
+      },
+
+      _renderChips(state) {
+        var chipsContainer = document.getElementById("filter-chips");
+        if (!chipsContainer) {
+          chipsContainer = document.createElement("div");
+          chipsContainer.id = "filter-chips";
+          chipsContainer.className = "filter-chips";
+          var resultsList = document.getElementById("results-list");
+          if (resultsList && resultsList.parentNode) {
+            resultsList.parentNode.insertBefore(chipsContainer, resultsList);
+          }
+        }
+        chipsContainer.innerHTML = "";
+
+        var chips = [];
+        if (state.filters.cat) {
+          chips.push({ key: "cat", label: "Category: " + state.filters.cat });
+        }
+        if (state.filters.fileType) {
+          chips.push({ key: "fileType", label: "Type: " + state.filters.fileType });
+        }
+        if (state.filters.keyword && state.mode === "search") {
+          chips.push({ key: "keyword", label: 'Keyword: "' + state.filters.keyword + '"' });
+        }
+
+        chips.forEach(function (chip) {
+          var el = document.createElement("span");
+          el.className = "chip";
+          el.appendChild(document.createTextNode(chip.label + " "));
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.setAttribute("aria-label", "Remove " + chip.label);
+          btn.textContent = "\u00d7";
+          btn.addEventListener("click", function () {
+            var patch = { filters: {} };
+            patch.filters[chip.key] = "";
+            State.update(patch);
+          });
+          el.appendChild(btn);
+          chipsContainer.appendChild(el);
+        });
+      }
+    };
+
+    /* ===========================================================
+       ResultsList Module  (Task 13.1 — Req 8.1–8.4)
+       Renders document cards from browse() or search() results.
+       Shows a hover / focus preview overlay with the first 200
+       characters of the abstract and a "Read full document" button.
+       Dismissed on mouseleave / blur / Escape.
+       =========================================================== */
+    const ResultsList = {
+      _results: [],
+      _previewEl: null,
+      _previewTrigger: null,
+
+      render(state) {
+        var container = document.getElementById("results-list");
+        if (!container) return;
+
+        if (state.mode === "search") {
+          var q = state.filters.keyword || "";
+          if (!q) {
+            container.innerHTML =
+              '<p class="placeholder">Enter a search query.</p>';
+            return;
+          }
+          container.innerHTML =
+            '<p class="placeholder">Searching\u2026</p>';
+          var self = this;
+          Api.search(q, state.filters.cat, state.filters.fileType, 20)
+            .then(function (data) {
+              self._results = data.hits || [];
+              self._renderResults(container);
+            })
+            .catch(function () {
+              container.innerHTML =
+                '<p class="placeholder">Search failed.</p>';
+            });
+        } else {
+          container.innerHTML =
+            '<p class="placeholder">Loading documents\u2026</p>';
+          var self = this;
+          Api.browse(state.currentCat, state.currentSub)
+            .then(function (docs) {
+              var filtered = docs;
+              if (state.filters.fileType) {
+                filtered = filtered.filter(function (d) {
+                  return d.file_type === state.filters.fileType;
+                });
+              }
+              self._results = filtered;
+              self._renderResults(container);
+            })
+            .catch(function () {
+              container.innerHTML =
+                '<p class="placeholder">Failed to load documents.</p>';
+            });
+        }
+      },
+
+      _renderResults(container) {
+        container.innerHTML = "";
+        if (this._results.length === 0) {
+          container.innerHTML =
+            '<p class="no-results">No documents found.</p>';
+          return;
+        }
+
+        var self = this;
+        this._results.forEach(function (doc) {
+          var card = document.createElement("div");
+          card.className = "result-card";
+          card.setAttribute("tabindex", "0");
+          card.setAttribute("role", "button");
+          card.setAttribute("aria-label", "Open " + doc.title);
+
+          var title = document.createElement("div");
+          title.className = "card-title";
+          title.textContent = doc.title;
+          card.appendChild(title);
+
+          var meta = document.createElement("div");
+          meta.className = "card-meta";
+          var metaText = doc.category + " \u00b7 " + (doc.file_type || "txt");
+          if (doc.score) {
+            metaText += " \u00b7 score: " + doc.score.toFixed(2);
+          }
+          meta.textContent = metaText;
+          card.appendChild(meta);
+
+          if (doc.abstract) {
+            var snippet = document.createElement("div");
+            snippet.className = "card-snippet";
+            snippet.textContent = doc.abstract.substring(0, 120) + "\u2026";
+            card.appendChild(snippet);
+          }
+
+          function openDoc() {
+            NavHistory.push(State.get());
+            State.update({ currentDocId: doc.id });
+          }
+          card.addEventListener("click", openDoc);
+          card.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              openDoc();
+            }
+          });
+
+          card.addEventListener("mouseenter", function () {
+            self._showPreview(doc, card);
+          });
+          card.addEventListener("mouseleave", function () {
+            self._hidePreview();
+          });
+          card.addEventListener("focus", function () {
+            self._showPreview(doc, card);
+          });
+          card.addEventListener("blur", function () {
+            self._hidePreview();
+          });
+
+          container.appendChild(card);
+        });
+      },
+
+      _showPreview(doc, trigger) {
+        this._hidePreview();
+        var el = document.createElement("div");
+        el.className = "preview-overlay";
+        el.setAttribute("role", "tooltip");
+
+        var close = document.createElement("button");
+        close.className = "preview-close";
+        close.type = "button";
+        close.setAttribute("aria-label", "Close preview");
+        close.innerHTML = "&times;";
+        var self = this;
+        close.addEventListener("click", function (e) {
+          e.stopPropagation();
+          self._hidePreview();
+          trigger.focus();
+        });
+        el.appendChild(close);
+
+        var abs = document.createElement("div");
+        abs.className = "preview-abstract";
+        abs.textContent = (doc.abstract || "").substring(0, 200);
+        el.appendChild(abs);
+
+        var btn = document.createElement("button");
+        btn.className = "preview-btn";
+        btn.type = "button";
+        btn.textContent = "Read full document \u2192";
+        btn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          self._hidePreview();
+          NavHistory.push(State.get());
+          State.update({ currentDocId: doc.id });
+        });
+        el.appendChild(btn);
+
+        document.body.appendChild(el);
+        this._previewEl = el;
+        this._previewTrigger = trigger;
+      },
+
+      _hidePreview() {
+        if (this._previewEl) {
+          this._previewEl.remove();
+          this._previewEl = null;
+        }
+      }
+    };
+
+    /* ===========================================================
+       DocViewer Module  (Task 13.2 — Req 4.4, 5.1, 9.2, 9.3)
+       Fetches /api/doc?id=N, renders the full document, related
+       documents, and internal links.  Records each opened doc in
+       RecentlyViewed.
+       =========================================================== */
+    const DocViewer = {
+      _currentDoc: null,
+
+      render(state) {
+        var container = document.getElementById("doc-viewer");
+        if (!container) return;
+
+        if (state.currentDocId == null) {
+          this._currentDoc = null;
+          container.innerHTML =
+            '<div class="detail-empty">' +
+              '<span class="icon" aria-hidden="true">&#128196;</span>' +
+              "<p>Select a document to view its full content.</p>" +
+            "</div>";
+          Breadcrumb._docTitle = "";
+          return;
+        }
+
+        if (this._currentDoc && this._currentDoc.id === state.currentDocId) {
+          Breadcrumb._docTitle = this._currentDoc.title || "";
+          Breadcrumb.render();
+          return;
+        }
+
+        var self = this;
+        container.innerHTML =
+          '<p class="placeholder">Loading document\u2026</p>';
+        Api.doc(state.currentDocId)
+          .then(function (doc) {
+            if (doc.error) {
+              container.innerHTML =
+                '<p class="placeholder">Error: ' + doc.error + "</p>";
+              return;
+            }
+            self._currentDoc = doc;
+            Breadcrumb._docTitle = doc.title || "";
+            Breadcrumb.render();
+            self._renderDoc(container, doc);
+            RecentlyViewed.record(doc.id, doc.title);
+            updateRecentlyViewed();
+          })
+          .catch(function () {
+            container.innerHTML =
+              '<p class="placeholder">Failed to load document.</p>';
+          });
+      },
+
+      _renderDoc(container, doc) {
+        container.innerHTML = "";
+
+        var title = document.createElement("h3");
+        title.textContent = doc.title;
+        container.appendChild(title);
+
+        var meta = document.createElement("div");
+        meta.className = "doc-meta";
+        meta.textContent =
+          doc.category + " \u00b7 " +
+          (doc.subcategory || "Other") + " \u00b7 " +
+          (doc.file_type || "txt");
+        container.appendChild(meta);
+
+        if (doc.abstract) {
+          container.appendChild(this._section("Abstract", doc.abstract));
+        }
+        if (doc.methodology) {
+          container.appendChild(this._section("Methodology", doc.methodology));
+        }
+        if (doc.results) {
+          container.appendChild(this._section("Results", doc.results));
+        }
+
+        if (doc.internal_links && doc.internal_links.length > 0) {
+          container.appendChild(this._linksSection(doc.internal_links));
+        }
+
+        if (doc.related && doc.related.length > 0) {
+          container.appendChild(this._relatedSection(doc.related));
+        }
+      },
+
+      _section(heading, text) {
+        var section = document.createElement("div");
+        section.className = "doc-section";
+        var h4 = document.createElement("h4");
+        h4.textContent = heading;
+        section.appendChild(h4);
+        var p = document.createElement("p");
+        p.textContent = text;
+        section.appendChild(p);
+        return section;
+      },
+
+      _linksSection(links) {
+        var section = document.createElement("div");
+        section.className = "doc-section";
+        var h4 = document.createElement("h4");
+        h4.textContent = "Internal Links";
+        section.appendChild(h4);
+        var ul = document.createElement("ul");
+        ul.className = "links-list";
+        links.forEach(function (link) {
+          var li = document.createElement("li");
+          var a = document.createElement("a");
+          a.textContent = link.title + " (" + link.hits + " hits)";
+          a.href = "#";
+          a.addEventListener("click", function (e) {
+            e.preventDefault();
+            NavHistory.push(State.get());
+            State.update({ currentDocId: link.id });
+          });
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+        section.appendChild(ul);
+        return section;
+      },
+
+      _relatedSection(related) {
+        var section = document.createElement("div");
+        section.className = "doc-section";
+        var h4 = document.createElement("h4");
+        h4.textContent = "Related Documents";
+        section.appendChild(h4);
+        var ul = document.createElement("ul");
+        ul.className = "related-list";
+        related.forEach(function (rel) {
+          var li = document.createElement("li");
+          var a = document.createElement("a");
+          a.textContent = rel.title;
+          a.href = "#";
+          a.addEventListener("click", function (e) {
+            e.preventDefault();
+            NavHistory.push(State.get());
+            State.update({ currentDocId: rel.id });
+          });
+          li.appendChild(a);
+          var score = document.createElement("span");
+          score.className = "related-score";
+          score.textContent = "score: " + (rel.score || 0).toFixed(2);
+          li.appendChild(score);
+          ul.appendChild(li);
+        });
+        section.appendChild(ul);
+        return section;
+      }
+    };
+
+    /* ===========================================================
+       Initialisation — wire all modules and keyboard navigation
+       (Task 14 — Req 5.3, 7.2–7.5, 10.3, 10.4)
+       =========================================================== */
+    document.addEventListener("DOMContentLoaded", function () {
+      SearchBar.init();
+
+      // Wire Back / Forward buttons to NavHistory
+      var backBtn = document.getElementById("back-btn");
+      var fwdBtn  = document.getElementById("forward-btn");
+      if (backBtn) {
+        backBtn.addEventListener("click", function () {
+          var snapshot = NavHistory.back();
+          if (snapshot) State.update(snapshot);
+        });
+      }
+      if (fwdBtn) {
+        fwdBtn.addEventListener("click", function () {
+          var snapshot = NavHistory.forward();
+          if (snapshot) State.update(snapshot);
+        });
+      }
+
+      // Keyboard navigation
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          ResultsList._hidePreview();
+        }
+        if (e.altKey && e.key === "ArrowLeft") {
+          e.preventDefault();
+          var snap = NavHistory.back();
+          if (snap) State.update(snap);
+        }
+        if (e.altKey && e.key === "ArrowRight") {
+          e.preventDefault();
+          var snap = NavHistory.forward();
+          if (snap) State.update(snap);
+        }
+      });
+
+      // First render — populates the results list
+      render();
+    });
+  </script>
+</body>
+</html>
