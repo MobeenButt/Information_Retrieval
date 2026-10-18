@@ -1,0 +1,2 @@
+Title: Text Preprocessing
+Text preprocessing is an important step before indexing documents. Common preprocessing steps include tokenization which splits text into individual words, stop word removal which eliminates common words like the and is, and stemming which reduces words to their root form. For example the words running and runs both stem to run. Preprocessing ensures that documents and queries are compared on the same terms.

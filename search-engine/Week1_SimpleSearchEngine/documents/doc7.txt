@@ -1,0 +1,2 @@
+Title: Precision and Recall
+Precision and recall are the two most important evaluation metrics in information retrieval. Precision is the fraction of retrieved documents that are relevant. Recall is the fraction of all relevant documents that were retrieved. A system with high precision returns mostly relevant results. A system with high recall finds most of the relevant documents. There is usually a trade-off between precision and recall. The F1 score combines both into a single number.

@@ -14,7 +14,7 @@
       "MRR": 1.0,
       "MAP": 0.3697,
       "nDCG@10": 0.7881,
-      "took_ms": 14.7
+      "took_ms": 19.6
     },
     {
       "model": "vsm",
@@ -24,7 +24,7 @@
       "MRR": 1.0,
       "MAP": 0.3401,
       "nDCG@10": 0.7612,
-      "took_ms": 390.3
+      "took_ms": 371.3
     },
     {
       "model": "bim",
@@ -34,7 +34,7 @@
       "MRR": 1.0,
       "MAP": 0.3294,
       "nDCG@10": 0.7365,
-      "took_ms": 54.1
+      "took_ms": 55.6
     },
     {
       "model": "boolean",
@@ -44,7 +44,7 @@
       "MRR": 0.0061,
       "MAP": 0.0026,
       "nDCG@10": 0.0,
-      "took_ms": 41.8
+      "took_ms": 61.8
     },
     {
       "model": "overlap",
@@ -54,7 +54,7 @@
       "MRR": 0.6,
       "MAP": 0.0578,
       "nDCG@10": 0.2115,
-      "took_ms": 82.3
+      "took_ms": 76.9
     },
     {
       "model": "nonoverlap",
@@ -64,7 +64,7 @@
       "MRR": 1.0,
       "MAP": 0.348,
       "nDCG@10": 0.7403,
-      "took_ms": 232.0
+      "took_ms": 244.7
     },
     {
       "model": "proximal",
@@ -74,7 +74,7 @@
       "MRR": 1.0,
       "MAP": 0.3335,
       "nDCG@10": 0.7415,
-      "took_ms": 287.2
+      "took_ms": 312.0
     },
     {
       "model": "field_bm25",
@@ -84,14 +84,14 @@
       "MRR": 1.0,
       "MAP": 0.0471,
       "nDCG@10": 0.4385,
-      "took_ms": 3.9
+      "took_ms": 7.5
     }
   ],
   "by_model": {
     "bm25": {
       "model": "bm25",
       "k": 10,
-      "took_ms": 14.7,
+      "took_ms": 19.6,
       "mean_metrics": {
         "P@10": 0.84,
         "R@10": 0.1964,
@@ -2532,7 +2532,7 @@
     "vsm": {
       "model": "vsm",
       "k": 10,
-      "took_ms": 390.3,
+      "took_ms": 371.3,
       "mean_metrics": {
         "P@10": 0.8267,
         "R@10": 0.1933,
@@ -4946,7 +4946,7 @@
     "bim": {
       "model": "bim",
       "k": 10,
-      "took_ms": 54.1,
+      "took_ms": 55.6,
       "mean_metrics": {
         "P@10": 0.8067,
         "R@10": 0.1896,
@@ -5314,13 +5314,13 @@
               "score": 15.8954,
               "probability": 1.0,
               "term_weights": {
-                "deploy": 3.4599,
                 "checkout": 0.8295,
                 "return": 3.2357,
+                "coupon": 3.0502,
+                "without": 5.2886,
                 "500": 2.2107,
                 "order": 0.871,
-                "without": 5.2886,
-                "coupon": 3.0502
+                "deploy": 3.4599
               },
               "matched": [
                 "checkout",
@@ -5339,13 +5339,13 @@
               "score": 15.4857,
               "probability": 1.0,
               "term_weights": {
-                "deploy": 3.4599,
                 "checkout": 0.8295,
                 "return": 3.2357,
+                "coupon": 3.0502,
+                "without": 5.2886,
                 "500": 2.2107,
                 "order": 0.871,
-                "without": 5.2886,
-                "coupon": 3.0502
+                "deploy": 3.4599
               },
               "matched": [
                 "checkout",
@@ -5364,13 +5364,13 @@
               "score": 11.5645,
               "probability": 1.0,
               "term_weights": {
-                "deploy": 3.4599,
                 "checkout": 0.8295,
                 "return": 3.2357,
+                "coupon": 3.0502,
+                "without": 5.2886,
                 "500": 2.2107,
                 "order": 0.871,
-                "without": 5.2886,
-                "coupon": 3.0502
+                "deploy": 3.4599
               },
               "matched": [
                 "checkout",
@@ -5387,13 +5387,13 @@
               "score": 10.735,
               "probability": 1.0,
               "term_weights": {
-                "deploy": 3.4599,
                 "checkout": 0.8295,
                 "return": 3.2357,
+                "coupon": 3.0502,
+                "without": 5.2886,
                 "500": 2.2107,
                 "order": 0.871,
-                "without": 5.2886,
-                "coupon": 3.0502
+                "deploy": 3.4599
               },
               "matched": [
                 "return",
@@ -5409,13 +5409,13 @@
               "score": 9.7773,
               "probability": 0.9999,
               "term_weights": {
-                "deploy": 3.4599,
                 "checkout": 0.8295,
                 "return": 3.2357,
+                "coupon": 3.0502,
+                "without": 5.2886,
                 "500": 2.2107,
                 "order": 0.871,
-                "without": 5.2886,
-                "coupon": 3.0502
+                "deploy": 3.4599
               },
               "matched": [
                 "return",
@@ -5432,13 +5432,13 @@
               "score": 9.3538,
               "probability": 0.9999,
               "term_weights": {
-                "deploy": 3.4599,
                 "checkout": 0.8295,
                 "return": 3.2357,
+                "coupon": 3.0502,
+                "without": 5.2886,
                 "500": 2.2107,
                 "order": 0.871,
-                "without": 5.2886,
-                "coupon": 3.0502
+                "deploy": 3.4599
               },
               "matched": [
                 "checkout",
@@ -5454,13 +5454,13 @@
               "score": 8.9063,
               "probability": 0.9999,
               "term_weights": {
-                "deploy": 3.4599,
                 "checkout": 0.8295,
                 "return": 3.2357,
+                "coupon": 3.0502,
+                "without": 5.2886,
                 "500": 2.2107,
                 "order": 0.871,
-                "without": 5.2886,
-                "coupon": 3.0502
+                "deploy": 3.4599
               },
               "matched": [
                 "return",
@@ -5476,13 +5476,13 @@
               "score": 8.7485,
               "probability": 0.9998,
               "term_weights": {
-                "deploy": 3.4599,
                 "checkout": 0.8295,
                 "return": 3.2357,
+                "coupon": 3.0502,
+                "without": 5.2886,
                 "500": 2.2107,
                 "order": 0.871,
-                "without": 5.2886,
-                "coupon": 3.0502
+                "deploy": 3.4599
               },
               "matched": [
                 "without",
@@ -5497,13 +5497,13 @@
               "score": 7.5666,
               "probability": 0.9995,
               "term_weights": {
-                "deploy": 3.4599,
                 "checkout": 0.8295,
                 "return": 3.2357,
+                "coupon": 3.0502,
+                "without": 5.2886,
                 "500": 2.2107,
                 "order": 0.871,
-                "without": 5.2886,
-                "coupon": 3.0502
+                "deploy": 3.4599
               },
               "matched": [
                 "return",
@@ -5519,13 +5519,13 @@
               "score": 7.5666,
               "probability": 0.9995,
               "term_weights": {
-                "deploy": 3.4599,
                 "checkout": 0.8295,
                 "return": 3.2357,
+                "coupon": 3.0502,
+                "without": 5.2886,
                 "500": 2.2107,
                 "order": 0.871,
-                "without": 5.2886,
-                "coupon": 3.0502
+                "deploy": 3.4599
               },
               "matched": [
                 "return",
@@ -5549,10 +5549,10 @@
               "term_weights": {
                 "quantiti": 3.3522,
                 "accept": 4.0933,
-                "negat": 3.5797,
+                "zero": 6.0534,
                 "item": 2.5664,
                 "order": 0.871,
-                "zero": 6.0534
+                "negat": 3.5797
               },
               "matched": [
                 "order",
@@ -5573,10 +5573,10 @@
               "term_weights": {
                 "quantiti": 3.3522,
                 "accept": 4.0933,
-                "negat": 3.5797,
+                "zero": 6.0534,
                 "item": 2.5664,
                 "order": 0.871,
-                "zero": 6.0534
+                "negat": 3.5797
               },
               "matched": [
                 "order",
@@ -5594,10 +5594,10 @@
               "term_weights": {
                 "quantiti": 3.3522,
                 "accept": 4.0933,
-                "negat": 3.5797,
+                "zero": 6.0534,
                 "item": 2.5664,
                 "order": 0.871,
-                "zero": 6.0534
+                "negat": 3.5797
               },
               "matched": [
                 "accept",
@@ -5615,10 +5615,10 @@
               "term_weights": {
                 "quantiti": 3.3522,
                 "accept": 4.0933,
-                "negat": 3.5797,
+                "zero": 6.0534,
                 "item": 2.5664,
                 "order": 0.871,
-                "zero": 6.0534
+                "negat": 3.5797
               },
               "matched": [
                 "accept",
@@ -5636,10 +5636,10 @@
               "term_weights": {
                 "quantiti": 3.3522,
                 "accept": 4.0933,
-                "negat": 3.5797,
+                "zero": 6.0534,
                 "item": 2.5664,
                 "order": 0.871,
-                "zero": 6.0534
+                "negat": 3.5797
               },
               "matched": [
                 "accept",
@@ -5657,10 +5657,10 @@
               "term_weights": {
                 "quantiti": 3.3522,
                 "accept": 4.0933,
-                "negat": 3.5797,
+                "zero": 6.0534,
                 "item": 2.5664,
                 "order": 0.871,
-                "zero": 6.0534
+                "negat": 3.5797
               },
               "matched": [
                 "accept",
@@ -5678,10 +5678,10 @@
               "term_weights": {
                 "quantiti": 3.3522,
                 "accept": 4.0933,
-                "negat": 3.5797,
+                "zero": 6.0534,
                 "item": 2.5664,
                 "order": 0.871,
-                "zero": 6.0534
+                "negat": 3.5797
               },
               "matched": [
                 "accept",
@@ -5699,10 +5699,10 @@
               "term_weights": {
                 "quantiti": 3.3522,
                 "accept": 4.0933,
-                "negat": 3.5797,
+                "zero": 6.0534,
                 "item": 2.5664,
                 "order": 0.871,
-                "zero": 6.0534
+                "negat": 3.5797
               },
               "matched": [
                 "accept",
@@ -5720,10 +5720,10 @@
               "term_weights": {
                 "quantiti": 3.3522,
                 "accept": 4.0933,
-                "negat": 3.5797,
+                "zero": 6.0534,
                 "item": 2.5664,
                 "order": 0.871,
-                "zero": 6.0534
+                "negat": 3.5797
               },
               "matched": [
                 "accept",
@@ -5741,10 +5741,10 @@
               "term_weights": {
                 "quantiti": 3.3522,
                 "accept": 4.0933,
-                "negat": 3.5797,
+                "zero": 6.0534,
                 "item": 2.5664,
                 "order": 0.871,
-                "zero": 6.0534
+                "negat": 3.5797
               },
               "matched": [
                 "accept",
@@ -5766,14 +5766,14 @@
               "score": 23.7964,
               "probability": 1.0,
               "term_weights": {
-                "match": 3.6054,
                 "violat": 4.325,
-                "item": 2.5664,
-                "line": 1.611,
+                "match": 3.6054,
                 "sum": 4.2743,
-                "order": 0.871,
                 "total": 2.2182,
-                "constraint": 4.325
+                "constraint": 4.325,
+                "item": 2.5664,
+                "order": 0.871,
+                "line": 1.611
               },
               "matched": [
                 "order",
@@ -5794,14 +5794,14 @@
               "score": 23.7964,
               "probability": 1.0,
               "term_weights": {
-                "match": 3.6054,
                 "violat": 4.325,
-                "item": 2.5664,
-                "line": 1.611,
+                "match": 3.6054,
                 "sum": 4.2743,
-                "order": 0.871,
                 "total": 2.2182,
-                "constraint": 4.325
+                "constraint": 4.325,
+                "item": 2.5664,
+                "order": 0.871,
+                "line": 1.611
               },
               "matched": [
                 "order",
@@ -5822,14 +5822,14 @@
               "score": 23.7964,
               "probability": 1.0,
               "term_weights": {
-                "match": 3.6054,
                 "violat": 4.325,
-                "item": 2.5664,
-                "line": 1.611,
+                "match": 3.6054,
                 "sum": 4.2743,
-                "order": 0.871,
                 "total": 2.2182,
-                "constraint": 4.325
+                "constraint": 4.325,
+                "item": 2.5664,
+                "order": 0.871,
+                "line": 1.611
               },
               "matched": [
                 "order",
@@ -5850,14 +5850,14 @@
               "score": 23.7964,
               "probability": 1.0,
               "term_weights": {
-                "match": 3.6054,
                 "violat": 4.325,
-                "item": 2.5664,
-                "line": 1.611,
+                "match": 3.6054,
                 "sum": 4.2743,
-                "order": 0.871,
                 "total": 2.2182,
-                "constraint": 4.325
+                "constraint": 4.325,
+                "item": 2.5664,
+                "order": 0.871,
+                "line": 1.611
               },
               "matched": [
                 "order",
@@ -5878,14 +5878,14 @@
               "score": 23.7964,
               "probability": 1.0,
               "term_weights": {
-                "match": 3.6054,
                 "violat": 4.325,
-                "item": 2.5664,
-                "line": 1.611,
+                "match": 3.6054,
                 "sum": 4.2743,
-                "order": 0.871,
                 "total": 2.2182,
-                "constraint": 4.325
+                "constraint": 4.325,
+                "item": 2.5664,
+                "order": 0.871,
+                "line": 1.611
               },
               "matched": [
                 "order",
@@ -5906,14 +5906,14 @@
               "score": 23.7964,
               "probability": 1.0,
               "term_weights": {
-                "match": 3.6054,
                 "violat": 4.325,
-                "item": 2.5664,
-                "line": 1.611,
+                "match": 3.6054,
                 "sum": 4.2743,
-                "order": 0.871,
                 "total": 2.2182,
-                "constraint": 4.325
+                "constraint": 4.325,
+                "item": 2.5664,
+                "order": 0.871,
+                "line": 1.611
               },
               "matched": [
                 "order",
@@ -5934,14 +5934,14 @@
               "score": 23.7964,
               "probability": 1.0,
               "term_weights": {
-                "match": 3.6054,
                 "violat": 4.325,
-                "item": 2.5664,
-                "line": 1.611,
+                "match": 3.6054,
                 "sum": 4.2743,
-                "order": 0.871,
                 "total": 2.2182,
-                "constraint": 4.325
+                "constraint": 4.325,
+                "item": 2.5664,
+                "order": 0.871,
+                "line": 1.611
               },
               "matched": [
                 "order",
@@ -5962,14 +5962,14 @@
               "score": 23.7964,
               "probability": 1.0,
               "term_weights": {
-                "match": 3.6054,
                 "violat": 4.325,
-                "item": 2.5664,
-                "line": 1.611,
+                "match": 3.6054,
                 "sum": 4.2743,
-                "order": 0.871,
                 "total": 2.2182,
-                "constraint": 4.325
+                "constraint": 4.325,
+                "item": 2.5664,
+                "order": 0.871,
+                "line": 1.611
               },
               "matched": [
                 "order",
@@ -5990,14 +5990,14 @@
               "score": 23.7964,
               "probability": 1.0,
               "term_weights": {
-                "match": 3.6054,
                 "violat": 4.325,
-                "item": 2.5664,
-                "line": 1.611,
+                "match": 3.6054,
                 "sum": 4.2743,
-                "order": 0.871,
                 "total": 2.2182,
-                "constraint": 4.325
+                "constraint": 4.325,
+                "item": 2.5664,
+                "order": 0.871,
+                "line": 1.611
               },
               "matched": [
                 "order",
@@ -6018,14 +6018,14 @@
               "score": 23.7964,
               "probability": 1.0,
               "term_weights": {
-                "match": 3.6054,
                 "violat": 4.325,
-                "item": 2.5664,
-                "line": 1.611,
+                "match": 3.6054,
                 "sum": 4.2743,
-                "order": 0.871,
                 "total": 2.2182,
-                "constraint": 4.325
+                "constraint": 4.325,
+                "item": 2.5664,
+                "order": 0.871,
+                "line": 1.611
               },
               "matched": [
                 "order",
@@ -6052,14 +6052,14 @@
               "score": 25.8929,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
-                "422": 5.4324,
-                "invalid": 2.7765,
-                "return": 3.2357,
                 "checkout": 0.8295,
+                "return": 3.2357,
+                "invalid": 2.7765,
+                "instead": 5.6001,
+                "422": 5.4324,
+                "error": 0.1854,
                 "500": 2.2107,
                 "payload": 3.0046,
-                "instead": 5.6001,
                 "valid": 2.6181
               },
               "matched": [
@@ -6082,14 +6082,14 @@
               "score": 22.0589,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
-                "422": 5.4324,
-                "invalid": 2.7765,
-                "return": 3.2357,
                 "checkout": 0.8295,
+                "return": 3.2357,
+                "invalid": 2.7765,
+                "instead": 5.6001,
+                "422": 5.4324,
+                "error": 0.1854,
                 "500": 2.2107,
                 "payload": 3.0046,
-                "instead": 5.6001,
                 "valid": 2.6181
               },
               "matched": [
@@ -6110,14 +6110,14 @@
               "score": 15.4641,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
-                "422": 5.4324,
-                "invalid": 2.7765,
-                "return": 3.2357,
                 "checkout": 0.8295,
+                "return": 3.2357,
+                "invalid": 2.7765,
+                "instead": 5.6001,
+                "422": 5.4324,
+                "error": 0.1854,
                 "500": 2.2107,
                 "payload": 3.0046,
-                "instead": 5.6001,
                 "valid": 2.6181
               },
               "matched": [
@@ -6137,14 +6137,14 @@
               "score": 15.2787,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
-                "422": 5.4324,
-                "invalid": 2.7765,
-                "return": 3.2357,
                 "checkout": 0.8295,
+                "return": 3.2357,
+                "invalid": 2.7765,
+                "instead": 5.6001,
+                "422": 5.4324,
+                "error": 0.1854,
                 "500": 2.2107,
                 "payload": 3.0046,
-                "instead": 5.6001,
                 "valid": 2.6181
               },
               "matched": [
@@ -6163,14 +6163,14 @@
               "score": 15.2787,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
-                "422": 5.4324,
-                "invalid": 2.7765,
-                "return": 3.2357,
                 "checkout": 0.8295,
+                "return": 3.2357,
+                "invalid": 2.7765,
+                "instead": 5.6001,
+                "422": 5.4324,
+                "error": 0.1854,
                 "500": 2.2107,
                 "payload": 3.0046,
-                "instead": 5.6001,
                 "valid": 2.6181
               },
               "matched": [
@@ -6189,14 +6189,14 @@
               "score": 14.031,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
-                "422": 5.4324,
-                "invalid": 2.7765,
-                "return": 3.2357,
                 "checkout": 0.8295,
+                "return": 3.2357,
+                "invalid": 2.7765,
+                "instead": 5.6001,
+                "422": 5.4324,
+                "error": 0.1854,
                 "500": 2.2107,
                 "payload": 3.0046,
-                "instead": 5.6001,
                 "valid": 2.6181
               },
               "matched": [
@@ -6216,14 +6216,14 @@
               "score": 13.8834,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
-                "422": 5.4324,
-                "invalid": 2.7765,
-                "return": 3.2357,
                 "checkout": 0.8295,
+                "return": 3.2357,
+                "invalid": 2.7765,
+                "instead": 5.6001,
+                "422": 5.4324,
+                "error": 0.1854,
                 "500": 2.2107,
                 "payload": 3.0046,
-                "instead": 5.6001,
                 "valid": 2.6181
               },
               "matched": [
@@ -6241,14 +6241,14 @@
               "score": 11.4129,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
-                "422": 5.4324,
-                "invalid": 2.7765,
-                "return": 3.2357,
                 "checkout": 0.8295,
+                "return": 3.2357,
+                "invalid": 2.7765,
+                "instead": 5.6001,
+                "422": 5.4324,
+                "error": 0.1854,
                 "500": 2.2107,
                 "payload": 3.0046,
-                "instead": 5.6001,
                 "valid": 2.6181
               },
               "matched": [
@@ -6267,14 +6267,14 @@
               "score": 8.8584,
               "probability": 0.9999,
               "term_weights": {
-                "error": 0.1854,
-                "422": 5.4324,
-                "invalid": 2.7765,
-                "return": 3.2357,
                 "checkout": 0.8295,
+                "return": 3.2357,
+                "invalid": 2.7765,
+                "instead": 5.6001,
+                "422": 5.4324,
+                "error": 0.1854,
                 "500": 2.2107,
                 "payload": 3.0046,
-                "instead": 5.6001,
                 "valid": 2.6181
               },
               "matched": [
@@ -6291,14 +6291,14 @@
               "score": 8.8584,
               "probability": 0.9999,
               "term_weights": {
-                "error": 0.1854,
-                "422": 5.4324,
-                "invalid": 2.7765,
-                "return": 3.2357,
                 "checkout": 0.8295,
+                "return": 3.2357,
+                "invalid": 2.7765,
+                "instead": 5.6001,
+                "422": 5.4324,
+                "error": 0.1854,
                 "500": 2.2107,
                 "payload": 3.0046,
-                "instead": 5.6001,
                 "valid": 2.6181
               },
               "matched": [
@@ -6322,9 +6322,9 @@
               "probability": 1.0,
               "term_weights": {
                 "refactor": 5.6001,
-                "appli": 4.0526,
+                "discount": 2.9325,
                 "coupon": 3.0502,
-                "discount": 2.9325
+                "appli": 4.0526
               },
               "matched": [
                 "coupon",
@@ -6342,9 +6342,9 @@
               "probability": 1.0,
               "term_weights": {
                 "refactor": 5.6001,
-                "appli": 4.0526,
+                "discount": 2.9325,
                 "coupon": 3.0502,
-                "discount": 2.9325
+                "appli": 4.0526
               },
               "matched": [
                 "coupon",
@@ -6361,9 +6361,9 @@
               "probability": 1.0,
               "term_weights": {
                 "refactor": 5.6001,
-                "appli": 4.0526,
+                "discount": 2.9325,
                 "coupon": 3.0502,
-                "discount": 2.9325
+                "appli": 4.0526
               },
               "matched": [
                 "coupon",
@@ -6380,9 +6380,9 @@
               "probability": 1.0,
               "term_weights": {
                 "refactor": 5.6001,
-                "appli": 4.0526,
+                "discount": 2.9325,
                 "coupon": 3.0502,
-                "discount": 2.9325
+                "appli": 4.0526
               },
               "matched": [
                 "coupon",
@@ -6399,9 +6399,9 @@
               "probability": 1.0,
               "term_weights": {
                 "refactor": 5.6001,
-                "appli": 4.0526,
+                "discount": 2.9325,
                 "coupon": 3.0502,
-                "discount": 2.9325
+                "appli": 4.0526
               },
               "matched": [
                 "coupon",
@@ -6418,9 +6418,9 @@
               "probability": 1.0,
               "term_weights": {
                 "refactor": 5.6001,
-                "appli": 4.0526,
+                "discount": 2.9325,
                 "coupon": 3.0502,
-                "discount": 2.9325
+                "appli": 4.0526
               },
               "matched": [
                 "coupon",
@@ -6437,9 +6437,9 @@
               "probability": 1.0,
               "term_weights": {
                 "refactor": 5.6001,
-                "appli": 4.0526,
+                "discount": 2.9325,
                 "coupon": 3.0502,
-                "discount": 2.9325
+                "appli": 4.0526
               },
               "matched": [
                 "coupon",
@@ -6456,9 +6456,9 @@
               "probability": 1.0,
               "term_weights": {
                 "refactor": 5.6001,
-                "appli": 4.0526,
+                "discount": 2.9325,
                 "coupon": 3.0502,
-                "discount": 2.9325
+                "appli": 4.0526
               },
               "matched": [
                 "coupon",
@@ -6475,9 +6475,9 @@
               "probability": 1.0,
               "term_weights": {
                 "refactor": 5.6001,
-                "appli": 4.0526,
+                "discount": 2.9325,
                 "coupon": 3.0502,
-                "discount": 2.9325
+                "appli": 4.0526
               },
               "matched": [
                 "coupon",
@@ -6494,9 +6494,9 @@
               "probability": 1.0,
               "term_weights": {
                 "refactor": 5.6001,
-                "appli": 4.0526,
+                "discount": 2.9325,
                 "coupon": 3.0502,
-                "discount": 2.9325
+                "appli": 4.0526
               },
               "matched": [
                 "coupon",
@@ -6518,12 +6518,12 @@
               "score": 20.8698,
               "probability": 1.0,
               "term_weights": {
-                "stock": 2.7059,
-                "inventori": 2.4327,
-                "negat": 3.5797,
                 "concurr": 4.3783,
+                "stock": 2.7059,
                 "goe": 6.9021,
-                "order": 0.871
+                "inventori": 2.4327,
+                "order": 0.871,
+                "negat": 3.5797
               },
               "matched": [
                 "inventori",
@@ -6542,12 +6542,12 @@
               "score": 13.0967,
               "probability": 1.0,
               "term_weights": {
-                "stock": 2.7059,
-                "inventori": 2.4327,
-                "negat": 3.5797,
                 "concurr": 4.3783,
+                "stock": 2.7059,
                 "goe": 6.9021,
-                "order": 0.871
+                "inventori": 2.4327,
+                "order": 0.871,
+                "negat": 3.5797
               },
               "matched": [
                 "inventori",
@@ -6564,12 +6564,12 @@
               "score": 13.0967,
               "probability": 1.0,
               "term_weights": {
-                "stock": 2.7059,
-                "inventori": 2.4327,
-                "negat": 3.5797,
                 "concurr": 4.3783,
+                "stock": 2.7059,
                 "goe": 6.9021,
-                "order": 0.871
+                "inventori": 2.4327,
+                "order": 0.871,
+                "negat": 3.5797
               },
               "matched": [
                 "inventori",
@@ -6586,12 +6586,12 @@
               "score": 13.0967,
               "probability": 1.0,
               "term_weights": {
-                "stock": 2.7059,
-                "inventori": 2.4327,
-                "negat": 3.5797,
                 "concurr": 4.3783,
+                "stock": 2.7059,
                 "goe": 6.9021,
-                "order": 0.871
+                "inventori": 2.4327,
+                "order": 0.871,
+                "negat": 3.5797
               },
               "matched": [
                 "inventori",
@@ -6608,12 +6608,12 @@
               "score": 13.0967,
               "probability": 1.0,
               "term_weights": {
-                "stock": 2.7059,
-                "inventori": 2.4327,
-                "negat": 3.5797,
                 "concurr": 4.3783,
+                "stock": 2.7059,
                 "goe": 6.9021,
-                "order": 0.871
+                "inventori": 2.4327,
+                "order": 0.871,
+                "negat": 3.5797
               },
               "matched": [
                 "inventori",
@@ -6630,12 +6630,12 @@
               "score": 13.0967,
               "probability": 1.0,
               "term_weights": {
-                "stock": 2.7059,
-                "inventori": 2.4327,
-                "negat": 3.5797,
                 "concurr": 4.3783,
+                "stock": 2.7059,
                 "goe": 6.9021,
-                "order": 0.871
+                "inventori": 2.4327,
+                "order": 0.871,
+                "negat": 3.5797
               },
               "matched": [
                 "inventori",
@@ -6652,12 +6652,12 @@
               "score": 13.0967,
               "probability": 1.0,
               "term_weights": {
-                "stock": 2.7059,
-                "inventori": 2.4327,
-                "negat": 3.5797,
                 "concurr": 4.3783,
+                "stock": 2.7059,
                 "goe": 6.9021,
-                "order": 0.871
+                "inventori": 2.4327,
+                "order": 0.871,
+                "negat": 3.5797
               },
               "matched": [
                 "inventori",
@@ -6674,12 +6674,12 @@
               "score": 13.0967,
               "probability": 1.0,
               "term_weights": {
-                "stock": 2.7059,
-                "inventori": 2.4327,
-                "negat": 3.5797,
                 "concurr": 4.3783,
+                "stock": 2.7059,
                 "goe": 6.9021,
-                "order": 0.871
+                "inventori": 2.4327,
+                "order": 0.871,
+                "negat": 3.5797
               },
               "matched": [
                 "inventori",
@@ -6696,12 +6696,12 @@
               "score": 13.0967,
               "probability": 1.0,
               "term_weights": {
-                "stock": 2.7059,
-                "inventori": 2.4327,
-                "negat": 3.5797,
                 "concurr": 4.3783,
+                "stock": 2.7059,
                 "goe": 6.9021,
-                "order": 0.871
+                "inventori": 2.4327,
+                "order": 0.871,
+                "negat": 3.5797
               },
               "matched": [
                 "inventori",
@@ -6718,12 +6718,12 @@
               "score": 13.0967,
               "probability": 1.0,
               "term_weights": {
-                "stock": 2.7059,
-                "inventori": 2.4327,
-                "negat": 3.5797,
                 "concurr": 4.3783,
+                "stock": 2.7059,
                 "goe": 6.9021,
-                "order": 0.871
+                "inventori": 2.4327,
+                "order": 0.871,
+                "negat": 3.5797
               },
               "matched": [
                 "inventori",
@@ -6746,14 +6746,14 @@
               "score": 13.487,
               "probability": 1.0,
               "term_weights": {
-                "401": 3.0046,
-                "payment": 1.7797,
                 "invalid": 2.7765,
-                "fail": 1.4904,
-                "api": 0.7209,
                 "config": 4.6968,
                 "chang": 5.4324,
-                "kei": 3.7149
+                "payment": 1.7797,
+                "kei": 3.7149,
+                "api": 0.7209,
+                "401": 3.0046,
+                "fail": 1.4904
               },
               "matched": [
                 "payment",
@@ -6772,14 +6772,14 @@
               "score": 12.4027,
               "probability": 1.0,
               "term_weights": {
-                "401": 3.0046,
-                "payment": 1.7797,
                 "invalid": 2.7765,
-                "fail": 1.4904,
-                "api": 0.7209,
                 "config": 4.6968,
                 "chang": 5.4324,
-                "kei": 3.7149
+                "payment": 1.7797,
+                "kei": 3.7149,
+                "api": 0.7209,
+                "401": 3.0046,
+                "fail": 1.4904
               },
               "matched": [
                 "payment",
@@ -6797,14 +6797,14 @@
               "score": 11.9966,
               "probability": 1.0,
               "term_weights": {
-                "401": 3.0046,
-                "payment": 1.7797,
                 "invalid": 2.7765,
-                "fail": 1.4904,
-                "api": 0.7209,
                 "config": 4.6968,
                 "chang": 5.4324,
-                "kei": 3.7149
+                "payment": 1.7797,
+                "kei": 3.7149,
+                "api": 0.7209,
+                "401": 3.0046,
+                "fail": 1.4904
               },
               "matched": [
                 "payment",
@@ -6822,14 +6822,14 @@
               "score": 11.9966,
               "probability": 1.0,
               "term_weights": {
-                "401": 3.0046,
-                "payment": 1.7797,
                 "invalid": 2.7765,
-                "fail": 1.4904,
-                "api": 0.7209,
                 "config": 4.6968,
                 "chang": 5.4324,
-                "kei": 3.7149
+                "payment": 1.7797,
+                "kei": 3.7149,
+                "api": 0.7209,
+                "401": 3.0046,
+                "fail": 1.4904
               },
               "matched": [
                 "payment",
@@ -6847,14 +6847,14 @@
               "score": 11.9966,
               "probability": 1.0,
               "term_weights": {
-                "401": 3.0046,
-                "payment": 1.7797,
                 "invalid": 2.7765,
-                "fail": 1.4904,
-                "api": 0.7209,
                 "config": 4.6968,
                 "chang": 5.4324,
-                "kei": 3.7149
+                "payment": 1.7797,
+                "kei": 3.7149,
+                "api": 0.7209,
+                "401": 3.0046,
+                "fail": 1.4904
               },
               "matched": [
                 "payment",
@@ -6872,14 +6872,14 @@
               "score": 11.9966,
               "probability": 1.0,
               "term_weights": {
-                "401": 3.0046,
-                "payment": 1.7797,
                 "invalid": 2.7765,
-                "fail": 1.4904,
-                "api": 0.7209,
                 "config": 4.6968,
                 "chang": 5.4324,
-                "kei": 3.7149
+                "payment": 1.7797,
+                "kei": 3.7149,
+                "api": 0.7209,
+                "401": 3.0046,
+                "fail": 1.4904
               },
               "matched": [
                 "payment",
@@ -6897,14 +6897,14 @@
               "score": 11.9966,
               "probability": 1.0,
               "term_weights": {
-                "401": 3.0046,
-                "payment": 1.7797,
                 "invalid": 2.7765,
-                "fail": 1.4904,
-                "api": 0.7209,
                 "config": 4.6968,
                 "chang": 5.4324,
-                "kei": 3.7149
+                "payment": 1.7797,
+                "kei": 3.7149,
+                "api": 0.7209,
+                "401": 3.0046,
+                "fail": 1.4904
               },
               "matched": [
                 "payment",
@@ -6922,14 +6922,14 @@
               "score": 11.9966,
               "probability": 1.0,
               "term_weights": {
-                "401": 3.0046,
-                "payment": 1.7797,
                 "invalid": 2.7765,
-                "fail": 1.4904,
-                "api": 0.7209,
                 "config": 4.6968,
                 "chang": 5.4324,
-                "kei": 3.7149
+                "payment": 1.7797,
+                "kei": 3.7149,
+                "api": 0.7209,
+                "401": 3.0046,
+                "fail": 1.4904
               },
               "matched": [
                 "payment",
@@ -6947,14 +6947,14 @@
               "score": 11.9966,
               "probability": 1.0,
               "term_weights": {
-                "401": 3.0046,
-                "payment": 1.7797,
                 "invalid": 2.7765,
-                "fail": 1.4904,
-                "api": 0.7209,
                 "config": 4.6968,
                 "chang": 5.4324,
-                "kei": 3.7149
+                "payment": 1.7797,
+                "kei": 3.7149,
+                "api": 0.7209,
+                "401": 3.0046,
+                "fail": 1.4904
               },
               "matched": [
                 "payment",
@@ -6972,14 +6972,14 @@
               "score": 11.9966,
               "probability": 1.0,
               "term_weights": {
-                "401": 3.0046,
-                "payment": 1.7797,
                 "invalid": 2.7765,
-                "fail": 1.4904,
-                "api": 0.7209,
                 "config": 4.6968,
                 "chang": 5.4324,
-                "kei": 3.7149
+                "payment": 1.7797,
+                "kei": 3.7149,
+                "api": 0.7209,
+                "401": 3.0046,
+                "fail": 1.4904
               },
               "matched": [
                 "payment",
@@ -7003,13 +7003,13 @@
               "score": 19.095,
               "probability": 1.0,
               "term_weights": {
-                "request": 2.0957,
-                "payment": 1.7797,
                 "gatewai": 1.0414,
-                "timeout": 3.0502,
+                "payment": 1.7797,
+                "handl": 4.226,
+                "request": 2.0957,
                 "read": 4.0526,
-                "hang": 6.9021,
-                "handl": 4.226
+                "timeout": 3.0502,
+                "hang": 6.9021
               },
               "matched": [
                 "payment",
@@ -7028,13 +7028,13 @@
               "score": 10.9782,
               "probability": 1.0,
               "term_weights": {
-                "request": 2.0957,
-                "payment": 1.7797,
                 "gatewai": 1.0414,
-                "timeout": 3.0502,
+                "payment": 1.7797,
+                "handl": 4.226,
+                "request": 2.0957,
                 "read": 4.0526,
-                "hang": 6.9021,
-                "handl": 4.226
+                "timeout": 3.0502,
+                "hang": 6.9021
               },
               "matched": [
                 "payment",
@@ -7051,13 +7051,13 @@
               "score": 10.9782,
               "probability": 1.0,
               "term_weights": {
-                "request": 2.0957,
-                "payment": 1.7797,
                 "gatewai": 1.0414,
-                "timeout": 3.0502,
+                "payment": 1.7797,
+                "handl": 4.226,
+                "request": 2.0957,
                 "read": 4.0526,
-                "hang": 6.9021,
-                "handl": 4.226
+                "timeout": 3.0502,
+                "hang": 6.9021
               },
               "matched": [
                 "payment",
@@ -7074,13 +7074,13 @@
               "score": 10.9782,
               "probability": 1.0,
               "term_weights": {
-                "request": 2.0957,
-                "payment": 1.7797,
                 "gatewai": 1.0414,
-                "timeout": 3.0502,
+                "payment": 1.7797,
+                "handl": 4.226,
+                "request": 2.0957,
                 "read": 4.0526,
-                "hang": 6.9021,
-                "handl": 4.226
+                "timeout": 3.0502,
+                "hang": 6.9021
               },
               "matched": [
                 "payment",
@@ -7097,13 +7097,13 @@
               "score": 10.9782,
               "probability": 1.0,
               "term_weights": {
-                "request": 2.0957,
-                "payment": 1.7797,
                 "gatewai": 1.0414,
-                "timeout": 3.0502,
+                "payment": 1.7797,
+                "handl": 4.226,
+                "request": 2.0957,
                 "read": 4.0526,
-                "hang": 6.9021,
-                "handl": 4.226
+                "timeout": 3.0502,
+                "hang": 6.9021
               },
               "matched": [
                 "payment",
@@ -7120,13 +7120,13 @@
               "score": 10.9782,
               "probability": 1.0,
               "term_weights": {
-                "request": 2.0957,
-                "payment": 1.7797,
                 "gatewai": 1.0414,
-                "timeout": 3.0502,
+                "payment": 1.7797,
+                "handl": 4.226,
+                "request": 2.0957,
                 "read": 4.0526,
-                "hang": 6.9021,
-                "handl": 4.226
+                "timeout": 3.0502,
+                "hang": 6.9021
               },
               "matched": [
                 "payment",
@@ -7143,13 +7143,13 @@
               "score": 10.9782,
               "probability": 1.0,
               "term_weights": {
-                "request": 2.0957,
-                "payment": 1.7797,
                 "gatewai": 1.0414,
-                "timeout": 3.0502,
+                "payment": 1.7797,
+                "handl": 4.226,
+                "request": 2.0957,
                 "read": 4.0526,
-                "hang": 6.9021,
-                "handl": 4.226
+                "timeout": 3.0502,
+                "hang": 6.9021
               },
               "matched": [
                 "payment",
@@ -7166,13 +7166,13 @@
               "score": 10.9782,
               "probability": 1.0,
               "term_weights": {
-                "request": 2.0957,
-                "payment": 1.7797,
                 "gatewai": 1.0414,
-                "timeout": 3.0502,
+                "payment": 1.7797,
+                "handl": 4.226,
+                "request": 2.0957,
                 "read": 4.0526,
-                "hang": 6.9021,
-                "handl": 4.226
+                "timeout": 3.0502,
+                "hang": 6.9021
               },
               "matched": [
                 "payment",
@@ -7189,13 +7189,13 @@
               "score": 10.9782,
               "probability": 1.0,
               "term_weights": {
-                "request": 2.0957,
-                "payment": 1.7797,
                 "gatewai": 1.0414,
-                "timeout": 3.0502,
+                "payment": 1.7797,
+                "handl": 4.226,
+                "request": 2.0957,
                 "read": 4.0526,
-                "hang": 6.9021,
-                "handl": 4.226
+                "timeout": 3.0502,
+                "hang": 6.9021
               },
               "matched": [
                 "payment",
@@ -7212,13 +7212,13 @@
               "score": 10.9782,
               "probability": 1.0,
               "term_weights": {
-                "request": 2.0957,
-                "payment": 1.7797,
                 "gatewai": 1.0414,
-                "timeout": 3.0502,
+                "payment": 1.7797,
+                "handl": 4.226,
+                "request": 2.0957,
                 "read": 4.0526,
-                "hang": 6.9021,
-                "handl": 4.226
+                "timeout": 3.0502,
+                "hang": 6.9021
               },
               "matched": [
                 "payment",
@@ -7242,10 +7242,10 @@
               "probability": 1.0,
               "term_weights": {
                 "anoth": 6.3906,
-                "view": 3.5302,
                 "user": 4.1357,
-                "order": 0.871,
-                "s": 4.4941
+                "s": 4.4941,
+                "view": 3.5302,
+                "order": 0.871
               },
               "matched": [
                 "user",
@@ -7264,10 +7264,10 @@
               "probability": 1.0,
               "term_weights": {
                 "anoth": 6.3906,
-                "view": 3.5302,
                 "user": 4.1357,
-                "order": 0.871,
-                "s": 4.4941
+                "s": 4.4941,
+                "view": 3.5302,
+                "order": 0.871
               },
               "matched": [
                 "user",
@@ -7286,10 +7286,10 @@
               "probability": 0.9953,
               "term_weights": {
                 "anoth": 6.3906,
-                "view": 3.5302,
                 "user": 4.1357,
-                "order": 0.871,
-                "s": 4.4941
+                "s": 4.4941,
+                "view": 3.5302,
+                "order": 0.871
               },
               "matched": [
                 "s",
@@ -7305,10 +7305,10 @@
               "probability": 0.9953,
               "term_weights": {
                 "anoth": 6.3906,
-                "view": 3.5302,
                 "user": 4.1357,
-                "order": 0.871,
-                "s": 4.4941
+                "s": 4.4941,
+                "view": 3.5302,
+                "order": 0.871
               },
               "matched": [
                 "s",
@@ -7324,10 +7324,10 @@
               "probability": 0.9953,
               "term_weights": {
                 "anoth": 6.3906,
-                "view": 3.5302,
                 "user": 4.1357,
-                "order": 0.871,
-                "s": 4.4941
+                "s": 4.4941,
+                "view": 3.5302,
+                "order": 0.871
               },
               "matched": [
                 "s",
@@ -7343,10 +7343,10 @@
               "probability": 0.9953,
               "term_weights": {
                 "anoth": 6.3906,
-                "view": 3.5302,
                 "user": 4.1357,
-                "order": 0.871,
-                "s": 4.4941
+                "s": 4.4941,
+                "view": 3.5302,
+                "order": 0.871
               },
               "matched": [
                 "s",
@@ -7362,10 +7362,10 @@
               "probability": 0.9953,
               "term_weights": {
                 "anoth": 6.3906,
-                "view": 3.5302,
                 "user": 4.1357,
-                "order": 0.871,
-                "s": 4.4941
+                "s": 4.4941,
+                "view": 3.5302,
+                "order": 0.871
               },
               "matched": [
                 "s",
@@ -7381,10 +7381,10 @@
               "probability": 0.9953,
               "term_weights": {
                 "anoth": 6.3906,
-                "view": 3.5302,
                 "user": 4.1357,
-                "order": 0.871,
-                "s": 4.4941
+                "s": 4.4941,
+                "view": 3.5302,
+                "order": 0.871
               },
               "matched": [
                 "s",
@@ -7400,10 +7400,10 @@
               "probability": 0.9953,
               "term_weights": {
                 "anoth": 6.3906,
-                "view": 3.5302,
                 "user": 4.1357,
-                "order": 0.871,
-                "s": 4.4941
+                "s": 4.4941,
+                "view": 3.5302,
+                "order": 0.871
               },
               "matched": [
                 "s",
@@ -7419,10 +7419,10 @@
               "probability": 0.9953,
               "term_weights": {
                 "anoth": 6.3906,
-                "view": 3.5302,
                 "user": 4.1357,
-                "order": 0.871,
-                "s": 4.4941
+                "s": 4.4941,
+                "view": 3.5302,
+                "order": 0.871
               },
               "matched": [
                 "s",
@@ -7444,11 +7444,11 @@
               "probability": 1.0,
               "term_weights": {
                 "json": 3.0195,
-                "invalid": 2.7765,
-                "webhook": 3.114,
                 "crash": 6.0534,
-                "malform": 6.3906,
-                "date": 5.4324
+                "invalid": 2.7765,
+                "date": 5.4324,
+                "webhook": 3.114,
+                "malform": 6.3906
               },
               "matched": [
                 "webhook",
@@ -7468,11 +7468,11 @@
               "probability": 1.0,
               "term_weights": {
                 "json": 3.0195,
-                "invalid": 2.7765,
-                "webhook": 3.114,
                 "crash": 6.0534,
-                "malform": 6.3906,
-                "date": 5.4324
+                "invalid": 2.7765,
+                "date": 5.4324,
+                "webhook": 3.114,
+                "malform": 6.3906
               },
               "matched": [
                 "webhook",
@@ -7490,11 +7490,11 @@
               "probability": 1.0,
               "term_weights": {
                 "json": 3.0195,
-                "invalid": 2.7765,
-                "webhook": 3.114,
                 "crash": 6.0534,
-                "malform": 6.3906,
-                "date": 5.4324
+                "invalid": 2.7765,
+                "date": 5.4324,
+                "webhook": 3.114,
+                "malform": 6.3906
               },
               "matched": [
                 "crash",
@@ -7511,11 +7511,11 @@
               "probability": 1.0,
               "term_weights": {
                 "json": 3.0195,
-                "invalid": 2.7765,
-                "webhook": 3.114,
                 "crash": 6.0534,
-                "malform": 6.3906,
-                "date": 5.4324
+                "invalid": 2.7765,
+                "date": 5.4324,
+                "webhook": 3.114,
+                "malform": 6.3906
               },
               "matched": [
                 "webhook",
@@ -7532,11 +7532,11 @@
               "probability": 0.9998,
               "term_weights": {
                 "json": 3.0195,
-                "invalid": 2.7765,
-                "webhook": 3.114,
                 "crash": 6.0534,
-                "malform": 6.3906,
-                "date": 5.4324
+                "invalid": 2.7765,
+                "date": 5.4324,
+                "webhook": 3.114,
+                "malform": 6.3906
               },
               "matched": [
                 "webhook",
@@ -7552,11 +7552,11 @@
               "probability": 0.9998,
               "term_weights": {
                 "json": 3.0195,
-                "invalid": 2.7765,
-                "webhook": 3.114,
                 "crash": 6.0534,
-                "malform": 6.3906,
-                "date": 5.4324
+                "invalid": 2.7765,
+                "date": 5.4324,
+                "webhook": 3.114,
+                "malform": 6.3906
               },
               "matched": [
                 "webhook",
@@ -7572,11 +7572,11 @@
               "probability": 0.9978,
               "term_weights": {
                 "json": 3.0195,
-                "invalid": 2.7765,
-                "webhook": 3.114,
                 "crash": 6.0534,
-                "malform": 6.3906,
-                "date": 5.4324
+                "invalid": 2.7765,
+                "date": 5.4324,
+                "webhook": 3.114,
+                "malform": 6.3906
               },
               "matched": [
                 "webhook",
@@ -7592,11 +7592,11 @@
               "probability": 0.9978,
               "term_weights": {
                 "json": 3.0195,
-                "invalid": 2.7765,
-                "webhook": 3.114,
                 "crash": 6.0534,
-                "malform": 6.3906,
-                "date": 5.4324
+                "invalid": 2.7765,
+                "date": 5.4324,
+                "webhook": 3.114,
+                "malform": 6.3906
               },
               "matched": [
                 "webhook",
@@ -7612,11 +7612,11 @@
               "probability": 0.9978,
               "term_weights": {
                 "json": 3.0195,
-                "invalid": 2.7765,
-                "webhook": 3.114,
                 "crash": 6.0534,
-                "malform": 6.3906,
-                "date": 5.4324
+                "invalid": 2.7765,
+                "date": 5.4324,
+                "webhook": 3.114,
+                "malform": 6.3906
               },
               "matched": [
                 "webhook",
@@ -7632,11 +7632,11 @@
               "probability": 0.9978,
               "term_weights": {
                 "json": 3.0195,
-                "invalid": 2.7765,
-                "webhook": 3.114,
                 "crash": 6.0534,
-                "malform": 6.3906,
-                "date": 5.4324
+                "invalid": 2.7765,
+                "date": 5.4324,
+                "webhook": 3.114,
+                "malform": 6.3906
               },
               "matched": [
                 "webhook",
@@ -7657,13 +7657,13 @@
               "score": 17.0095,
               "probability": 1.0,
               "term_weights": {
-                "slow": 2.5169,
-                "endpoint": 4.0933,
-                "list": 4.9501,
-                "queri": 2.6181,
-                "order": 0.871,
+                "mani": 6.0534,
                 "sql": 8.0014,
-                "mani": 6.0534
+                "queri": 2.6181,
+                "list": 4.9501,
+                "endpoint": 4.0933,
+                "slow": 2.5169,
+                "order": 0.871
               },
               "matched": [
                 "order",
@@ -7681,13 +7681,13 @@
               "score": 12.5325,
               "probability": 1.0,
               "term_weights": {
-                "slow": 2.5169,
-                "endpoint": 4.0933,
-                "list": 4.9501,
-                "queri": 2.6181,
-                "order": 0.871,
+                "mani": 6.0534,
                 "sql": 8.0014,
-                "mani": 6.0534
+                "queri": 2.6181,
+                "list": 4.9501,
+                "endpoint": 4.0933,
+                "slow": 2.5169,
+                "order": 0.871
               },
               "matched": [
                 "order",
@@ -7704,13 +7704,13 @@
               "score": 11.8746,
               "probability": 1.0,
               "term_weights": {
-                "slow": 2.5169,
-                "endpoint": 4.0933,
-                "list": 4.9501,
-                "queri": 2.6181,
-                "order": 0.871,
+                "mani": 6.0534,
                 "sql": 8.0014,
-                "mani": 6.0534
+                "queri": 2.6181,
+                "list": 4.9501,
+                "endpoint": 4.0933,
+                "slow": 2.5169,
+                "order": 0.871
               },
               "matched": [
                 "order",
@@ -7726,13 +7726,13 @@
               "score": 9.9144,
               "probability": 1.0,
               "term_weights": {
-                "slow": 2.5169,
-                "endpoint": 4.0933,
-                "list": 4.9501,
-                "queri": 2.6181,
-                "order": 0.871,
+                "mani": 6.0534,
                 "sql": 8.0014,
-                "mani": 6.0534
+                "queri": 2.6181,
+                "list": 4.9501,
+                "endpoint": 4.0933,
+                "slow": 2.5169,
+                "order": 0.871
               },
               "matched": [
                 "order",
@@ -7748,13 +7748,13 @@
               "score": 8.4392,
               "probability": 0.9998,
               "term_weights": {
-                "slow": 2.5169,
-                "endpoint": 4.0933,
-                "list": 4.9501,
-                "queri": 2.6181,
-                "order": 0.871,
+                "mani": 6.0534,
                 "sql": 8.0014,
-                "mani": 6.0534
+                "queri": 2.6181,
+                "list": 4.9501,
+                "endpoint": 4.0933,
+                "slow": 2.5169,
+                "order": 0.871
               },
               "matched": [
                 "order",
@@ -7770,13 +7770,13 @@
               "score": 8.4392,
               "probability": 0.9998,
               "term_weights": {
-                "slow": 2.5169,
-                "endpoint": 4.0933,
-                "list": 4.9501,
-                "queri": 2.6181,
-                "order": 0.871,
+                "mani": 6.0534,
                 "sql": 8.0014,
-                "mani": 6.0534
+                "queri": 2.6181,
+                "list": 4.9501,
+                "endpoint": 4.0933,
+                "slow": 2.5169,
+                "order": 0.871
               },
               "matched": [
                 "order",
@@ -7792,13 +7792,13 @@
               "score": 8.4392,
               "probability": 0.9998,
               "term_weights": {
-                "slow": 2.5169,
-                "endpoint": 4.0933,
-                "list": 4.9501,
-                "queri": 2.6181,
-                "order": 0.871,
+                "mani": 6.0534,
                 "sql": 8.0014,
-                "mani": 6.0534
+                "queri": 2.6181,
+                "list": 4.9501,
+                "endpoint": 4.0933,
+                "slow": 2.5169,
+                "order": 0.871
               },
               "matched": [
                 "order",
@@ -7814,13 +7814,13 @@
               "score": 6.0534,
               "probability": 0.9977,
               "term_weights": {
-                "slow": 2.5169,
-                "endpoint": 4.0933,
-                "list": 4.9501,
-                "queri": 2.6181,
-                "order": 0.871,
+                "mani": 6.0534,
                 "sql": 8.0014,
-                "mani": 6.0534
+                "queri": 2.6181,
+                "list": 4.9501,
+                "endpoint": 4.0933,
+                "slow": 2.5169,
+                "order": 0.871
               },
               "matched": [
                 "mani"
@@ -7834,13 +7834,13 @@
               "score": 6.006,
               "probability": 0.9975,
               "term_weights": {
-                "slow": 2.5169,
-                "endpoint": 4.0933,
-                "list": 4.9501,
-                "queri": 2.6181,
-                "order": 0.871,
+                "mani": 6.0534,
                 "sql": 8.0014,
-                "mani": 6.0534
+                "queri": 2.6181,
+                "list": 4.9501,
+                "endpoint": 4.0933,
+                "slow": 2.5169,
+                "order": 0.871
               },
               "matched": [
                 "order",
@@ -7856,13 +7856,13 @@
               "score": 6.006,
               "probability": 0.9975,
               "term_weights": {
-                "slow": 2.5169,
-                "endpoint": 4.0933,
-                "list": 4.9501,
-                "queri": 2.6181,
-                "order": 0.871,
+                "mani": 6.0534,
                 "sql": 8.0014,
-                "mani": 6.0534
+                "queri": 2.6181,
+                "list": 4.9501,
+                "endpoint": 4.0933,
+                "slow": 2.5169,
+                "order": 0.871
               },
               "matched": [
                 "order",
@@ -7884,16 +7884,16 @@
               "score": 26.0039,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
                 "failur": 6.3906,
+                "miss": 5.0509,
+                "id": 1.8868,
+                "cannot": 4.7744,
+                "error": 0.1854,
+                "correl": 4.9501,
                 "payment": 1.7797,
                 "webhook": 3.114,
-                "id": 1.8868,
-                "trace": 6.9021,
-                "miss": 5.0509,
-                "cannot": 4.7744,
-                "correl": 4.9501,
-                "log": -2.6394
+                "log": -2.6394,
+                "trace": 6.9021
               },
               "matched": [
                 "error",
@@ -7915,16 +7915,16 @@
               "score": 14.1421,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
                 "failur": 6.3906,
+                "miss": 5.0509,
+                "id": 1.8868,
+                "cannot": 4.7744,
+                "error": 0.1854,
+                "correl": 4.9501,
                 "payment": 1.7797,
                 "webhook": 3.114,
-                "id": 1.8868,
-                "trace": 6.9021,
-                "miss": 5.0509,
-                "cannot": 4.7744,
-                "correl": 4.9501,
-                "log": -2.6394
+                "log": -2.6394,
+                "trace": 6.9021
               },
               "matched": [
                 "log",
@@ -7943,16 +7943,16 @@
               "score": 11.028,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
                 "failur": 6.3906,
+                "miss": 5.0509,
+                "id": 1.8868,
+                "cannot": 4.7744,
+                "error": 0.1854,
+                "correl": 4.9501,
                 "payment": 1.7797,
                 "webhook": 3.114,
-                "id": 1.8868,
-                "trace": 6.9021,
-                "miss": 5.0509,
-                "cannot": 4.7744,
-                "correl": 4.9501,
-                "log": -2.6394
+                "log": -2.6394,
+                "trace": 6.9021
               },
               "matched": [
                 "log",
@@ -7970,16 +7970,16 @@
               "score": 10.7516,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
                 "failur": 6.3906,
+                "miss": 5.0509,
+                "id": 1.8868,
+                "cannot": 4.7744,
+                "error": 0.1854,
+                "correl": 4.9501,
                 "payment": 1.7797,
                 "webhook": 3.114,
-                "id": 1.8868,
-                "trace": 6.9021,
-                "miss": 5.0509,
-                "cannot": 4.7744,
-                "correl": 4.9501,
-                "log": -2.6394
+                "log": -2.6394,
+                "trace": 6.9021
               },
               "matched": [
                 "log",
@@ -7997,16 +7997,16 @@
               "score": 10.7516,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
                 "failur": 6.3906,
+                "miss": 5.0509,
+                "id": 1.8868,
+                "cannot": 4.7744,
+                "error": 0.1854,
+                "correl": 4.9501,
                 "payment": 1.7797,
                 "webhook": 3.114,
-                "id": 1.8868,
-                "trace": 6.9021,
-                "miss": 5.0509,
-                "cannot": 4.7744,
-                "correl": 4.9501,
-                "log": -2.6394
+                "log": -2.6394,
+                "trace": 6.9021
               },
               "matched": [
                 "log",
@@ -8024,16 +8024,16 @@
               "score": 10.7516,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
                 "failur": 6.3906,
+                "miss": 5.0509,
+                "id": 1.8868,
+                "cannot": 4.7744,
+                "error": 0.1854,
+                "correl": 4.9501,
                 "payment": 1.7797,
                 "webhook": 3.114,
-                "id": 1.8868,
-                "trace": 6.9021,
-                "miss": 5.0509,
-                "cannot": 4.7744,
-                "correl": 4.9501,
-                "log": -2.6394
+                "log": -2.6394,
+                "trace": 6.9021
               },
               "matched": [
                 "log",
@@ -8051,16 +8051,16 @@
               "score": 10.7516,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
                 "failur": 6.3906,
+                "miss": 5.0509,
+                "id": 1.8868,
+                "cannot": 4.7744,
+                "error": 0.1854,
+                "correl": 4.9501,
                 "payment": 1.7797,
                 "webhook": 3.114,
-                "id": 1.8868,
-                "trace": 6.9021,
-                "miss": 5.0509,
-                "cannot": 4.7744,
-                "correl": 4.9501,
-                "log": -2.6394
+                "log": -2.6394,
+                "trace": 6.9021
               },
               "matched": [
                 "log",
@@ -8078,16 +8078,16 @@
               "score": 10.7516,
               "probability": 1.0,
               "term_weights": {
-                "error": 0.1854,
                 "failur": 6.3906,
+                "miss": 5.0509,
+                "id": 1.8868,
+                "cannot": 4.7744,
+                "error": 0.1854,
+                "correl": 4.9501,
                 "payment": 1.7797,
                 "webhook": 3.114,
-                "id": 1.8868,
-                "trace": 6.9021,
-                "miss": 5.0509,
-                "cannot": 4.7744,
-                "correl": 4.9501,
-                "log": -2.6394
+                "log": -2.6394,
+                "trace": 6.9021
               },
               "matched": [
                 "log",
@@ -8105,16 +8105,16 @@
               "score": 9.0912,
               "probability": 0.9999,
               "term_weights": {
-                "error": 0.1854,
                 "failur": 6.3906,
+                "miss": 5.0509,
+                "id": 1.8868,
+                "cannot": 4.7744,
+                "error": 0.1854,
+                "correl": 4.9501,
                 "payment": 1.7797,
                 "webhook": 3.114,
-                "id": 1.8868,
-                "trace": 6.9021,
-                "miss": 5.0509,
-                "cannot": 4.7744,
-                "correl": 4.9501,
-                "log": -2.6394
+                "log": -2.6394,
+                "trace": 6.9021
               },
               "matched": [
                 "log",
@@ -8132,16 +8132,16 @@
               "score": 6.8306,
               "probability": 0.9989,
               "term_weights": {
-                "error": 0.1854,
                 "failur": 6.3906,
+                "miss": 5.0509,
+                "id": 1.8868,
+                "cannot": 4.7744,
+                "error": 0.1854,
+                "correl": 4.9501,
                 "payment": 1.7797,
                 "webhook": 3.114,
-                "id": 1.8868,
-                "trace": 6.9021,
-                "miss": 5.0509,
-                "cannot": 4.7744,
-                "correl": 4.9501,
-                "log": -2.6394
+                "log": -2.6394,
+                "trace": 6.9021
               },
               "matched": [
                 "miss",
@@ -8163,11 +8163,11 @@
               "probability": 1.0,
               "term_weights": {
                 "invoic": 3.9394,
-                "on": 5.6001,
-                "paisa": 6.3906,
-                "round": 4.226,
                 "chang": 5.4324,
-                "total": 2.2182
+                "on": 5.6001,
+                "total": 2.2182,
+                "paisa": 6.3906,
+                "round": 4.226
               },
               "matched": [
                 "invoic",
@@ -8187,11 +8187,11 @@
               "probability": 1.0,
               "term_weights": {
                 "invoic": 3.9394,
-                "on": 5.6001,
-                "paisa": 6.3906,
-                "round": 4.226,
                 "chang": 5.4324,
-                "total": 2.2182
+                "on": 5.6001,
+                "total": 2.2182,
+                "paisa": 6.3906,
+                "round": 4.226
               },
               "matched": [
                 "invoic",
@@ -8210,11 +8210,11 @@
               "probability": 1.0,
               "term_weights": {
                 "invoic": 3.9394,
-                "on": 5.6001,
-                "paisa": 6.3906,
-                "round": 4.226,
                 "chang": 5.4324,
-                "total": 2.2182
+                "on": 5.6001,
+                "total": 2.2182,
+                "paisa": 6.3906,
+                "round": 4.226
               },
               "matched": [
                 "invoic",
@@ -8231,11 +8231,11 @@
               "probability": 1.0,
               "term_weights": {
                 "invoic": 3.9394,
-                "on": 5.6001,
-                "paisa": 6.3906,
-                "round": 4.226,
                 "chang": 5.4324,
-                "total": 2.2182
+                "on": 5.6001,
+                "total": 2.2182,
+                "paisa": 6.3906,
+                "round": 4.226
               },
               "matched": [
                 "invoic",
@@ -8252,11 +8252,11 @@
               "probability": 1.0,
               "term_weights": {
                 "invoic": 3.9394,
-                "on": 5.6001,
-                "paisa": 6.3906,
-                "round": 4.226,
                 "chang": 5.4324,
-                "total": 2.2182
+                "on": 5.6001,
+                "total": 2.2182,
+                "paisa": 6.3906,
+                "round": 4.226
               },
               "matched": [
                 "invoic",
@@ -8273,11 +8273,11 @@
               "probability": 1.0,
               "term_weights": {
                 "invoic": 3.9394,
-                "on": 5.6001,
-                "paisa": 6.3906,
-                "round": 4.226,
                 "chang": 5.4324,
-                "total": 2.2182
+                "on": 5.6001,
+                "total": 2.2182,
+                "paisa": 6.3906,
+                "round": 4.226
               },
               "matched": [
                 "invoic",
@@ -8294,11 +8294,11 @@
               "probability": 1.0,
               "term_weights": {
                 "invoic": 3.9394,
-                "on": 5.6001,
-                "paisa": 6.3906,
-                "round": 4.226,
                 "chang": 5.4324,
-                "total": 2.2182
+                "on": 5.6001,
+                "total": 2.2182,
+                "paisa": 6.3906,
+                "round": 4.226
               },
               "matched": [
                 "invoic",
@@ -8315,11 +8315,11 @@
               "probability": 1.0,
               "term_weights": {
                 "invoic": 3.9394,
-                "on": 5.6001,
-                "paisa": 6.3906,
-                "round": 4.226,
                 "chang": 5.4324,
-                "total": 2.2182
+                "on": 5.6001,
+                "total": 2.2182,
+                "paisa": 6.3906,
+                "round": 4.226
               },
               "matched": [
                 "invoic",
@@ -8336,11 +8336,11 @@
               "probability": 1.0,
               "term_weights": {
                 "invoic": 3.9394,
-                "on": 5.6001,
-                "paisa": 6.3906,
-                "round": 4.226,
                 "chang": 5.4324,
-                "total": 2.2182
+                "on": 5.6001,
+                "total": 2.2182,
+                "paisa": 6.3906,
+                "round": 4.226
               },
               "matched": [
                 "invoic",
@@ -8357,11 +8357,11 @@
               "probability": 1.0,
               "term_weights": {
                 "invoic": 3.9394,
-                "on": 5.6001,
-                "paisa": 6.3906,
-                "round": 4.226,
                 "chang": 5.4324,
-                "total": 2.2182
+                "on": 5.6001,
+                "total": 2.2182,
+                "paisa": 6.3906,
+                "round": 4.226
               },
               "matched": [
                 "invoic",
@@ -8383,13 +8383,13 @@
               "score": 19.8686,
               "probability": 1.0,
               "term_weights": {
-                "app": 1.6256,
-                "quantiti": 3.3522,
-                "error": 0.1854,
                 "compar": 6.3906,
-                "type": 4.6246,
-                "str": 4.2743,
+                "error": 0.1854,
+                "quantiti": 3.3522,
                 "mobil": 5.8014,
+                "app": 1.6256,
+                "str": 4.2743,
+                "type": 4.6246,
                 "int": 4.226
               },
               "matched": [
@@ -8408,13 +8408,13 @@
               "score": 15.0535,
               "probability": 1.0,
               "term_weights": {
-                "app": 1.6256,
-                "quantiti": 3.3522,
-                "error": 0.1854,
                 "compar": 6.3906,
-                "type": 4.6246,
-                "str": 4.2743,
+                "error": 0.1854,
+                "quantiti": 3.3522,
                 "mobil": 5.8014,
+                "app": 1.6256,
+                "str": 4.2743,
+                "type": 4.6246,
                 "int": 4.226
               },
               "matched": [
@@ -8432,13 +8432,13 @@
               "score": 13.6634,
               "probability": 1.0,
               "term_weights": {
-                "app": 1.6256,
-                "quantiti": 3.3522,
-                "error": 0.1854,
                 "compar": 6.3906,
-                "type": 4.6246,
-                "str": 4.2743,
+                "error": 0.1854,
+                "quantiti": 3.3522,
                 "mobil": 5.8014,
+                "app": 1.6256,
+                "str": 4.2743,
+                "type": 4.6246,
                 "int": 4.226
               },
               "matched": [
@@ -8457,13 +8457,13 @@
               "score": 13.6634,
               "probability": 1.0,
               "term_weights": {
-                "app": 1.6256,
-                "quantiti": 3.3522,
-                "error": 0.1854,
                 "compar": 6.3906,
-                "type": 4.6246,
-                "str": 4.2743,
+                "error": 0.1854,
+                "quantiti": 3.3522,
                 "mobil": 5.8014,
+                "app": 1.6256,
+                "str": 4.2743,
+                "type": 4.6246,
                 "int": 4.226
               },
               "matched": [
@@ -8482,13 +8482,13 @@
               "score": 13.6634,
               "probability": 1.0,
               "term_weights": {
-                "app": 1.6256,
-                "quantiti": 3.3522,
-                "error": 0.1854,
                 "compar": 6.3906,
-                "type": 4.6246,
-                "str": 4.2743,
+                "error": 0.1854,
+                "quantiti": 3.3522,
                 "mobil": 5.8014,
+                "app": 1.6256,
+                "str": 4.2743,
+                "type": 4.6246,
                 "int": 4.226
               },
               "matched": [
@@ -8507,13 +8507,13 @@
               "score": 13.6634,
               "probability": 1.0,
               "term_weights": {
-                "app": 1.6256,
-                "quantiti": 3.3522,
-                "error": 0.1854,
                 "compar": 6.3906,
-                "type": 4.6246,
-                "str": 4.2743,
+                "error": 0.1854,
+                "quantiti": 3.3522,
                 "mobil": 5.8014,
+                "app": 1.6256,
+                "str": 4.2743,
+                "type": 4.6246,
                 "int": 4.226
               },
               "matched": [
@@ -8532,13 +8532,13 @@
               "score": 13.6634,
               "probability": 1.0,
               "term_weights": {
-                "app": 1.6256,
-                "quantiti": 3.3522,
-                "error": 0.1854,
                 "compar": 6.3906,
-                "type": 4.6246,
-                "str": 4.2743,
+                "error": 0.1854,
+                "quantiti": 3.3522,
                 "mobil": 5.8014,
+                "app": 1.6256,
+                "str": 4.2743,
+                "type": 4.6246,
                 "int": 4.226
               },
               "matched": [
@@ -8557,13 +8557,13 @@
               "score": 13.6634,
               "probability": 1.0,
               "term_weights": {
-                "app": 1.6256,
-                "quantiti": 3.3522,
-                "error": 0.1854,
                 "compar": 6.3906,
-                "type": 4.6246,
-                "str": 4.2743,
+                "error": 0.1854,
+                "quantiti": 3.3522,
                 "mobil": 5.8014,
+                "app": 1.6256,
+                "str": 4.2743,
+                "type": 4.6246,
                 "int": 4.226
               },
               "matched": [
@@ -8582,13 +8582,13 @@
               "score": 13.6634,
               "probability": 1.0,
               "term_weights": {
-                "app": 1.6256,
-                "quantiti": 3.3522,
-                "error": 0.1854,
                 "compar": 6.3906,
-                "type": 4.6246,
-                "str": 4.2743,
+                "error": 0.1854,
+                "quantiti": 3.3522,
                 "mobil": 5.8014,
+                "app": 1.6256,
+                "str": 4.2743,
+                "type": 4.6246,
                 "int": 4.226
               },
               "matched": [
@@ -8607,13 +8607,13 @@
               "score": 13.6634,
               "probability": 1.0,
               "term_weights": {
-                "app": 1.6256,
-                "quantiti": 3.3522,
-                "error": 0.1854,
                 "compar": 6.3906,
-                "type": 4.6246,
-                "str": 4.2743,
+                "error": 0.1854,
+                "quantiti": 3.3522,
                 "mobil": 5.8014,
+                "app": 1.6256,
+                "str": 4.2743,
+                "type": 4.6246,
                 "int": 4.226
               },
               "matched": [
@@ -8638,13 +8638,13 @@
               "score": 21.8654,
               "probability": 1.0,
               "term_weights": {
-                "stage": 3.8053,
-                "point": 4.6968,
-                "tax": 3.8372,
                 "servic": -1.1374,
-                "product": 3.8702,
+                "tax": 3.8372,
+                "stage": 3.8053,
                 "url": 2.7407,
-                "unreach": 4.0526
+                "unreach": 4.0526,
+                "product": 3.8702,
+                "point": 4.6968
               },
               "matched": [
                 "tax",
@@ -8664,13 +8664,13 @@
               "score": 17.8127,
               "probability": 1.0,
               "term_weights": {
-                "stage": 3.8053,
-                "point": 4.6968,
-                "tax": 3.8372,
                 "servic": -1.1374,
-                "product": 3.8702,
+                "tax": 3.8372,
+                "stage": 3.8053,
                 "url": 2.7407,
-                "unreach": 4.0526
+                "unreach": 4.0526,
+                "product": 3.8702,
+                "point": 4.6968
               },
               "matched": [
                 "tax",
@@ -8689,13 +8689,13 @@
               "score": 14.0074,
               "probability": 1.0,
               "term_weights": {
-                "stage": 3.8053,
-                "point": 4.6968,
-                "tax": 3.8372,
                 "servic": -1.1374,
-                "product": 3.8702,
+                "tax": 3.8372,
+                "stage": 3.8053,
                 "url": 2.7407,
-                "unreach": 4.0526
+                "unreach": 4.0526,
+                "product": 3.8702,
+                "point": 4.6968
               },
               "matched": [
                 "tax",
@@ -8713,13 +8713,13 @@
               "score": 14.0074,
               "probability": 1.0,
               "term_weights": {
-                "stage": 3.8053,
-                "point": 4.6968,
-                "tax": 3.8372,
                 "servic": -1.1374,
-                "product": 3.8702,
+                "tax": 3.8372,
+                "stage": 3.8053,
                 "url": 2.7407,
-                "unreach": 4.0526
+                "unreach": 4.0526,
+                "product": 3.8702,
+                "point": 4.6968
               },
               "matched": [
                 "tax",
@@ -8737,13 +8737,13 @@
               "score": 13.2984,
               "probability": 1.0,
               "term_weights": {
-                "stage": 3.8053,
-                "point": 4.6968,
-                "tax": 3.8372,
                 "servic": -1.1374,
-                "product": 3.8702,
+                "tax": 3.8372,
+                "stage": 3.8053,
                 "url": 2.7407,
-                "unreach": 4.0526
+                "unreach": 4.0526,
+                "product": 3.8702,
+                "point": 4.6968
               },
               "matched": [
                 "tax",
@@ -8761,13 +8761,13 @@
               "score": 13.2984,
               "probability": 1.0,
               "term_weights": {
-                "stage": 3.8053,
-                "point": 4.6968,
-                "tax": 3.8372,
                 "servic": -1.1374,
-                "product": 3.8702,
+                "tax": 3.8372,
+                "stage": 3.8053,
                 "url": 2.7407,
-                "unreach": 4.0526
+                "unreach": 4.0526,
+                "product": 3.8702,
+                "point": 4.6968
               },
               "matched": [
                 "tax",
@@ -8785,13 +8785,13 @@
               "score": 13.2984,
               "probability": 1.0,
               "term_weights": {
-                "stage": 3.8053,
-                "point": 4.6968,
-                "tax": 3.8372,
                 "servic": -1.1374,
-                "product": 3.8702,
+                "tax": 3.8372,
+                "stage": 3.8053,
                 "url": 2.7407,
-                "unreach": 4.0526
+                "unreach": 4.0526,
+                "product": 3.8702,
+                "point": 4.6968
               },
               "matched": [
                 "tax",
@@ -8809,13 +8809,13 @@
               "score": 13.2984,
               "probability": 1.0,
               "term_weights": {
-                "stage": 3.8053,
-                "point": 4.6968,
-                "tax": 3.8372,
                 "servic": -1.1374,
-                "product": 3.8702,
+                "tax": 3.8372,
+                "stage": 3.8053,
                 "url": 2.7407,
-                "unreach": 4.0526
+                "unreach": 4.0526,
+                "product": 3.8702,
+                "point": 4.6968
               },
               "matched": [
                 "tax",
@@ -8833,13 +8833,13 @@
               "score": 13.2984,
               "probability": 1.0,
               "term_weights": {
-                "stage": 3.8053,
-                "point": 4.6968,
-                "tax": 3.8372,
                 "servic": -1.1374,
-                "product": 3.8702,
+                "tax": 3.8372,
+                "stage": 3.8053,
                 "url": 2.7407,
-                "unreach": 4.0526
+                "unreach": 4.0526,
+                "product": 3.8702,
+                "point": 4.6968
               },
               "matched": [
                 "tax",
@@ -8857,13 +8857,13 @@
               "score": 13.2984,
               "probability": 1.0,
               "term_weights": {
-                "stage": 3.8053,
-                "point": 4.6968,
-                "tax": 3.8372,
                 "servic": -1.1374,
-                "product": 3.8702,
+                "tax": 3.8372,
+                "stage": 3.8053,
                 "url": 2.7407,
-                "unreach": 4.0526
+                "unreach": 4.0526,
+                "product": 3.8702,
+                "point": 4.6968
               },
               "matched": [
                 "tax",
@@ -8881,7 +8881,7 @@
     "boolean": {
       "model": "boolean",
       "k": 10,
-      "took_ms": 41.8,
+      "took_ms": 61.8,
       "mean_metrics": {
         "P@10": 0.0,
         "R@10": 0.0,
@@ -10845,7 +10845,7 @@
     "overlap": {
       "model": "overlap",
       "k": 10,
-      "took_ms": 82.3,
+      "took_ms": 76.9,
       "mean_metrics": {
         "P@10": 0.1267,
         "R@10": 0.0371,
@@ -11516,7 +11516,7 @@
     "nonoverlap": {
       "model": "nonoverlap",
       "k": 10,
-      "took_ms": 232.0,
+      "took_ms": 244.7,
       "mean_metrics": {
         "P@10": 0.8533,
         "R@10": 0.1956,
@@ -15692,7 +15692,7 @@
     "proximal": {
       "model": "proximal",
       "k": 10,
-      "took_ms": 287.2,
+      "took_ms": 312.0,
       "mean_metrics": {
         "P@10": 0.8133,
         "R@10": 0.1909,
@@ -21078,7 +21078,7 @@
     "field_bm25": {
       "model": "field_bm25",
       "k": 10,
-      "took_ms": 3.9,
+      "took_ms": 7.5,
       "mean_metrics": {
         "P@10": 0.2267,
         "R@10": 0.0509,

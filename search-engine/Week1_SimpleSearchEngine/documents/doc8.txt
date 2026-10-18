@@ -1,0 +1,2 @@
+Title: Vector Space Model
+The vector space model represents documents and queries as vectors in a high dimensional space. Each dimension corresponds to a unique term in the vocabulary. The relevance of a document to a query is computed as the cosine similarity between the document vector and the query vector. Documents closer in direction to the query vector are ranked higher. TF-IDF weights are commonly used to build these vectors.

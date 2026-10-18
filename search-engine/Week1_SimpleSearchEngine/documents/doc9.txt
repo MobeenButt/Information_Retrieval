@@ -1,0 +1,2 @@
+Title: Web Crawling and Indexing
+Web crawlers are programs that automatically browse the web to collect documents for indexing. A crawler starts from a set of seed URLs and follows hyperlinks to discover new pages. Each discovered page is downloaded and added to the index. Search engines like Google use crawlers to keep their indexes up to date. Crawling at web scale requires careful management of politeness delays duplicate detection and robots.txt rules.

@@ -1,0 +1,2 @@
+Title: TF-IDF Ranking
+TF-IDF stands for Term Frequency Inverse Document Frequency. It is a numerical statistic used to reflect how important a word is to a document in a collection. Term frequency measures how often a term appears in a document. Inverse document frequency penalizes terms that appear in many documents because they are less informative. A word that appears frequently in one document but rarely across the collection receives a high TF-IDF score.

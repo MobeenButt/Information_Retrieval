@@ -1,0 +1,2 @@
+Title: Introduction to Information Retrieval
+Information retrieval is the process of obtaining relevant information from a large collection of documents. A search engine is a classic example of an information retrieval system. It accepts a query from the user and returns a ranked list of documents that are relevant to the query. The core tasks of information retrieval include indexing documents, processing queries, and ranking results by relevance.

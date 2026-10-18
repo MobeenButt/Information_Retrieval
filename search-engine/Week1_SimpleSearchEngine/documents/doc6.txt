@@ -1,0 +1,2 @@
+Title: BM25 Ranking Algorithm
+BM25 is a probabilistic ranking algorithm widely used in search engines. It improves on TF-IDF by adding term frequency saturation and document length normalization. Term frequency saturation means that a word appearing ten times in a document is not ten times more relevant than a word appearing once. Length normalization penalizes long documents so that they do not dominate just because they contain more words. BM25 parameters k1 and b control these two properties.

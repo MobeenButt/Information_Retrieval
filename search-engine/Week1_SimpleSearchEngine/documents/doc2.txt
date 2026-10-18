@@ -1,0 +1,2 @@
+Title: Inverted Index
+An inverted index is a data structure used in information retrieval to map terms to the documents that contain them. It is called inverted because it maps from content to location rather than from location to content. Each entry in an inverted index contains a term and a list of documents called a postings list. Inverted indexes make keyword search very fast and efficient.

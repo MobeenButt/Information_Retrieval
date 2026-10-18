@@ -1,0 +1,2 @@
+Title: Boolean Search Model
+The Boolean search model retrieves documents based on logical operators AND OR and NOT. A query like cat AND dog retrieves only documents that contain both words. A query like cat OR dog retrieves documents that contain either word. Boolean retrieval is simple and precise but does not rank results by relevance. All matching documents are treated equally regardless of how many times the search terms appear.

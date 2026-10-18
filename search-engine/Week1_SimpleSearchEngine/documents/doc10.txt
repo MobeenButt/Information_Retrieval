@@ -1,0 +1,2 @@
+Title: Query Processing
+Query processing transforms a raw user query into a form the search engine can use. Steps include tokenization stop word removal and stemming just like document preprocessing. The processed query terms are looked up in the inverted index to find candidate documents. Those candidates are then ranked by a scoring function such as TF-IDF or BM25. The final ranked list is returned to the user as search results.
