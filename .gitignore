@@ -52,5 +52,5 @@ desktop.ini
 # Logs
 *.log
 
-
+# zip files
 *.zip
