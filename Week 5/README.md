@@ -24,8 +24,8 @@ Week 5/
 │   └── preprocess.py
 ├── data/
 │   └── documents.json   Primary corpus (25 research papers)
-└── index/
-    └── browse_index.json  Auto-generated on first start
+└── index/          Used by the original search-engine backend; Week 5 builds
+                    its own in-memory index from documents.json
 ```
 
 > **Note:** Both `app.py` and `browse.py` insert `../search-engine/backend`
@@ -59,7 +59,7 @@ Week 5/
 | `/` or `/index.html` | GET | Serve the frontend SPA | `GET /` |
 | `/api/categories` | GET | Return the full category tree | `GET /api/categories` |
 | `/api/browse` | GET | Browse docs by category/subcategory | `GET /api/browse?cat=AI&sub=NLP` |
-| `/api/search` | GET | BM25 search with optional filters | `GET /api/search?q=retrieval&cat=IR&type=txt&k=10` |
+| `/api/search` | GET | BM25 search with optional category, type, date, author, topic, and language filters | `GET /api/search?q=retrieval&cat=IR&type=txt&date=2024-01-01&author=Smith&topic=ranking&language=en&k=10` |
 | `/api/doc` | GET | Full document + related + internal links | `GET /api/doc?id=4` |
 | `/api/stats` | GET | Server stats (doc count, categories, index status) | `GET /api/stats` |
 
@@ -104,7 +104,16 @@ Week 5/
 
 - The server uses only Python standard library (`http.server`, `json`, `urllib`).
 - All CORS headers (`Access-Control-Allow-Origin: *`) are emitted on every response.
-- The inverted index (`browse_index.json`) is built automatically on the first start
-  and reused on subsequent starts.
+- The Week 5 search index is built from `documents.json` each time the server starts,
+  keeping result IDs and titles aligned with the corpus shown in the UI. It does not
+  reuse the separate search-engine corpus index.
+- Date, author, and language filters use optional document metadata (`date` /
+  `publication_date` / `year`, `author` / `authors`, and `language` / `lang`).
+  Topic filtering checks topic/tag metadata and the existing category, subcategory,
+  and title. The current `documents.json` corpus does not include date, author,
+  or language fields, so those filters return no matches until metadata is added.
+- If a search has no exact matches, the server retries only unambiguous one-character
+  spelling corrections for terms of at least five characters. The response includes
+  `corrected_query`, and the UI indicates which corrected query produced the results.
 - `sys.path` injection in both `app.py` and `browse.py` points to
   `../search-engine/backend` relative to the `Week 5/` folder.

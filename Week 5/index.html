@@ -502,6 +502,11 @@
       padding: 2rem 1rem;
       text-align: center;
     }
+    .spell-correction {
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+    .spell-correction strong { color: var(--yellow); }
 
     /* Preview overlay */
     .preview-overlay {
@@ -744,12 +749,16 @@
 
       // GET /api/search?q=&cat=&type=&k=
       //   q required · cat optional · type optional · k optional (default 10)
-      search(q, cat, type, k) {
+      search(q, cat, type, k, filters) {
         const params = new URLSearchParams();
         params.set("q", q || "");
         if (cat)  params.set("cat", cat);
         if (type) params.set("type", type);
         params.set("k", k || 10);
+        filters = filters || {};
+        ["date", "author", "topic", "language"].forEach(key => {
+          if (filters[key]) params.set(key, filters[key]);
+        });
         return fetch("/api/search?" + params.toString()).then(r => r.json());
       },
 
@@ -781,7 +790,11 @@
         filters: {
           cat: "",
           fileType: "",
-          keyword: ""
+          keyword: "",
+          date: "",
+          author: "",
+          topic: "",
+          language: ""
         }
       },
 
@@ -1253,7 +1266,7 @@
        removable chips for active filters.
        =========================================================== */
     const SearchBar = {
-      _debounceTimer: null,
+      _debounceTimers: {},
 
       init() {
         // --- Mode toggle ---
@@ -1338,13 +1351,42 @@
         kwInput.placeholder = "Filter results\u2026";
         var self = this;
         kwInput.addEventListener("input", function () {
-          clearTimeout(self._debounceTimer);
-          self._debounceTimer = setTimeout(function () {
+          clearTimeout(self._debounceTimers.keyword);
+          self._debounceTimers.keyword = setTimeout(function () {
             State.update({ filters: { keyword: kwInput.value.trim() } });
           }, 300);
         });
         kwLabel.appendChild(kwInput);
         container.appendChild(kwLabel);
+
+        [
+          { key: "date", label: "Date", type: "date" },
+          { key: "author", label: "Author", type: "text" },
+          { key: "topic", label: "Topic", type: "text" },
+          { key: "language", label: "Language", type: "text" }
+        ].forEach(function (filter) {
+          var label = document.createElement("label");
+          label.textContent = filter.label;
+          var input = document.createElement("input");
+          input.type = filter.type;
+          input.id = "filter-" + filter.key;
+          input.setAttribute("aria-label", filter.label + " filter");
+          input.addEventListener(filter.type === "date" ? "change" : "input", function () {
+            var updateFilter = function () {
+              var patch = { filters: {} };
+              patch.filters[filter.key] = input.value.trim();
+              State.update(patch);
+            };
+            if (filter.type === "date") {
+              updateFilter();
+            } else {
+              clearTimeout(self._debounceTimers[filter.key]);
+              self._debounceTimers[filter.key] = setTimeout(updateFilter, 300);
+            }
+          });
+          label.appendChild(input);
+          container.appendChild(label);
+        });
       },
 
       render() {
@@ -1374,6 +1416,12 @@
         if (kwInput && document.activeElement !== kwInput) {
           kwInput.value = state.filters.keyword;
         }
+        ["date", "author", "topic", "language"].forEach(function (key) {
+          var input = document.getElementById("filter-" + key);
+          if (input && document.activeElement !== input) {
+            input.value = state.filters[key] || "";
+          }
+        });
 
         this._renderChips(state);
       },
@@ -1401,6 +1449,14 @@
         if (state.filters.keyword && state.mode === "search") {
           chips.push({ key: "keyword", label: 'Keyword: "' + state.filters.keyword + '"' });
         }
+        ["date", "author", "topic", "language"].forEach(function (key) {
+          if (state.filters[key]) {
+            chips.push({
+              key: key,
+              label: key.charAt(0).toUpperCase() + key.slice(1) + ": " + state.filters[key]
+            });
+          }
+        });
 
         chips.forEach(function (chip) {
           var el = document.createElement("span");
@@ -1447,10 +1503,10 @@
           container.innerHTML =
             '<p class="placeholder">Searching\u2026</p>';
           var self = this;
-          Api.search(q, state.filters.cat, state.filters.fileType, 20)
+          Api.search(q, state.filters.cat, state.filters.fileType, 20, state.filters)
             .then(function (data) {
               self._results = data.hits || [];
-              self._renderResults(container);
+            self._renderResults(container, data.corrected_query);
             })
             .catch(function () {
               container.innerHTML =
@@ -1478,11 +1534,25 @@
         }
       },
 
-      _renderResults(container) {
+      _renderResults(container, correctedQuery) {
         container.innerHTML = "";
+        if (correctedQuery) {
+          var notice = document.createElement("p");
+          notice.className = "spell-correction";
+          notice.appendChild(
+            document.createTextNode("No exact matches. Showing results for ")
+          );
+          var corrected = document.createElement("strong");
+          corrected.textContent = correctedQuery;
+          notice.appendChild(corrected);
+          notice.appendChild(document.createTextNode("."));
+          container.appendChild(notice);
+        }
         if (this._results.length === 0) {
-          container.innerHTML =
-            '<p class="no-results">No documents found.</p>';
+          var empty = document.createElement("p");
+          empty.className = "no-results";
+          empty.textContent = "No documents found.";
+          container.appendChild(empty);
           return;
         }
 

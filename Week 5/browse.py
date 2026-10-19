@@ -12,16 +12,15 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 _BACKEND = os.path.join(_HERE, "..", "search-engine", "backend")
 sys.path.insert(0, _BACKEND)
 
-from indexer import InvertedIndex, load_or_build  # noqa: E402
+from indexer import InvertedIndex  # noqa: E402
 from engine import SearchEngine                    # noqa: E402
-from preprocess import STOPWORDS                   # noqa: E402
+from preprocess import STOPWORDS, tokenize         # noqa: E402
 
 # ---------------------------------------------------------------------------
 # File / path constants
 # ---------------------------------------------------------------------------
 DOCUMENTS_JSON = os.path.join(_HERE, "..", "search-engine", "data", "documents.json")
 DATA_DIR = os.path.join(_HERE, "..", "search-engine", "data")
-INDEX_PATH = os.path.join(_HERE, "..", "search-engine", "index", "browse_index.json")
 
 # ---------------------------------------------------------------------------
 # Subcategory keyword map — used by _derive_subcategory()
@@ -68,6 +67,91 @@ MIN_KEYWORD_LEN = 3
 MAX_LINKS = 5
 
 
+def _metadata_values(doc: dict, keys: tuple) -> list:
+    """Return scalar text values for any matching metadata keys."""
+    values = []
+    for key, value in doc.items():
+        if key.lower() not in keys or value is None:
+            continue
+        candidates = value if isinstance(value, (list, tuple, set)) else [value]
+        values.extend(str(candidate).strip() for candidate in candidates if candidate is not None)
+    return [value for value in values if value]
+
+
+def _metadata_matches(doc: dict, query: str, keys: tuple) -> bool:
+    """Match a metadata filter against scalar or collection-valued fields."""
+    if not query:
+        return True
+    needle = query.strip().casefold()
+    return any(needle in value.casefold() for value in _metadata_values(doc, keys))
+
+
+def _matches_date(doc: dict, date: str) -> bool:
+    if not date:
+        return True
+    requested = date.strip()
+    for value in _metadata_values(
+        doc, ("date", "publication_date", "published", "published_at",
+              "publication_year", "year", "created_at")
+    ):
+        normalized = value[:10]
+        if normalized == requested or (
+            len(normalized) == 4 and requested.startswith(normalized)
+        ):
+            return True
+    return False
+
+
+def _topic_matches(doc: dict, topic: str) -> bool:
+    if not topic:
+        return True
+    # The current corpus uses category and title as its only topic metadata.
+    keys = ("topic", "topics", "tag", "tags", "category", "subcategory", "title")
+    return _metadata_matches(doc, topic, keys)
+
+
+def _one_edit_apart(left: str, right: str) -> bool:
+    """Return whether two terms differ by exactly one insertion/deletion/substitution."""
+    if abs(len(left) - len(right)) > 1:
+        return False
+
+    short, long = sorted((left, right), key=len)
+    short_index = long_index = edits = 0
+    while short_index < len(short) and long_index < len(long):
+        if short[short_index] == long[long_index]:
+            short_index += 1
+            long_index += 1
+            continue
+        edits += 1
+        if edits > 1:
+            return False
+        if len(short) == len(long):
+            short_index += 1
+        long_index += 1
+
+    edits += len(long) - long_index
+    return edits == 1
+
+
+def _correct_query(query: str, vocabulary: set) -> str:
+    """Correct unknown words only when each has one unambiguous one-edit match."""
+    corrected = []
+    changed = False
+    for token in tokenize(query):
+        if token in vocabulary or len(token) < 5:
+            corrected.append(token)
+            continue
+        candidates = [
+            term for term in vocabulary
+            if _one_edit_apart(token, term)
+        ]
+        if len(candidates) != 1:
+            return query
+        corrected.append(candidates[0])
+        changed = True
+    return " ".join(corrected) if changed else query
+
+
 def _derive_subcategory(title: str, category: str):
     """Return the first matching subcategory label for *title*, or None."""
     lower = title.lower()
@@ -86,6 +170,19 @@ def _strip_doc(doc: dict) -> dict:
         "category":    doc.get("category", ""),
         "file_type":   doc.get("file_type", "txt"),
         "subcategory": doc.get("subcategory"),
+        "date":        next(iter(_metadata_values(
+            doc, ("date", "publication_date", "published", "published_at",
+                  "publication_year", "year", "created_at")
+        )), None),
+        "author":      next(iter(_metadata_values(
+            doc, ("author", "authors", "creator", "creators")
+        )), None),
+        "language":    next(iter(_metadata_values(
+            doc, ("language", "lang")
+        )), None),
+        "topic":       next(iter(_metadata_values(
+            doc, ("topic", "topics", "tag", "tags")
+        )), None),
     }
 
 
@@ -140,11 +237,24 @@ class BrowseEngine:
             self._docs.append(doc)
             self._docs_by_id[doc_id] = doc
 
-        # ── 5. Build or reuse the inverted index ────────────────────────────
-        index_path = os.path.normpath(INDEX_PATH)
-        self._index: InvertedIndex = load_or_build(
-            os.path.normpath(DATA_DIR), index_path
-        )
+        # ── 5. Build the search index from the same corpus exposed to the UI ──
+        # The general search-engine data directory contains a separate corpus
+        # whose numeric IDs do not correspond to documents.json.
+        self._index = InvertedIndex()
+        for doc in self._docs:
+            text = " ".join(
+                doc.get(field, "")
+                for field in ("abstract", "methodology", "results")
+                if doc.get(field)
+            )
+            self._index.add_document(
+                doc["id"],
+                doc.get("title", ""),
+                text,
+                source=str(doc["id"]),
+                file_type=doc.get("file_type", "txt"),
+            )
+        self._index.finalize()
 
         # ── 6. Instantiate the search engine ────────────────────────────────
         self._engine: SearchEngine = SearchEngine(self._index)
@@ -230,12 +340,14 @@ class BrowseEngine:
 
         return results
 
-    def search(self, query: str, cat: str = "", file_type: str = "", k: int = 10) -> dict:
-        """BM25 search with optional category and file_type post-filters.
+    def search(
+        self, query: str, cat: str = "", file_type: str = "", k: int = 10,
+        date: str = "", author: str = "", topic: str = "", language: str = "",
+    ) -> dict:
+        """BM25 search with optional category, file type, and metadata filters.
 
-        Over-fetches k=50 results from the underlying engine, then filters by
-        *cat* and *file_type*, attaches ``category`` and ``file_type`` fields
-        to every hit, and truncates to *k* results.
+        Retrieves all indexed candidates before applying filters so matching
+        documents are not lost when a filter excludes high-ranking results.
 
         Returns
         -------
@@ -246,7 +358,21 @@ class BrowseEngine:
         HTTP 400 / empty-query guard is handled by the caller (app.py) before
         this method is invoked; this method does not need to raise on empty query.
         """
-        raw = self._engine.search(query, model="bm25", k=50)
+        raw = self._engine.search(
+            query, model="bm25", k=max(len(self._docs), len(self._index.docs))
+        )
+        corrected_query = query
+        if not raw["hits"]:
+            corrected_query = _correct_query(query, set(self._index.postings))
+            if corrected_query != query:
+                corrected_results = self._engine.search(
+                    corrected_query,
+                    model="bm25",
+                    k=max(len(self._docs), len(self._index.docs)),
+                )
+                if corrected_results["hits"]:
+                    raw = corrected_results
+
         hits = []
         for hit in raw["hits"]:
             doc = self._docs_by_id.get(hit["id"])
@@ -258,14 +384,28 @@ class BrowseEngine:
             # Post-filter by file_type
             if file_type and doc.get("file_type", "txt") != file_type:
                 continue
+            if not _matches_date(doc, date):
+                continue
+            if not _metadata_matches(
+                doc, author, ("author", "authors", "creator", "creators")
+            ):
+                continue
+            if not _topic_matches(doc, topic):
+                continue
+            if not _metadata_matches(doc, language, ("language", "lang")):
+                continue
             # Attach metadata fields
             hit = dict(hit)  # shallow copy — do not mutate the engine's list
             hit["category"] = doc.get("category", "")
             hit["file_type"] = doc.get("file_type", "txt")
+            hit.update(_strip_doc(doc))
             hits.append(hit)
             if len(hits) >= k:
                 break
         raw = dict(raw)  # shallow copy of the top-level response
+        raw["query"] = query
+        if corrected_query != query and raw["hits"]:
+            raw["corrected_query"] = corrected_query
         raw["hits"] = hits
         raw["total"] = len(hits)
         return raw
@@ -395,6 +535,7 @@ class BrowseEngine:
         if source is None:
             return None
 
+        metadata = _strip_doc(source)
         return {
             "id":             source["id"],
             "title":          source.get("title", ""),
@@ -404,6 +545,10 @@ class BrowseEngine:
             "category":       source.get("category", ""),
             "subcategory":    source.get("subcategory"),
             "file_type":      source.get("file_type", "txt"),
+            "date":           metadata["date"],
+            "author":         metadata["author"],
+            "language":       metadata["language"],
+            "topic":          metadata["topic"],
             "related":        self.related_docs(doc_id),
             "internal_links": self.internal_links(doc_id),
         }

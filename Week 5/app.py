@@ -80,7 +80,13 @@ class Handler(BaseHTTPRequestHandler):
             cat = params.get("cat", "")
             ftype = params.get("type", "")
             k = int(params.get("k", "10"))
-            return self._send(200, ENGINE.search(q, cat, ftype, k))
+            return self._send(200, ENGINE.search(
+                q, cat, ftype, k,
+                date=params.get("date", ""),
+                author=params.get("author", ""),
+                topic=params.get("topic", ""),
+                language=params.get("language", ""),
+            ))
         elif url.path == "/api/doc":
             try:
                 doc_id = int(params.get("id", "0"))
