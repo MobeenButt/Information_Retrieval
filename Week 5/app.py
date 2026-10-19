@@ -19,7 +19,8 @@ from browse import BrowseEngine  # noqa: E402 — import after sys.path injectio
 
 ENGINE: BrowseEngine = None  # initialised in main()
 
-PORT = 8080
+HOST = "127.0.0.1"
+PORT = int(os.environ.get("IR_PORT", "8080"))
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -78,6 +79,7 @@ class Handler(BaseHTTPRequestHandler):
             if not q:
                 return self._send(400, {"error": "Missing q"})
             cat = params.get("cat", "")
+            sub = params.get("sub", "")
             ftype = params.get("type", "")
             k = int(params.get("k", "10"))
             return self._send(200, ENGINE.search(
@@ -86,7 +88,19 @@ class Handler(BaseHTTPRequestHandler):
                 author=params.get("author", ""),
                 topic=params.get("topic", ""),
                 language=params.get("language", ""),
+                sub=sub,
             ))
+        elif url.path == "/api/compare":
+            q = params.get("q", "").strip()[:200]
+            if not q:
+                return self._send(400, {"error": "Missing q"})
+            models = [name.strip().lower() for name in params.get("models", "").split(",") if name.strip()]
+            try:
+                k = max(1, min(int(params.get("k", "10")), 20))
+                result = ENGINE.compare(q, models, k)
+            except (TypeError, ValueError) as exc:
+                return self._send(400, {"error": str(exc)})
+            return self._send(200, result)
         elif url.path == "/api/doc":
             try:
                 doc_id = int(params.get("id", "0"))
@@ -111,8 +125,20 @@ def main():
     global ENGINE
     print("Initialising BrowseEngine…")
     ENGINE = BrowseEngine()
-    print(f"BrowseServer ready → http://localhost:{PORT}/")
-    with ThreadingHTTPServer(("", PORT), Handler) as server:
+    server = None
+    last_error = None
+    # Windows may reserve a port range or another process may already own the configured port.
+    for port in [PORT] + [candidate for candidate in range(PORT + 1, PORT + 11)]:
+        try:
+            server = ThreadingHTTPServer((HOST, port), Handler)
+            break
+        except OSError as exc:
+            last_error = exc
+    if server is None:
+        raise OSError(f"Could not bind the app to ports {PORT}-{PORT + 10}: {last_error}")
+
+    print(f"BrowseServer ready → http://{HOST}:{server.server_port}/")
+    with server:
         try:
             server.serve_forever()
         except KeyboardInterrupt:

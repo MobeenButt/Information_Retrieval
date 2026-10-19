@@ -59,7 +59,8 @@ Week 5/
 | `/` or `/index.html` | GET | Serve the frontend SPA | `GET /` |
 | `/api/categories` | GET | Return the full category tree | `GET /api/categories` |
 | `/api/browse` | GET | Browse docs by category/subcategory | `GET /api/browse?cat=AI&sub=NLP` |
-| `/api/search` | GET | BM25 search with optional category, type, date, author, topic, and language filters | `GET /api/search?q=retrieval&cat=IR&type=txt&date=2024-01-01&author=Smith&topic=ranking&language=en&k=10` |
+| `/api/search` | GET | BM25 search with category, subcategory, file type, and available metadata filters | `GET /api/search?q=retrieval&cat=IR&sub=Evaluation&type=txt&k=10` |
+| `/api/compare` | GET | Compare supported ranking models for one query | `GET /api/compare?q=retrieval&models=bm25,tfidf,boolean,overlap,nonoverlap,bim,proximal&k=10` |
 | `/api/doc` | GET | Full document + related + internal links | `GET /api/doc?id=4` |
 | `/api/stats` | GET | Server stats (doc count, categories, index status) | `GET /api/stats` |
 
@@ -107,6 +108,9 @@ Week 5/
 - The Week 5 search index is built from `documents.json` each time the server starts,
   keeping result IDs and titles aligned with the corpus shown in the UI. It does not
   reuse the separate search-engine corpus index.
+- The comparison page runs the query through all seven supported ranking models by
+  default; individual models can be deselected. Results include score details,
+  available engine explanations, and a rank-movement chart.
 - Date, author, and language filters use optional document metadata (`date` /
   `publication_date` / `year`, `author` / `authors`, and `language` / `lang`).
   Topic filtering checks topic/tag metadata and the existing category, subcategory,
@@ -117,3 +121,5 @@ Week 5/
   `corrected_query`, and the UI indicates which corrected query produced the results.
 - `sys.path` injection in both `app.py` and `browse.py` points to
   `../search-engine/backend` relative to the `Week 5/` folder.
+- `run.bat` starts the offline vanilla HTML/CSS/JavaScript interface and local API.
+  The server tries ports 8080 through 8090 and prints the URL it successfully binds.

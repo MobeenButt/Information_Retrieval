@@ -5,27 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IR Browse — Week 5</title>
 
-  <!--
-    Browsing and Navigation Module — Single-Page Frontend
-    Task 9: layout, CSS tokens, and skeleton.
-    JS modules (Api, State, NavHistory, RecentlyViewed, CategoryMenu,
-    SearchBar, Breadcrumb, ResultsList, DocViewer) are added in Tasks 10-14.
-  -->
   <style>
-    /* ===========================================================
-       CSS Custom Properties — Black / Yellow Theme  (Req 10.1)
-       =========================================================== */
+    /* Design tokens: spacing follows an 8px scale; colors are theme-aware. */
     :root {
-      --yellow:  #f5c518;
-      --bg:      #0a0a0a;
-      --surface: #111111;
-      --border:  #2a2a2a;
-      --text:    #e8e8e8;
-      --muted:   #888888;
-
-      --header-h: 56px;
-      --radius:   6px;
-      --font:     system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color-scheme: light;
+      --space-1: 8px; --space-2: 16px; --space-3: 24px; --space-4: 32px;
+      --bg: #f7f8fa; --surface: #ffffff; --surface-alt: #f1f3f7;
+      --border: #dfe3eb; --text: #202536; --muted: #596174;
+      --accent: #4f46e5; --accent-hover: #4338ca; --success: #16794b; --warning: #8a5700;
+      --yellow: var(--accent);
+      --shadow: 0 1px 3px rgb(20 27 45 / 8%), 0 8px 24px rgb(20 27 45 / 5%);
+      --header-h: 64px; --radius: 12px; --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #11131a; --surface: #191c25; --surface-alt: #222633;
+      --border: #303545; --text: #edf0f7; --muted: #aeb5c5;
+      --accent: #a5a0ff; --accent-hover: #c3bfff; --success: #72d6a5; --warning: #f2c56d;
+      --yellow: var(--accent);
+      --shadow: 0 1px 3px rgb(0 0 0 / 25%), 0 8px 24px rgb(0 0 0 / 15%);
     }
 
     /* ===========================================================
@@ -50,7 +48,7 @@
       background: var(--bg);
       color: var(--text);
       font-family: var(--font);
-      font-size: 14px;
+      font-size: 16px;
       line-height: 1.5;
     }
 
@@ -74,7 +72,7 @@
 
     /* Visible focus ring for keyboard users */
     :focus-visible {
-      outline: 2px solid var(--yellow);
+      outline: 3px solid var(--accent);
       outline-offset: 2px;
     }
 
@@ -85,10 +83,14 @@
       flex: 0 0 auto;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: var(--space-2);
       height: var(--header-h);
       padding: 0 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 120;
       background: var(--surface);
+      box-shadow: var(--shadow);
       border-bottom: 1px solid var(--border);
     }
 
@@ -105,7 +107,7 @@
       gap: 0.4rem;
       font-weight: 700;
       font-size: 1.1rem;
-      color: var(--yellow);
+      color: var(--accent);
       white-space: nowrap;
     }
 
@@ -115,8 +117,8 @@
       justify-content: center;
       width: 28px;
       height: 28px;
-      background: var(--yellow);
-      color: #000;
+      background: var(--accent);
+      color: #fff;
       border-radius: var(--radius);
       font-size: 0.8rem;
       font-weight: 800;
@@ -127,8 +129,8 @@
       display: none;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       background: transparent;
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -157,13 +159,13 @@
       background: var(--bg);
       color: var(--text);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border-radius: 8px;
       font: inherit;
       font-size: 0.9rem;
     }
     #search-bar::placeholder { color: var(--muted); }
     #search-bar:focus {
-      border-color: var(--yellow);
+      border-color: var(--accent);
     }
 
     #mode-toggle {
@@ -171,9 +173,9 @@
       height: 36px;
       padding: 0 0.875rem;
       background: transparent;
-      color: var(--yellow);
-      border: 1px solid var(--yellow);
-      border-radius: var(--radius);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
       font: inherit;
       font-size: 0.85rem;
       font-weight: 600;
@@ -193,11 +195,11 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 36px;
-      height: 36px;
+      width: 44px;
+      height: 44px;
       background: transparent;
       border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border-radius: 8px;
       color: var(--text);
       font-size: 1.1rem;
       line-height: 1;
@@ -215,7 +217,7 @@
       flex: 0 0 auto;
       display: flex;
       align-items: center;
-      gap: 0.25rem;
+      gap: 0.5rem;
       padding: 0.5rem 1rem;
       background: var(--bg);
       border-bottom: 1px solid var(--border);
@@ -241,6 +243,8 @@
     /* --- Sidebar column --- */
     .sidebar-col {
       grid-area: sidebar;
+      display: flex;
+      flex-direction: column;
       overflow-y: auto;
       background: var(--surface);
       border-right: 1px solid var(--border);
@@ -269,6 +273,7 @@
     .sidebar-section {
       margin-bottom: 1.5rem;
     }
+    .sidebar-section:last-child { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); }
     .sidebar-section h2 {
       font-size: 0.75rem;
       text-transform: uppercase;
@@ -304,6 +309,13 @@
     .detail-empty .icon {
       font-size: 2rem;
     }
+    .skeleton-card { padding: 20px 24px; margin: 0 0 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+    .skeleton-line { height: 12px; margin: 10px 0; border-radius: 999px; background: var(--surface-alt); animation: skeleton-pulse 1.2s ease-in-out infinite alternate; }
+    .skeleton-line.title { width: 62%; height: 18px; }
+    .skeleton-line.short { width: 38%; }
+    @keyframes skeleton-pulse { to { opacity: .45; } }
+    .error-state { padding: 20px; border: 1px solid var(--warning); border-radius: var(--radius); color: var(--text); background: var(--surface); }
+    .error-state button { min-height: 44px; margin-top: 12px; padding: 0 14px; border: 1px solid var(--border); border-radius: 8px; color: var(--text); background: var(--surface-alt); cursor: pointer; }
 
     /* ===========================================================
        Sidebar overlay (mobile — catches taps outside menu)
@@ -356,6 +368,7 @@
         transform: translateX(-100%);
         transition: transform 0.2s ease;
         z-index: 200;
+        box-shadow: var(--shadow);
       }
       .sidebar-col.open {
         transform: translateX(0);
@@ -502,51 +515,8 @@
       padding: 2rem 1rem;
       text-align: center;
     }
-    .spell-correction {
-      color: var(--muted);
-      margin-bottom: 0.75rem;
-    }
-    .spell-correction strong { color: var(--yellow); }
 
-    /* Preview overlay */
-    .preview-overlay {
-      position: fixed;
-      z-index: 300;
-      max-width: 380px;
-      background: var(--surface);
-      border: 1px solid var(--yellow);
-      border-radius: var(--radius);
-      padding: 1rem 1.25rem 1.25rem;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-    }
-    .preview-overlay .preview-close {
-      position: absolute;
-      top: 0.25rem;
-      right: 0.5rem;
-      background: none;
-      border: none;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 1.2rem;
-      line-height: 1;
-    }
-    .preview-overlay .preview-abstract {
-      font-size: 0.85rem;
-      color: var(--text);
-      margin-bottom: 0.5rem;
-      margin-top: 0.5rem;
-    }
-    .preview-overlay .preview-btn {
-      background: var(--yellow);
-      color: #000;
-      border: none;
-      border-radius: var(--radius);
-      padding: 0.3rem 0.75rem;
-      font: inherit;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
+    .hidden { display: none !important; }
 
     /* ===========================================================
        Document viewer  (Task 13.2)
@@ -613,7 +583,175 @@
       cursor: pointer;
       font-size: 0.85rem;
     }
-    #recently-viewed a:hover { color: var(--yellow); }
+    #recently-viewed a:hover { color: var(--accent); }
+
+    .breadcrumb-bar {
+      position: sticky;
+      top: var(--header-h);
+      z-index: 110;
+      background: var(--surface);
+      min-height: 48px;
+      padding: 8px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .breadcrumb-bar a { color: var(--muted); text-decoration: none; }
+    .breadcrumb-bar a:hover { color: var(--accent); }
+    .breadcrumb-bar [aria-current="page"] {
+      display: inline-block; max-width: min(52vw, 560px); overflow: hidden;
+      color: var(--text); font-weight: 600; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .model-control {
+      display: flex; align-items: center; gap: 8px; color: var(--muted);
+      font-size: 12px; font-weight: 600; white-space: nowrap;
+    }
+    .model-control select {
+      min-height: 44px; padding: 0 32px 0 12px; border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); background: var(--surface); font: inherit;
+    }
+    .theme-btn { flex: 0 0 44px; }
+    button, input, select { font: inherit; }
+    button, select { cursor: pointer; }
+    .result-card, .detail-col { box-shadow: var(--shadow); }
+    .main-col, .sidebar-col, .detail-col { background: var(--surface); }
+    .result-card { border-radius: var(--radius); }
+    .result-card:hover { border-color: var(--accent); }
+    :focus-visible { outline-color: var(--accent); }
+    .logo-mark { border-radius: 8px; }
+    .logo-text { color: var(--text); }
+    .sidebar-section h2 { font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+
+    .filter-bar {
+      position: static; display: flex; align-items: end;
+      gap: 8px; padding: 12px; margin: 0 0 12px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
+    }
+    .filter-bar label { display: grid; gap: 4px; color: var(--muted); font-size: 12px; font-weight: 600; }
+    .filter-bar select { min-height: 44px; min-width: 120px; padding: 0 30px 0 10px; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; }
+    .result-summary { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+    .filter-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 12px; }
+    .chip { display: inline-flex; align-items: center; min-height: 32px; padding: 4px 8px 4px 12px; gap: 8px; color: var(--text); background: var(--surface-alt); border-radius: 99px; font-size: 13px; }
+    .chip button { min-width: 28px; min-height: 28px; border-radius: 50%; }
+    .clear-filters { min-height: 36px; padding: 0 12px; color: var(--accent); background: transparent; border: 0; border-radius: 8px; font-weight: 600; }
+    .filter-bar.hidden { display: none; }
+    .results-list { gap: 12px; }
+    .result-card { padding: 18px 20px; cursor: default; transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease; }
+    .result-card .card-title { display: block; width: 100%; min-height: 44px; padding: 0; text-align: left; color: var(--text); background: transparent; border: 0; font-size: 18px; font-weight: 650; cursor: pointer; }
+    .card-meta { margin: 8px 0; }
+    .meta-badge { padding: 3px 9px; color: var(--muted); background: var(--surface-alt); border-radius: 99px; font-size: 12px; }
+    .score-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; color: var(--muted); font-size: 12px; }
+    .score-track { display: inline-block; width: 92px; height: 5px; overflow: hidden; background: var(--surface-alt); border-radius: 99px; }
+    .score-fill { display: block; height: 100%; background: var(--accent); border-radius: inherit; }
+    .result-card .card-snippet { display: -webkit-box; max-width: 75ch; overflow: hidden; line-height: 1.55; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .empty-state, .error-state { padding: 36px 24px; text-align: center; color: var(--muted); background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius); }
+    .empty-state strong { display: block; margin-bottom: 8px; color: var(--text); font-size: 18px; }
+    .empty-state p { margin-bottom: 16px; }
+    .error-state { color: var(--warning); }
+    #category-menu > ul > li { margin: 2px 0; }
+    #category-menu .cat-name, #category-menu .subcat-name { width: 100%; min-height: 40px; padding: 8px; text-align: left; background: transparent; border: 0; border-radius: 8px; font: inherit; cursor: pointer; }
+    #category-menu .cat-name:hover, #category-menu .subcat-name:hover { background: var(--surface-alt); color: var(--accent); }
+    #category-menu [aria-current="page"] { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); font-weight: 650; }
+    #category-menu ul ul { padding-left: 12px; border-left: 1px solid var(--border); margin-left: 12px; }
+    #category-menu .subcat-name { font-size: 14px; }
+    .document-page { max-width: 78ch; margin: 0 auto; padding: 8px 12px 48px; }
+    .document-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .back-results, .document-pager button { min-height: 44px; padding: 0 12px; color: var(--accent); background: transparent; border: 1px solid var(--border); border-radius: 8px; font-weight: 600; }
+    .document-pager { display: flex; gap: 8px; }
+    .document-pager button:disabled { color: var(--muted); opacity: .55; cursor: not-allowed; }
+    .document-page h3 { margin: 0 0 12px; color: var(--text); font-size: clamp(24px, 3vw, 34px); line-height: 1.2; }
+    .document-page > .doc-meta { margin-bottom: 28px; color: var(--muted); }
+    .document-page .doc-section { margin: 28px 0; }
+    .document-page .doc-section h4, .context-section h4 { margin: 0 0 10px; color: var(--muted); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+    .document-page .doc-section p { max-width: 70ch; color: var(--text); font-size: 16px; line-height: 1.75; white-space: pre-line; }
+    .context-section { padding: 18px 0; border-bottom: 1px solid var(--border); }
+    .context-section p { display: flex; justify-content: space-between; gap: 12px; margin: 8px 0; color: var(--muted); font-size: 13px; }
+    .context-section p strong { color: var(--text); font-weight: 550; }
+    .context-section ul { list-style: none; }
+    .context-section li { padding: 10px 0; border-top: 1px solid var(--border); }
+    .context-section a { color: var(--accent); text-decoration: none; }
+    .context-section a:hover { text-decoration: underline; }
+    .context-empty { color: var(--muted); font-size: 13px; }
+    .same-category-badge { display: inline-block; margin-left: 8px; padding: 2px 7px; color: var(--success); background: color-mix(in srgb, var(--success) 12%, var(--surface)); border-radius: 99px; font-size: 11px; }
+    .preview-title { margin: 8px 0; font-size: 20px; line-height: 1.3; }
+    .preview-abstract { color: var(--text); line-height: 1.65; }
+    .eyebrow { color: var(--muted); font-size: 12px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; }
+    .preview-btn { min-height: 44px; margin-top: 16px; padding: 0 14px; color: white; background: var(--accent); border: 0; border-radius: 8px; font-weight: 650; }
+    .preview-btn:hover { background: var(--accent-hover); }
+    .compare-toggle { min-height: 44px; padding: 0 14px; color: var(--accent); background: transparent; border: 1px solid var(--border); border-radius: 8px; font-weight: 650; white-space: nowrap; }
+    .compare-toggle:hover { background: var(--surface-alt); }
+    .content.comparison-mode { grid-template-columns: 240px minmax(0, 1fr); grid-template-areas: "sidebar main"; }
+    .comparison-page { max-width: 1500px; margin: 0 auto; padding: 8px 4px 48px; }
+    .compare-intro { margin-bottom: 24px; }
+    .compare-intro h1 { margin: 4px 0 8px; font-size: clamp(24px, 3vw, 34px); }
+    .compare-intro > p:last-child { color: var(--muted); }
+    .compare-form { margin-bottom: 24px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .compare-form > label, .compare-form legend { color: var(--text); font-weight: 650; }
+    .compare-query-row { display: flex; gap: 8px; margin: 8px 0 20px; }
+    .compare-query-row input { flex: 1; min-width: 0; min-height: 48px; padding: 0 12px; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; }
+    .primary-action { min-height: 48px; padding: 0 20px; color: #fff; background: var(--accent); border: 0; border-radius: 8px; font-weight: 650; }
+    .primary-action:hover { background: var(--accent-hover); }
+    .compare-form fieldset { border: 0; }
+    .compare-form legend { margin-bottom: 10px; }
+    .compare-model-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .model-option { display: flex; min-height: 44px; align-items: center; gap: 8px; padding: 0 12px; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; }
+    .model-option:has(input:checked) { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+    .model-option input { accent-color: var(--accent); }
+    .field-hint { margin-top: 8px; color: var(--muted); font-size: 13px; }
+    .rank-chart-section { margin: 24px 0; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+    .rank-chart-section h2 { margin: 0 0 12px; font-size: 18px; }
+    .rank-chart svg { display: block; width: 100%; max-height: 320px; overflow: visible; }
+    .chart-gridline { stroke: var(--border); stroke-width: 1; }
+    .chart-axis-label { fill: var(--muted); font: 12px var(--font); }
+    .rank-line { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .rank-point { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+    .chart-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; }
+    .chart-legend span { max-width: 240px; overflow: hidden; color: var(--muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+    .chart-legend span::before { content: "●"; margin-right: 6px; color: var(--accent); }
+    .comparison-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); align-items: start; gap: 12px; }
+    .model-results-column { min-width: 0; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+    .model-results-column > h2 { font-size: 18px; }
+    .model-result-count { margin: 4px 0 12px; color: var(--muted); font-size: 12px; }
+    .compare-result-card { padding: 14px 0; border-top: 1px solid var(--border); }
+    .compare-result-card h3 { font-size: 15px; line-height: 1.4; }
+    .compare-result-meta { margin: 6px 0; color: var(--muted); font-size: 12px; }
+    .compare-score-row { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; }
+    .compare-snippet { display: -webkit-box; margin: 8px 0; overflow: hidden; color: var(--muted); font-size: 13px; line-height: 1.5; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+    .why-block { margin-top: 10px; padding: 10px; background: var(--surface-alt); border-radius: 8px; color: var(--muted); font-size: 12px; }
+    .why-block strong { display: block; margin-bottom: 4px; color: var(--text); }
+    .why-block p { margin: 3px 0; }
+    :root[data-theme="dark"] .logo-mark,
+    :root[data-theme="dark"] .preview-btn,
+    :root[data-theme="dark"] .primary-action { color: #11131a; }
+    #theme-toggle, #hamburger, .compare-toggle { min-width: 44px; min-height: 44px; }
+
+    @media (max-width: 900px) {
+      .model-control { font-size: 0; }
+      .model-control select { max-width: 108px; font-size: 14px; }
+      .content { grid-template-columns: 220px minmax(0, 1fr); grid-template-areas: "sidebar main" "sidebar detail"; }
+      .detail-col { border-left: 0; border-top: 1px solid var(--border); }
+    }
+    @media (max-width: 600px) {
+      .app-header { gap: 8px; padding: 0 8px; }
+      .header-search { gap: 6px; }
+      #mode-toggle { padding: 0 8px; }
+      .header-nav { display: none; }
+      .model-control { display: none; }
+      .content { display: block; overflow: auto; }
+      .main-col, .detail-col { min-height: 0; padding: 16px; }
+      .breadcrumb-bar { top: var(--header-h); padding: 8px 16px; flex-wrap: nowrap; overflow: hidden; white-space: nowrap; }
+      .filter-bar { position: static; display: grid; grid-template-columns: 1fr 1fr; margin: 0 0 12px; }
+      .filter-bar select { min-width: 0; width: 100%; }
+      .document-page { padding: 4px 0 32px; }
+      .document-toolbar { align-items: flex-start; flex-direction: column; }
+      .compare-toggle { padding: 0 8px; font-size: 12px; }
+      .compare-toggle { flex: 0 0 44px; width: 44px; padding: 0; overflow: hidden; font-size: 0; }
+      .compare-toggle::before { content: "⇄"; font-size: 20px; }
+      .content.comparison-mode { grid-template-columns: 1fr; }
+      .comparison-page { padding: 4px 0 32px; }
+      .compare-form { padding: 14px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
   </style>
 </head>
 
@@ -646,6 +784,21 @@
         Browse
       </button>
     </form>
+
+    <label class="model-control" for="model-select">Model
+      <select id="model-select" aria-label="Search ranking model">
+        <option value="bm25">BM25</option>
+        <option value="tfidf">TF-IDF</option>
+        <option value="boolean">Boolean</option>
+        <option value="overlap">Overlap</option>
+        <option value="nonoverlap">Non-overlap</option>
+        <option value="bim">BIM</option>
+        <option value="proximal">Proximal</option>
+      </select>
+    </label>
+    <button id="theme-toggle" class="nav-btn theme-btn" type="button"
+            aria-label="Switch color theme" title="Switch color theme">◐</button>
+    <button id="compare-toggle" class="compare-toggle" type="button">Compare models</button>
 
     <div class="header-nav">
       <button id="back-btn" class="nav-btn" type="button"
@@ -695,9 +848,36 @@
       <div id="filter-bar" class="filter-bar" aria-label="Filter controls">
         <!-- Filter bar populated by SearchBar module -->
       </div>
+      <div id="result-summary" class="result-summary" role="status" aria-live="polite"></div>
       <div id="results-list" class="results-list">
         <p class="placeholder">Start by searching or browsing the corpus.</p>
       </div>
+      <article id="document-page" class="document-page hidden" aria-labelledby="document-title"></article>
+      <section id="comparison-page" class="comparison-page hidden" aria-labelledby="compare-heading">
+        <div class="compare-intro">
+          <p class="eyebrow">Research tools</p>
+          <h1 id="compare-heading">Compare ranking models</h1>
+          <p>Run the same query through every ranking model and compare their ranked results.</p>
+        </div>
+        <form id="compare-form" class="compare-form">
+          <label for="compare-query">Query</label>
+          <div class="compare-query-row">
+            <input id="compare-query" type="search" maxlength="200" required placeholder="Enter a research query" />
+            <button type="submit" class="primary-action">Compare</button>
+          </div>
+          <fieldset>
+            <legend>Ranking models</legend>
+            <div id="compare-model-options" class="compare-model-options"></div>
+            <p id="model-selection-status" class="field-hint" aria-live="polite">Select at least one model.</p>
+          </fieldset>
+        </form>
+        <div id="comparison-status" class="result-summary" role="status" aria-live="polite"></div>
+        <section id="rank-chart-section" class="rank-chart-section hidden" aria-labelledby="rank-chart-title">
+          <h2 id="rank-chart-title">Rank movement across models</h2>
+          <div id="rank-chart" class="rank-chart"></div>
+        </section>
+        <div id="comparison-results" class="comparison-results"></div>
+      </section>
     </main>
 
     <!-- Detail panel — role="complementary" (Req 10.4) -->
@@ -749,16 +929,13 @@
 
       // GET /api/search?q=&cat=&type=&k=
       //   q required · cat optional · type optional · k optional (default 10)
-      search(q, cat, type, k, filters) {
+      search(q, cat, type, k, sub) {
         const params = new URLSearchParams();
         params.set("q", q || "");
         if (cat)  params.set("cat", cat);
+        if (sub)  params.set("sub", sub);
         if (type) params.set("type", type);
         params.set("k", k || 10);
-        filters = filters || {};
-        ["date", "author", "topic", "language"].forEach(key => {
-          if (filters[key]) params.set(key, filters[key]);
-        });
         return fetch("/api/search?" + params.toString()).then(r => r.json());
       },
 
@@ -767,6 +944,14 @@
         const params = new URLSearchParams();
         if (id != null) params.set("id", id);
         return fetch("/api/doc?" + params.toString()).then(r => r.json());
+      },
+
+      compare(query, models, k) {
+        const params = new URLSearchParams();
+        params.set("q", query);
+        params.set("models", models.join(","));
+        params.set("k", k || 10);
+        return fetch("/api/compare?" + params.toString()).then(r => r.json());
       },
 
       // GET /api/stats — no parameters
@@ -783,18 +968,17 @@
        =========================================================== */
     const State = {
       _state: {
+        view: "results",
         mode: "browse",
         currentCat: "",
         currentSub: "",
         currentDocId: null,
         filters: {
           cat: "",
+          sub: "",
           fileType: "",
           keyword: "",
-          date: "",
-          author: "",
-          topic: "",
-          language: ""
+          sort: "relevance"
         }
       },
 
@@ -823,8 +1007,38 @@
        =========================================================== */
     function render() {
       var state = State.get();
+      var comparePage = document.getElementById("comparison-page");
+      var content = document.querySelector(".content");
+      var compareToggle = document.getElementById("compare-toggle");
+      var isComparing = state.view === "compare";
+      if (comparePage) comparePage.classList.toggle("hidden", !isComparing);
+      if (content) content.classList.toggle("comparison-mode", isComparing);
+      if (compareToggle) {
+        compareToggle.textContent = isComparing ? "Back to results" : "Compare models";
+        compareToggle.setAttribute("aria-label", isComparing ? "Return to results" : "Open model comparison");
+      }
+      if (isComparing) {
+        ["filter-bar", "result-summary", "results-list", "document-page", "detail-panel"].forEach(function (id) {
+          var element = document.getElementById(id);
+          if (element) element.classList.add("hidden");
+        });
+        var chipBar = document.getElementById("filter-chips");
+        if (chipBar) chipBar.classList.add("hidden");
+        if (typeof Breadcrumb !== "undefined") Breadcrumb.render();
+        if (typeof CategoryMenu !== "undefined") CategoryMenu.render();
+        updateRecentlyViewed();
+        updateNavButtons();
+        return;
+      }
+      if (state.currentDocId == null) {
+        ["filter-bar", "result-summary", "results-list", "detail-panel"].forEach(function (id) {
+          var element = document.getElementById(id);
+          if (element) element.classList.remove("hidden");
+        });
+      }
 
       if (typeof Breadcrumb  !== "undefined") Breadcrumb.render();
+      if (typeof CategoryMenu !== "undefined") CategoryMenu.render();
       if (typeof SearchBar   !== "undefined") SearchBar.render();
       if (typeof ResultsList !== "undefined") ResultsList.render(state);
       if (typeof DocViewer   !== "undefined") DocViewer.render(state);
@@ -852,7 +1066,7 @@
         a.addEventListener("click", function (e) {
           e.preventDefault();
           NavHistory.push(State.get());
-          State.update({ currentDocId: item.id });
+          State.update({ view: "results", currentDocId: item.id });
         });
         li.appendChild(a);
         container.appendChild(li);
@@ -1004,7 +1218,7 @@
 
         if (!this._loaded) {
           container.innerHTML =
-            '<p class="placeholder">Loading categories&hellip;</p>';
+            '<div class="skeleton-line title" aria-hidden="true"></div><div class="skeleton-line" aria-hidden="true"></div><div class="skeleton-line short" aria-hidden="true"></div>';
           Api.categories()
             .then(data => {
               this._data = data || {};
@@ -1013,7 +1227,8 @@
             })
             .catch(() => {
               container.innerHTML =
-                '<p class="placeholder">Failed to load categories.</p>';
+                '<div class="error-state">Categories could not be loaded.<br><button type="button">Retry</button></div>';
+              container.querySelector("button").addEventListener("click", () => this.render());
             });
           return;
         }
@@ -1022,7 +1237,10 @@
       },
 
       _buildTree(container) {
+        // Build an accessible tree from the API counts and mark the active browse node.
         container.innerHTML = "";
+        const activeState = State.get();
+        if (activeState.currentCat) this._expanded[activeState.currentCat] = true;
         const keys = this._data ? Object.keys(this._data) : [];
         if (keys.length === 0) {
           container.innerHTML =
@@ -1040,10 +1258,14 @@
       _buildCategoryItem(catName, catData) {
         const li = document.createElement("li");
 
-        const header = document.createElement("span");
+        const header = document.createElement("button");
+        header.type = "button";
         header.className = "cat-name";
         header.textContent = catName + " (" + (catData.doc_count || 0) + ")";
-        header.style.cursor = "pointer";
+        const state = State.get();
+        const activeCategory = state.mode === "browse" && state.currentCat === catName && !state.currentSub;
+        header.setAttribute("aria-current", activeCategory ? "page" : "false");
+        header.setAttribute("aria-expanded", this._expanded[catName] ? "true" : "false");
         li.appendChild(header);
 
         const subs = catData.subcategories || {};
@@ -1058,6 +1280,8 @@
             );
           });
           subUl.style.display = this._expanded[catName] ? "" : "none";
+          header.setAttribute("aria-controls", "subtree-" + this._safeId(catName));
+          subUl.id = "subtree-" + this._safeId(catName);
           li.appendChild(subUl);
         }
 
@@ -1066,13 +1290,17 @@
           if (subUl) {
             this._expanded[catName] = !this._expanded[catName];
             subUl.style.display = this._expanded[catName] ? "" : "none";
+            header.setAttribute("aria-expanded", this._expanded[catName] ? "true" : "false");
           }
           // Switch to browse mode for this category.
           State.update({
+            view: "results",
             mode: "browse",
             currentCat: catName,
-            currentSub: ""
+            currentSub: "",
+            filters: { cat: "", sub: "" }
           });
+          this.closeSidebar();
         });
 
         return li;
@@ -1082,19 +1310,29 @@
         const li = document.createElement("li");
         const label = subName === "_unclassified" ? "Other" : subName;
 
-        const span = document.createElement("span");
+        const span = document.createElement("button");
+        span.type = "button";
         span.className = "subcat-name";
         span.textContent = label + " (" + (subData.doc_count || 0) + ")";
-        span.style.cursor = "pointer";
+        const current = State.get();
+        const active = current.mode === "browse" && current.currentCat === catName && current.currentSub === subName;
+        span.setAttribute("aria-current", active ? "page" : "false");
         span.addEventListener("click", () => {
           State.update({
+            view: "results",
             mode: "browse",
             currentCat: catName,
-            currentSub: subName
+            currentSub: subName,
+            filters: { cat: "", sub: "" }
           });
+          this.closeSidebar();
         });
         li.appendChild(span);
         return li;
+      },
+
+      _safeId(value) {
+        return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "category";
       },
 
       toggleSidebar() {
@@ -1107,6 +1345,8 @@
         if (hamburger) {
           hamburger.setAttribute("aria-expanded", willOpen ? "true" : "false");
         }
+        const overlay = document.getElementById("sidebar-overlay");
+        if (overlay) overlay.setAttribute("aria-hidden", willOpen ? "false" : "true");
       },
 
       closeSidebar() {
@@ -1114,6 +1354,8 @@
         const hamburger = document.getElementById("hamburger");
         if (sidebar) sidebar.classList.remove("open");
         if (hamburger) hamburger.setAttribute("aria-expanded", "false");
+        const overlay = document.getElementById("sidebar-overlay");
+        if (overlay) overlay.setAttribute("aria-hidden", "true");
       }
     };
 
@@ -1184,24 +1426,34 @@
       _buildSegments(state) {
         const segments = [];
         const homeView = {
+          view: "results",
           mode: "browse",
           currentCat: "",
           currentSub: "",
           currentDocId: null
         };
 
+        if (state.view === "compare") {
+          segments.push({ label: "Home", view: homeView });
+          segments.push({ label: "Compare models", view: null });
+          return segments;
+        }
+
         if (state.mode === "search") {
           // Home › Search: "<query>"
           segments.push({ label: "Home", view: homeView });
           const q = (state.filters && state.filters.keyword) || "";
-          segments.push({ label: 'Search: "' + q + '"', view: null });
+          const searchView = { view: "results", mode: "search", currentCat: "", currentSub: "", currentDocId: null, filters: state.filters };
+          segments.push({ label: 'Search: "' + q + '"', view: state.currentDocId == null ? null : searchView });
+          if (state.currentDocId != null) segments.push({ label: this._docTitle || ("Document #" + state.currentDocId), view: null });
           return segments;
         }
 
         // Browse mode.
         if (!state.currentCat) {
           // Home (all docs) — single terminal segment.
-          segments.push({ label: "Home", view: null });
+          segments.push({ label: "Home", view: state.currentDocId == null ? null : homeView });
+          if (state.currentDocId != null) segments.push({ label: this._docTitle || ("Document #" + state.currentDocId), view: null });
           return segments;
         }
 
@@ -1266,7 +1518,7 @@
        removable chips for active filters.
        =========================================================== */
     const SearchBar = {
-      _debounceTimers: {},
+      _debounceTimer: null,
 
       init() {
         // --- Mode toggle ---
@@ -1275,7 +1527,7 @@
           toggle.addEventListener("click", () => {
             var state = State.get();
             var newMode = state.mode === "search" ? "browse" : "search";
-            State.update({ mode: newMode, currentDocId: null });
+            State.update({ view: "results", mode: newMode, currentDocId: null });
           });
           toggle.dataset.sbWired = "1";
         }
@@ -1289,6 +1541,7 @@
             var q = input ? input.value.trim() : "";
             if (!q) return;
             State.update({
+              view: "results",
               mode: "search",
               currentDocId: null,
               filters: { keyword: q }
@@ -1304,88 +1557,78 @@
         var container = document.getElementById("filter-bar");
         if (!container) return;
         container.innerHTML = "";
-
-        // Category select
-        var catLabel = document.createElement("label");
-        catLabel.textContent = "Category";
-        var catSelect = document.createElement("select");
-        catSelect.id = "filter-cat";
-        catSelect.innerHTML = '<option value="">All</option>';
-        Api.categories().then(function (data) {
-          Object.keys(data).forEach(function (cat) {
-            var opt = document.createElement("option");
-            opt.value = cat;
-            opt.textContent = cat;
-            catSelect.appendChild(opt);
-          });
-        });
-        catSelect.addEventListener("change", function () {
-          State.update({ filters: { cat: catSelect.value } });
-        });
-        catLabel.appendChild(catSelect);
-        container.appendChild(catLabel);
-
-        // File type select
-        var ftLabel = document.createElement("label");
-        ftLabel.textContent = "File Type";
-        var ftSelect = document.createElement("select");
-        ftSelect.id = "filter-type";
-        ftSelect.innerHTML =
-          '<option value="">All</option>' +
-          '<option value="txt">txt</option>' +
-          '<option value="json">json</option>' +
-          '<option value="csv">csv</option>' +
-          '<option value="xml">xml</option>';
-        ftSelect.addEventListener("change", function () {
-          State.update({ filters: { fileType: ftSelect.value } });
-        });
-        ftLabel.appendChild(ftSelect);
-        container.appendChild(ftLabel);
-
-        // Keyword input (debounced 300 ms)
-        var kwLabel = document.createElement("label");
-        kwLabel.textContent = "Keyword";
-        var kwInput = document.createElement("input");
-        kwInput.type = "text";
-        kwInput.id = "filter-keyword";
-        kwInput.placeholder = "Filter results\u2026";
-        var self = this;
-        kwInput.addEventListener("input", function () {
-          clearTimeout(self._debounceTimers.keyword);
-          self._debounceTimers.keyword = setTimeout(function () {
-            State.update({ filters: { keyword: kwInput.value.trim() } });
-          }, 300);
-        });
-        kwLabel.appendChild(kwInput);
-        container.appendChild(kwLabel);
-
-        [
-          { key: "date", label: "Date", type: "date" },
-          { key: "author", label: "Author", type: "text" },
-          { key: "topic", label: "Topic", type: "text" },
-          { key: "language", label: "Language", type: "text" }
-        ].forEach(function (filter) {
-          var label = document.createElement("label");
-          label.textContent = filter.label;
-          var input = document.createElement("input");
-          input.type = filter.type;
-          input.id = "filter-" + filter.key;
-          input.setAttribute("aria-label", filter.label + " filter");
-          input.addEventListener(filter.type === "date" ? "change" : "input", function () {
-            var updateFilter = function () {
-              var patch = { filters: {} };
-              patch.filters[filter.key] = input.value.trim();
-              State.update(patch);
-            };
-            if (filter.type === "date") {
-              updateFilter();
-            } else {
-              clearTimeout(self._debounceTimers[filter.key]);
-              self._debounceTimers[filter.key] = setTimeout(updateFilter, 300);
-            }
-          });
-          label.appendChild(input);
+        const controls = [
+          ["Category", "filter-cat", ["All categories"]],
+          ["Subcategory", "filter-sub", ["All subcategories"]],
+          ["File type", "filter-type", ["All types"]],
+          ["Sort by", "filter-sort", []]
+        ];
+        controls.forEach(function (control) {
+          const label = document.createElement("label");
+          label.textContent = control[0];
+          const select = document.createElement("select");
+          select.id = control[1];
+          select.setAttribute("aria-label", control[0]);
+          if (control[1] === "filter-sort") {
+            select.innerHTML = '<option value="relevance">Relevance</option><option value="title">Title A–Z</option>';
+          } else {
+            const all = document.createElement("option");
+            all.value = "";
+            all.textContent = control[2][0];
+            select.appendChild(all);
+          }
+          label.appendChild(select);
           container.appendChild(label);
+        });
+
+        this._categoryData = null;
+        Api.categories().then(data => {
+          this._categoryData = data || {};
+          const catSelect = document.getElementById("filter-cat");
+          Object.keys(this._categoryData).forEach(cat => {
+            const option = document.createElement("option");
+            option.value = cat;
+            option.textContent = cat;
+            catSelect.appendChild(option);
+          });
+          this._populateSubcategories();
+        });
+        const typeSelect = document.getElementById("filter-type");
+        ["txt", "json", "csv", "xml"].forEach(type => {
+          const option = document.createElement("option");
+          option.value = type;
+          option.textContent = type.toUpperCase();
+          typeSelect.appendChild(option);
+        });
+        document.getElementById("filter-cat").addEventListener("change", () => {
+          State.update({ filters: { cat: document.getElementById("filter-cat").value, sub: "" } });
+        });
+        document.getElementById("filter-sub").addEventListener("change", () => {
+          State.update({ filters: { sub: document.getElementById("filter-sub").value } });
+        });
+        typeSelect.addEventListener("change", () => {
+          State.update({ filters: { fileType: typeSelect.value } });
+        });
+        document.getElementById("filter-sort").addEventListener("change", () => {
+          State.update({ filters: { sort: document.getElementById("filter-sort").value } });
+        });
+      },
+
+      _populateSubcategories() {
+        const select = document.getElementById("filter-sub");
+        if (!select) return;
+        const selectedCategory = document.getElementById("filter-cat").value;
+        const names = new Set();
+        Object.keys(this._categoryData || {}).forEach(cat => {
+          if (selectedCategory && selectedCategory !== cat) return;
+          Object.keys(this._categoryData[cat].subcategories || {}).forEach(sub => names.add(sub));
+        });
+        select.innerHTML = '<option value="">All subcategories</option>';
+        Array.from(names).sort().forEach(sub => {
+          const option = document.createElement("option");
+          option.value = sub;
+          option.textContent = sub === "_unclassified" ? "Other" : sub;
+          select.appendChild(option);
         });
       },
 
@@ -1404,24 +1647,19 @@
         }
 
         var filterBar = document.getElementById("filter-bar");
-        if (filterBar) {
-          filterBar.classList.toggle("hidden", state.mode !== "search");
-        }
+        if (filterBar) filterBar.classList.remove("hidden");
 
         var catSelect = document.getElementById("filter-cat");
         if (catSelect) catSelect.value = state.filters.cat;
+        var subSelect = document.getElementById("filter-sub");
+        if (subSelect) {
+          this._populateSubcategories();
+          subSelect.value = state.filters.sub;
+        }
         var ftSelect = document.getElementById("filter-type");
         if (ftSelect) ftSelect.value = state.filters.fileType;
-        var kwInput = document.getElementById("filter-keyword");
-        if (kwInput && document.activeElement !== kwInput) {
-          kwInput.value = state.filters.keyword;
-        }
-        ["date", "author", "topic", "language"].forEach(function (key) {
-          var input = document.getElementById("filter-" + key);
-          if (input && document.activeElement !== input) {
-            input.value = state.filters[key] || "";
-          }
-        });
+        var sortSelect = document.getElementById("filter-sort");
+        if (sortSelect) sortSelect.value = state.filters.sort;
 
         this._renderChips(state);
       },
@@ -1446,17 +1684,9 @@
         if (state.filters.fileType) {
           chips.push({ key: "fileType", label: "Type: " + state.filters.fileType });
         }
-        if (state.filters.keyword && state.mode === "search") {
-          chips.push({ key: "keyword", label: 'Keyword: "' + state.filters.keyword + '"' });
+        if (state.filters.sub) {
+          chips.push({ key: "sub", label: "Subcategory: " + (state.filters.sub === "_unclassified" ? "Other" : state.filters.sub) });
         }
-        ["date", "author", "topic", "language"].forEach(function (key) {
-          if (state.filters[key]) {
-            chips.push({
-              key: key,
-              label: key.charAt(0).toUpperCase() + key.slice(1) + ": " + state.filters[key]
-            });
-          }
-        });
 
         chips.forEach(function (chip) {
           var el = document.createElement("span");
@@ -1474,114 +1704,154 @@
           el.appendChild(btn);
           chipsContainer.appendChild(el);
         });
+        if (chips.length) {
+          const clear = document.createElement("button");
+          clear.type = "button";
+          clear.className = "clear-filters";
+          clear.textContent = "Clear all";
+          clear.addEventListener("click", function () {
+            State.update({ filters: { cat: "", sub: "", fileType: "", sort: "relevance" } });
+          });
+          chipsContainer.appendChild(clear);
+        }
       }
     };
 
     /* ===========================================================
        ResultsList Module  (Task 13.1 — Req 8.1–8.4)
        Renders document cards from browse() or search() results.
-       Shows a hover / focus preview overlay with the first 200
-       characters of the abstract and a "Read full document" button.
-       Dismissed on mouseleave / blur / Escape.
+       Renders result cards and opens an explicit preview panel.
        =========================================================== */
     const ResultsList = {
       _results: [],
-      _previewEl: null,
-      _previewTrigger: null,
+      _requestId: 0,
 
       render(state) {
         var container = document.getElementById("results-list");
         if (!container) return;
+        if (state.currentDocId != null) return;
+        var requestId = ++this._requestId;
+        var summary = document.getElementById("result-summary");
+        if (summary) summary.textContent = "Loading results…";
+        if (container) container.setAttribute("aria-busy", "true");
 
         if (state.mode === "search") {
           var q = state.filters.keyword || "";
           if (!q) {
+            container.removeAttribute("aria-busy");
             container.innerHTML =
-              '<p class="placeholder">Enter a search query.</p>';
+              '<div class="empty-state"><strong>Search the research library</strong><p>Enter a query above to find relevant documents.</p></div>';
+            if (summary) summary.textContent = "";
             return;
           }
-          container.innerHTML =
-            '<p class="placeholder">Searching\u2026</p>';
+          container.innerHTML = '<div class="skeleton-card" aria-hidden="true"><div class="skeleton-line title"></div><div class="skeleton-line short"></div><div class="skeleton-line"></div></div><div class="skeleton-card" aria-hidden="true"><div class="skeleton-line title"></div><div class="skeleton-line short"></div><div class="skeleton-line"></div></div>';
           var self = this;
-          Api.search(q, state.filters.cat, state.filters.fileType, 20, state.filters)
+          Api.search(q, state.filters.cat, state.filters.fileType, 50, state.filters.sub)
             .then(function (data) {
+              if (requestId !== self._requestId) return;
+              if (data.error) throw new Error(data.error);
               self._results = data.hits || [];
-            self._renderResults(container, data.corrected_query);
+              self._renderResults(container, state);
             })
             .catch(function () {
-              container.innerHTML =
-                '<p class="placeholder">Search failed.</p>';
+              if (requestId !== self._requestId) return;
+              container.removeAttribute("aria-busy");
+              container.innerHTML = '<div class="error-state">Search could not be loaded. Check that the server is running, then try again.<br><button type="button">Retry search</button></div>';
+              container.querySelector("button").addEventListener("click", () => self.render(state));
+              if (summary) summary.textContent = "";
+              if (typeof DocViewer !== "undefined") DocViewer.restoreListPosition();
             });
         } else {
-          container.innerHTML =
-            '<p class="placeholder">Loading documents\u2026</p>';
+          container.innerHTML = '<div class="skeleton-card" aria-hidden="true"><div class="skeleton-line title"></div><div class="skeleton-line short"></div><div class="skeleton-line"></div></div><div class="skeleton-card" aria-hidden="true"><div class="skeleton-line title"></div><div class="skeleton-line short"></div><div class="skeleton-line"></div></div>';
           var self = this;
-          Api.browse(state.currentCat, state.currentSub)
+          Api.browse(state.filters.cat || state.currentCat, state.filters.sub || state.currentSub)
             .then(function (docs) {
+              if (requestId !== self._requestId) return;
               var filtered = docs;
               if (state.filters.fileType) {
                 filtered = filtered.filter(function (d) {
                   return d.file_type === state.filters.fileType;
                 });
               }
+              if (state.filters.cat && state.currentCat && state.filters.cat !== state.currentCat) filtered = [];
+              if (state.filters.sub && state.currentSub && state.filters.sub !== state.currentSub) filtered = [];
               self._results = filtered;
-              self._renderResults(container);
+              self._renderResults(container, state);
             })
             .catch(function () {
-              container.innerHTML =
-                '<p class="placeholder">Failed to load documents.</p>';
+              if (requestId !== self._requestId) return;
+              container.removeAttribute("aria-busy");
+              container.innerHTML = '<div class="error-state">Documents could not be loaded. Check that the server is running, then try again.<br><button type="button">Retry browse</button></div>';
+              container.querySelector("button").addEventListener("click", () => self.render(state));
+              if (summary) summary.textContent = "";
+              if (typeof DocViewer !== "undefined") DocViewer.restoreListPosition();
             });
         }
       },
 
-      _renderResults(container, correctedQuery) {
-        container.innerHTML = "";
-        if (correctedQuery) {
-          var notice = document.createElement("p");
-          notice.className = "spell-correction";
-          notice.appendChild(
-            document.createTextNode("No exact matches. Showing results for ")
-          );
-          var corrected = document.createElement("strong");
-          corrected.textContent = correctedQuery;
-          notice.appendChild(corrected);
-          notice.appendChild(document.createTextNode("."));
-          container.appendChild(notice);
+      _renderResults(container, state) {
+        container.removeAttribute("aria-busy");
+        var results = this._results.slice();
+        if (state.filters.sort === "title") {
+          results.sort(function (a, b) { return (a.title || "").localeCompare(b.title || ""); });
         }
-        if (this._results.length === 0) {
-          var empty = document.createElement("p");
-          empty.className = "no-results";
-          empty.textContent = "No documents found.";
-          container.appendChild(empty);
+        var summary = document.getElementById("result-summary");
+        if (summary) summary.textContent = results.length + (results.length === 1 ? " document" : " documents");
+        container.innerHTML = "";
+        if (results.length === 0) {
+          container.innerHTML = '<div class="empty-state"><strong>No documents found</strong><p>Try a broader query or clear one or more filters.</p><button type="button" class="clear-filters">Clear filters</button></div>';
+          var clearButton = container.querySelector("button");
+          clearButton.addEventListener("click", function () {
+            State.update({ filters: { cat: "", sub: "", fileType: "", sort: "relevance" } });
+          });
+          if (typeof DocViewer !== "undefined") DocViewer.restoreListPosition();
           return;
         }
 
         var self = this;
-        this._results.forEach(function (doc) {
-          var card = document.createElement("div");
+        var maxScore = Math.max.apply(null, results.map(function (item) { return Number(item.score) || 0; })) || 1;
+        results.forEach(function (doc) {
+          var card = document.createElement("article");
           card.className = "result-card";
-          card.setAttribute("tabindex", "0");
-          card.setAttribute("role", "button");
-          card.setAttribute("aria-label", "Open " + doc.title);
+          card.tabIndex = -1;
 
-          var title = document.createElement("div");
+          var title = document.createElement("button");
+          title.type = "button";
           title.className = "card-title";
           title.textContent = doc.title;
+          title.setAttribute("aria-label", "Open document: " + doc.title);
           card.appendChild(title);
 
           var meta = document.createElement("div");
           meta.className = "card-meta";
-          var metaText = doc.category + " \u00b7 " + (doc.file_type || "txt");
-          if (doc.score) {
-            metaText += " \u00b7 score: " + doc.score.toFixed(2);
-          }
-          meta.textContent = metaText;
+          [doc.category, doc.subcategory, doc.file_type || "txt"].filter(Boolean).forEach(function (value) {
+            var badge = document.createElement("span");
+            badge.className = "meta-badge";
+            badge.textContent = value === "_unclassified" ? "Other" : value;
+            meta.appendChild(badge);
+          });
           card.appendChild(meta);
 
-          if (doc.abstract) {
+          if (doc.score !== undefined) {
+            var scoreWrap = document.createElement("div");
+            scoreWrap.className = "score-row";
+            var scoreTrack = document.createElement("span");
+            scoreTrack.className = "score-track";
+            var scoreBar = document.createElement("span");
+            scoreBar.className = "score-fill";
+            scoreBar.style.width = Math.max(4, ((Number(doc.score) || 0) / maxScore) * 100) + "%";
+            scoreTrack.appendChild(scoreBar);
+            var scoreText = document.createElement("span");
+            scoreText.textContent = "Relevance " + Number(doc.score).toFixed(2);
+            scoreWrap.append(scoreTrack, scoreText);
+            card.appendChild(scoreWrap);
+          }
+
+          var snippetText = doc.abstract || doc.snippet || "";
+          if (snippetText) {
             var snippet = document.createElement("div");
             snippet.className = "card-snippet";
-            snippet.textContent = doc.abstract.substring(0, 120) + "\u2026";
+            snippet.textContent = snippetText.replace(/<\/?mark>/g, "");
             card.appendChild(snippet);
           }
 
@@ -1589,76 +1859,55 @@
             NavHistory.push(State.get());
             State.update({ currentDocId: doc.id });
           }
-          card.addEventListener("click", openDoc);
-          card.addEventListener("keydown", function (e) {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              openDoc();
-            }
-          });
-
-          card.addEventListener("mouseenter", function () {
-            self._showPreview(doc, card);
-          });
-          card.addEventListener("mouseleave", function () {
-            self._hidePreview();
-          });
-          card.addEventListener("focus", function () {
-            self._showPreview(doc, card);
-          });
-          card.addEventListener("blur", function () {
-            self._hidePreview();
-          });
+          title.addEventListener("click", openDoc);
+          var previewButton = document.createElement("button");
+          previewButton.type = "button";
+          previewButton.className = "preview-btn";
+          previewButton.textContent = "Preview";
+          previewButton.setAttribute("aria-label", "Preview " + doc.title);
+          previewButton.addEventListener("click", function () { self._showPreview(doc); });
+          card.appendChild(previewButton);
 
           container.appendChild(card);
         });
+        if (typeof DocViewer !== "undefined") DocViewer.restoreListPosition();
       },
 
-      _showPreview(doc, trigger) {
-        this._hidePreview();
-        var el = document.createElement("div");
-        el.className = "preview-overlay";
-        el.setAttribute("role", "tooltip");
-
-        var close = document.createElement("button");
-        close.className = "preview-close";
-        close.type = "button";
-        close.setAttribute("aria-label", "Close preview");
-        close.innerHTML = "&times;";
-        var self = this;
-        close.addEventListener("click", function (e) {
-          e.stopPropagation();
-          self._hidePreview();
-          trigger.focus();
-        });
-        el.appendChild(close);
-
-        var abs = document.createElement("div");
-        abs.className = "preview-abstract";
-        abs.textContent = (doc.abstract || "").substring(0, 200);
-        el.appendChild(abs);
-
-        var btn = document.createElement("button");
-        btn.className = "preview-btn";
-        btn.type = "button";
-        btn.textContent = "Read full document \u2192";
-        btn.addEventListener("click", function (e) {
-          e.stopPropagation();
-          self._hidePreview();
+      _showPreview(doc) {
+        var panel = document.getElementById("doc-viewer");
+        if (!panel) return;
+        panel.innerHTML = "";
+        var label = document.createElement("p");
+        label.className = "eyebrow";
+        label.textContent = "Document preview";
+        panel.appendChild(label);
+        var title = document.createElement("h2");
+        title.className = "preview-title";
+        title.textContent = doc.title;
+        panel.appendChild(title);
+        var meta = document.createElement("p");
+        meta.className = "doc-meta";
+        meta.textContent = [doc.category, doc.subcategory === "_unclassified" ? "Other" : doc.subcategory, doc.file_type || "txt"].filter(Boolean).join(" · ");
+        panel.appendChild(meta);
+        var abstract = document.createElement("p");
+        abstract.className = "preview-abstract";
+        abstract.textContent = (doc.abstract || doc.snippet || "No abstract is available for this document.").replace(/<\/?mark>/g, "");
+        panel.appendChild(abstract);
+        var openButton = document.createElement("button");
+        openButton.type = "button";
+        openButton.className = "preview-btn";
+        openButton.textContent = "Open full document";
+        openButton.addEventListener("click", function () {
           NavHistory.push(State.get());
           State.update({ currentDocId: doc.id });
         });
-        el.appendChild(btn);
-
-        document.body.appendChild(el);
-        this._previewEl = el;
-        this._previewTrigger = trigger;
+        panel.appendChild(openButton);
       },
 
       _hidePreview() {
-        if (this._previewEl) {
-          this._previewEl.remove();
-          this._previewEl = null;
+        if (State.get().currentDocId == null) {
+          var panel = document.getElementById("doc-viewer");
+          if (panel) panel.innerHTML = '<div class="detail-empty"><p>Select a result to see its preview.</p></div>';
         }
       }
     };
@@ -1671,20 +1920,59 @@
        =========================================================== */
     const DocViewer = {
       _currentDoc: null,
+      _inDocument: false,
+      _listScrollTop: 0,
+      _pageScrollTop: 0,
+      _requestId: 0,
+      _restorePending: false,
+
+      restoreListPosition() {
+        if (!this._restorePending) return;
+        var main = document.getElementById("main-panel");
+        if (main) main.scrollTop = this._listScrollTop;
+        if (window.matchMedia("(max-width: 768px)").matches) window.scrollTo(0, this._pageScrollTop);
+        this._restorePending = false;
+      },
 
       render(state) {
         var container = document.getElementById("doc-viewer");
-        if (!container) return;
+        var page = document.getElementById("document-page");
+        var results = document.getElementById("results-list");
+        var filterBar = document.getElementById("filter-bar");
+        var summary = document.getElementById("result-summary");
+        var chips = document.getElementById("filter-chips");
+        if (!container || !page || !results) return;
 
         if (state.currentDocId == null) {
+          if (this._inDocument) {
+            this._requestId += 1;
+            this._inDocument = false;
+            page.classList.add("hidden");
+            results.classList.remove("hidden");
+            if (filterBar) filterBar.classList.remove("hidden");
+            if (summary) summary.classList.remove("hidden");
+            if (chips) chips.classList.remove("hidden");
+            this._restorePending = true;
+          }
           this._currentDoc = null;
-          container.innerHTML =
-            '<div class="detail-empty">' +
-              '<span class="icon" aria-hidden="true">&#128196;</span>' +
-              "<p>Select a document to view its full content.</p>" +
-            "</div>";
+          container.innerHTML = '<div class="detail-empty"><p>Select a result to see its preview.</p></div>';
           Breadcrumb._docTitle = "";
+          Breadcrumb.render();
           return;
+        }
+
+        if (!this._inDocument) {
+          var main = document.getElementById("main-panel");
+          this._listScrollTop = main ? main.scrollTop : 0;
+          this._pageScrollTop = window.scrollY;
+          this._inDocument = true;
+          results.classList.add("hidden");
+          if (filterBar) filterBar.classList.add("hidden");
+          if (summary) summary.classList.add("hidden");
+          if (chips) chips.classList.add("hidden");
+          page.classList.remove("hidden");
+          if (main) main.scrollTop = 0;
+          if (window.matchMedia("(max-width: 768px)").matches) window.scrollTo(0, 0);
         }
 
         if (this._currentDoc && this._currentDoc.id === state.currentDocId) {
@@ -1693,35 +1981,70 @@
           return;
         }
 
+        var requestId = ++this._requestId;
         var self = this;
-        container.innerHTML =
-          '<p class="placeholder">Loading document\u2026</p>';
+        page.setAttribute("aria-busy", "true");
+        page.innerHTML = '<div class="skeleton-card" aria-hidden="true"><div class="skeleton-line title"></div><div class="skeleton-line short"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>';
+        container.innerHTML = '<div class="skeleton-line title" aria-hidden="true"></div><div class="skeleton-line" aria-hidden="true"></div><div class="skeleton-line short" aria-hidden="true"></div>';
         Api.doc(state.currentDocId)
           .then(function (doc) {
+            if (requestId !== self._requestId) return;
             if (doc.error) {
-              container.innerHTML =
-                '<p class="placeholder">Error: ' + doc.error + "</p>";
+              page.removeAttribute("aria-busy");
+              page.innerHTML = '<div class="error-state">This document could not be loaded.</div>';
+              container.innerHTML = '<div class="error-state">Document details are unavailable.</div>';
               return;
             }
             self._currentDoc = doc;
+            page.removeAttribute("aria-busy");
             Breadcrumb._docTitle = doc.title || "";
             Breadcrumb.render();
-            self._renderDoc(container, doc);
+            self._renderDoc(page, container, doc);
             RecentlyViewed.record(doc.id, doc.title);
             updateRecentlyViewed();
           })
           .catch(function () {
-            container.innerHTML =
-              '<p class="placeholder">Failed to load document.</p>';
+            if (requestId !== self._requestId) return;
+            page.removeAttribute("aria-busy");
+            page.innerHTML = '<div class="error-state">Document could not be loaded. Check that the server is running, then try again.<br><button type="button">Retry document</button></div>';
+            page.querySelector("button").addEventListener("click", () => self.render(state));
           });
       },
 
-      _renderDoc(container, doc) {
-        container.innerHTML = "";
+      _renderDoc(page, panel, doc) {
+        page.innerHTML = "";
+        panel.innerHTML = "";
+
+        var toolbar = document.createElement("div");
+        toolbar.className = "document-toolbar";
+        var back = document.createElement("button");
+        back.type = "button";
+        back.className = "back-results";
+        back.textContent = "← Back to results";
+        back.addEventListener("click", function () { State.update({ currentDocId: null }); });
+        toolbar.appendChild(back);
+
+        var position = ResultsList._results.findIndex(function (item) { return item.id === doc.id; });
+        var pager = document.createElement("div");
+        pager.className = "document-pager";
+        var previous = document.createElement("button");
+        previous.type = "button";
+        previous.textContent = "Previous";
+        previous.disabled = position <= 0;
+        previous.addEventListener("click", function () { State.update({ currentDocId: ResultsList._results[position - 1].id }); });
+        var next = document.createElement("button");
+        next.type = "button";
+        next.textContent = "Next";
+        next.disabled = position < 0 || position >= ResultsList._results.length - 1;
+        next.addEventListener("click", function () { State.update({ currentDocId: ResultsList._results[position + 1].id }); });
+        pager.append(previous, next);
+        toolbar.appendChild(pager);
+        page.appendChild(toolbar);
 
         var title = document.createElement("h3");
+        title.id = "document-title";
         title.textContent = doc.title;
-        container.appendChild(title);
+        page.appendChild(title);
 
         var meta = document.createElement("div");
         meta.className = "doc-meta";
@@ -1729,25 +2052,36 @@
           doc.category + " \u00b7 " +
           (doc.subcategory || "Other") + " \u00b7 " +
           (doc.file_type || "txt");
-        container.appendChild(meta);
+        page.appendChild(meta);
 
         if (doc.abstract) {
-          container.appendChild(this._section("Abstract", doc.abstract));
+          page.appendChild(this._section("Abstract", doc.abstract));
         }
         if (doc.methodology) {
-          container.appendChild(this._section("Methodology", doc.methodology));
+          page.appendChild(this._section("Methodology", doc.methodology));
         }
         if (doc.results) {
-          container.appendChild(this._section("Results", doc.results));
+          page.appendChild(this._section("Results", doc.results));
         }
 
-        if (doc.internal_links && doc.internal_links.length > 0) {
-          container.appendChild(this._linksSection(doc.internal_links));
-        }
+        var metadata = document.createElement("section");
+        metadata.className = "context-section";
+        var metadataHeading = document.createElement("h4");
+        metadataHeading.textContent = "Document details";
+        metadata.appendChild(metadataHeading);
+        [["Category", doc.category], ["Subcategory", doc.subcategory || "Other"], ["File type", doc.file_type || "txt"], ["Document ID", String(doc.id)]].forEach(function (entry) {
+          var row = document.createElement("p");
+          var key = document.createElement("strong");
+          key.textContent = entry[0];
+          var value = document.createElement("span");
+          value.textContent = entry[1];
+          row.append(key, value);
+          metadata.appendChild(row);
+        });
+        panel.appendChild(metadata);
 
-        if (doc.related && doc.related.length > 0) {
-          container.appendChild(this._relatedSection(doc.related));
-        }
+        panel.appendChild(this._relatedSection(doc.related || []));
+        panel.appendChild(this._linksSection(doc.internal_links || []));
       },
 
       _section(heading, text) {
@@ -1763,13 +2097,19 @@
       },
 
       _linksSection(links) {
-        var section = document.createElement("div");
-        section.className = "doc-section";
+        var section = document.createElement("section");
+        section.className = "context-section";
         var h4 = document.createElement("h4");
         h4.textContent = "Internal Links";
         section.appendChild(h4);
         var ul = document.createElement("ul");
         ul.className = "links-list";
+        if (!links.length) {
+          var empty = document.createElement("li");
+          empty.className = "context-empty";
+          empty.textContent = "No internal links found.";
+          ul.appendChild(empty);
+        }
         links.forEach(function (link) {
           var li = document.createElement("li");
           var a = document.createElement("a");
@@ -1788,13 +2128,19 @@
       },
 
       _relatedSection(related) {
-        var section = document.createElement("div");
-        section.className = "doc-section";
+        var section = document.createElement("section");
+        section.className = "context-section";
         var h4 = document.createElement("h4");
         h4.textContent = "Related Documents";
         section.appendChild(h4);
         var ul = document.createElement("ul");
         ul.className = "related-list";
+        if (!related.length) {
+          var empty = document.createElement("li");
+          empty.className = "context-empty";
+          empty.textContent = "No related documents found.";
+          ul.appendChild(empty);
+        }
         related.forEach(function (rel) {
           var li = document.createElement("li");
           var a = document.createElement("a");
@@ -1810,6 +2156,12 @@
           score.className = "related-score";
           score.textContent = "score: " + (rel.score || 0).toFixed(2);
           li.appendChild(score);
+          if (rel.same_category) {
+            var sameCategory = document.createElement("span");
+            sameCategory.className = "same-category-badge";
+            sameCategory.textContent = "Same category";
+            li.appendChild(sameCategory);
+          }
           ul.appendChild(li);
         });
         section.appendChild(ul);
@@ -1817,12 +2169,287 @@
       }
     };
 
+    const Comparison = {
+      _models: [
+        ["bm25", "BM25"], ["tfidf", "TF-IDF"], ["boolean", "Boolean"],
+        ["overlap", "Overlap"], ["nonoverlap", "Non-overlap"], ["bim", "BIM"],
+        ["proximal", "Proximal"]
+      ],
+      _requestId: 0,
+
+      init() {
+        const options = document.getElementById("compare-model-options");
+        const form = document.getElementById("compare-form");
+        if (!options || !form) return;
+        this._models.forEach(([value, label]) => {
+          const wrapper = document.createElement("label");
+          wrapper.className = "model-option";
+          const input = document.createElement("input");
+          input.type = "checkbox";
+          input.name = "compare-model";
+          input.value = value;
+          input.checked = true;
+          input.addEventListener("change", () => this._updateSelectionStatus());
+          const text = document.createElement("span");
+          text.textContent = label;
+          wrapper.append(input, text);
+          options.appendChild(wrapper);
+        });
+        form.addEventListener("submit", event => {
+          event.preventDefault();
+          this.run();
+        });
+        this._updateSelectionStatus();
+      },
+
+      _selectedModels() {
+        return Array.from(document.querySelectorAll('input[name="compare-model"]:checked')).map(input => input.value);
+      },
+
+      _updateSelectionStatus() {
+        const checkboxes = Array.from(document.querySelectorAll('input[name="compare-model"]'));
+        const total = checkboxes.filter(input => input.checked).length;
+        document.getElementById("model-selection-status").textContent = total + " of " + this._models.length + " models selected";
+      },
+
+      run() {
+        const query = document.getElementById("compare-query").value.trim();
+        const models = this._selectedModels();
+        const status = document.getElementById("comparison-status");
+        const results = document.getElementById("comparison-results");
+        if (!query || !models.length) {
+          status.textContent = "Enter a query and select at least one model.";
+          return;
+        }
+        const requestId = ++this._requestId;
+        status.textContent = "Comparing models…";
+        results.setAttribute("aria-busy", "true");
+        results.innerHTML = '<div class="skeleton-card" aria-hidden="true"><div class="skeleton-line title"></div><div class="skeleton-line short"></div><div class="skeleton-line"></div></div>';
+        document.getElementById("rank-chart-section").classList.add("hidden");
+        Api.compare(query, models, 10).then(data => {
+          if (requestId !== this._requestId) return;
+          if (data.error) throw new Error(data.error);
+          results.removeAttribute("aria-busy");
+          this._render(data);
+        }).catch(error => {
+          if (requestId !== this._requestId) return;
+          results.removeAttribute("aria-busy");
+          const detail = error && error.message;
+          status.textContent = detail && detail !== "Failed to fetch"
+            ? "Comparison failed: " + detail
+            : "Comparison failed. Check that the server is running, then try again.";
+          results.innerHTML = "";
+        });
+      },
+
+      _render(data) {
+        const status = document.getElementById("comparison-status");
+        const results = document.getElementById("comparison-results");
+        results.removeAttribute("aria-busy");
+        status.textContent = "Comparison complete for “" + data.query + "”.";
+        results.innerHTML = "";
+        const groups = data.models.map(model => ({ model: model, hits: data.results[model].hits || [] }));
+        this._renderRankChart(groups);
+        groups.forEach(group => {
+          const column = document.createElement("section");
+          column.className = "model-results-column";
+          const heading = document.createElement("h2");
+          heading.textContent = this._label(group.model);
+          column.appendChild(heading);
+          const count = document.createElement("p");
+          count.className = "model-result-count";
+          count.textContent = group.hits.length + " results";
+          column.appendChild(count);
+          const maxScore = Math.max.apply(null, group.hits.map(hit => Number(hit.score) || 0)) || 1;
+          if (!group.hits.length) {
+            const empty = document.createElement("p");
+            empty.className = "context-empty";
+            empty.textContent = "No matching documents for this model.";
+            column.appendChild(empty);
+          }
+          group.hits.forEach(hit => column.appendChild(this._resultCard(hit, maxScore)));
+          results.appendChild(column);
+        });
+      },
+
+      _resultCard(hit, maxScore) {
+        const card = document.createElement("article");
+        card.className = "compare-result-card";
+        const heading = document.createElement("h3");
+        heading.textContent = hit.rank + ". " + hit.title;
+        card.appendChild(heading);
+        const meta = document.createElement("p");
+        meta.className = "compare-result-meta";
+        meta.textContent = [hit.category, hit.subcategory === "_unclassified" ? "Other" : hit.subcategory, hit.file_type].filter(Boolean).join(" · ");
+        card.appendChild(meta);
+        const score = document.createElement("div");
+        score.className = "compare-score-row";
+        const track = document.createElement("span");
+        track.className = "score-track";
+        const fill = document.createElement("span");
+        fill.className = "score-fill";
+        fill.style.width = Math.max(4, ((Number(hit.score) || 0) / maxScore) * 100) + "%";
+        track.appendChild(fill);
+        const scoreText = document.createElement("span");
+        scoreText.textContent = Number(hit.score).toFixed(4);
+        score.append(track, scoreText);
+        card.appendChild(score);
+        if (hit.snippet) {
+          const snippet = document.createElement("p");
+          snippet.className = "compare-snippet";
+          snippet.textContent = hit.snippet.replace(/<\/?mark>/g, "");
+          card.appendChild(snippet);
+        }
+        card.appendChild(this._explanation(hit));
+        return card;
+      },
+
+      _explanation(hit) {
+        const why = document.createElement("div");
+        why.className = "why-block";
+        const title = document.createElement("strong");
+        title.textContent = "Why this result";
+        why.appendChild(title);
+        const parts = [];
+        if (hit.matched && hit.matched.length) parts.push("Matched terms: " + hit.matched.join(", "));
+        if (hit.missing && hit.missing.length) parts.push("Missing terms: " + hit.missing.join(", "));
+        if (hit.proximity) {
+          const prox = hit.proximity;
+          if (prox.best_window_terms && prox.best_window_terms.length) {
+            parts.push("Nearby terms: " + prox.best_window_terms.join(", ") + " (span " + (prox.span || "?") + ", window " + (prox.window_size || "?") + ")");
+          } else {
+            parts.push("No query terms occurred within the proximity window.");
+          }
+        }
+        if (!parts.length) parts.push("The engine did not provide additional explanation fields.");
+        parts.forEach(text => {
+          const line = document.createElement("p");
+          line.textContent = text;
+          why.appendChild(line);
+        });
+        return why;
+      },
+
+      _renderRankChart(groups) {
+        // Plot each document's rank at each model position using a dependency-free inline SVG.
+        const section = document.getElementById("rank-chart-section");
+        const container = document.getElementById("rank-chart");
+        container.innerHTML = "";
+        const ranks = new Map();
+        groups.forEach(group => group.hits.forEach(hit => {
+          if (!ranks.has(hit.id)) ranks.set(hit.id, { title: hit.title, positions: {} });
+          ranks.get(hit.id).positions[group.model] = hit.rank;
+        }));
+        const entries = Array.from(ranks.entries()).slice(0, 12);
+        if (groups.length < 2) {
+          section.classList.add("hidden");
+          return;
+        }
+        section.classList.remove("hidden");
+        if (entries.every(entry => Object.keys(entry[1].positions).length < 2)) {
+          container.textContent = "No documents are shared across the selected models’ top results.";
+          return;
+        }
+        const ns = "http://www.w3.org/2000/svg";
+        const width = 760, height = 280, left = 56, right = 20, top = 24, bottom = 48;
+        const plotHeight = height - top - bottom;
+        const svg = document.createElementNS(ns, "svg");
+        svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+        svg.setAttribute("role", "img");
+        svg.setAttribute("aria-label", "Document rank positions across selected ranking models");
+        const xAt = index => groups.length === 1 ? width / 2 : left + index * (width - left - right) / (groups.length - 1);
+        const yAt = rank => top + (Math.max(1, rank) - 1) * plotHeight / 9;
+        [1, 5, 10].forEach(rank => {
+          const y = yAt(rank);
+          const line = document.createElementNS(ns, "line");
+          line.setAttribute("x1", left); line.setAttribute("x2", width - right);
+          line.setAttribute("y1", y); line.setAttribute("y2", y);
+          line.setAttribute("class", "chart-gridline");
+          svg.appendChild(line);
+          const label = document.createElementNS(ns, "text");
+          label.setAttribute("x", left - 16); label.setAttribute("y", y + 4);
+          label.setAttribute("class", "chart-axis-label"); label.textContent = String(rank);
+          svg.appendChild(label);
+        });
+        groups.forEach((group, index) => {
+          const label = document.createElementNS(ns, "text");
+          label.setAttribute("x", xAt(index)); label.setAttribute("y", height - 14);
+          label.setAttribute("text-anchor", "middle"); label.setAttribute("class", "chart-axis-label");
+          label.textContent = this._label(group.model); svg.appendChild(label);
+        });
+        entries.forEach((entry, index) => {
+          const positions = entry[1].positions;
+          const points = groups.map((group, modelIndex) => positions[group.model] ? [xAt(modelIndex), yAt(positions[group.model]), group.model, positions[group.model]] : null).filter(Boolean);
+          if (points.length < 2) return;
+          const path = document.createElementNS(ns, "path");
+          path.setAttribute("d", points.map((point, pointIndex) => (pointIndex ? "L" : "M") + point[0] + " " + point[1]).join(" "));
+          path.setAttribute("class", "rank-line"); path.style.opacity = String(.25 + (index % 5) * .14);
+          const tooltip = document.createElementNS(ns, "title"); tooltip.textContent = entry[1].title; path.appendChild(tooltip); svg.appendChild(path);
+          points.forEach(point => {
+            const circle = document.createElementNS(ns, "circle");
+            circle.setAttribute("cx", point[0]); circle.setAttribute("cy", point[1]); circle.setAttribute("r", "4");
+            circle.setAttribute("class", "rank-point");
+            const hint = document.createElementNS(ns, "title"); hint.textContent = entry[1].title + " — " + this._label(point[2]) + " rank " + point[3];
+            circle.appendChild(hint); svg.appendChild(circle);
+          });
+        });
+        container.appendChild(svg);
+        const legend = document.createElement("div");
+        legend.className = "chart-legend";
+        entries.forEach((entry, index) => {
+          const item = document.createElement("span");
+          item.style.opacity = String(.5 + (index % 5) * .1);
+          item.textContent = entry[1].title;
+          legend.appendChild(item);
+        });
+        container.appendChild(legend);
+      },
+
+      _label(model) {
+        return (this._models.find(item => item[0] === model) || [model, model])[1];
+      },
+
+    };
+
     /* ===========================================================
        Initialisation — wire all modules and keyboard navigation
        (Task 14 — Req 5.3, 7.2–7.5, 10.3, 10.4)
        =========================================================== */
     document.addEventListener("DOMContentLoaded", function () {
+      // Keep the chosen theme across visits; otherwise follow the OS preference.
+      var themeToggle = document.getElementById("theme-toggle");
+      var savedTheme = localStorage.getItem("ir-theme");
+      var initialTheme = savedTheme ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = initialTheme;
+      if (themeToggle) {
+        themeToggle.addEventListener("click", function () {
+          var nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+          document.documentElement.dataset.theme = nextTheme;
+          localStorage.setItem("ir-theme", nextTheme);
+          themeToggle.setAttribute("aria-label", "Switch to " + (nextTheme === "dark" ? "light" : "dark") + " theme");
+        });
+      }
       SearchBar.init();
+      Comparison.init();
+
+      var compareToggle = document.getElementById("compare-toggle");
+      if (compareToggle) {
+        compareToggle.addEventListener("click", function () {
+          var state = State.get();
+          if (state.view === "compare") {
+            var snapshot = NavHistory.back();
+            if (snapshot) State.update(snapshot);
+            else State.update({ view: "results", currentDocId: null });
+            return;
+          }
+          NavHistory.push(state);
+          var queryInput = document.getElementById("compare-query");
+          queryInput.value = document.getElementById("search-bar").value || state.filters.keyword || "";
+          State.update({ view: "compare", currentDocId: null });
+          queryInput.focus();
+        });
+      }
 
       // Wire Back / Forward buttons to NavHistory
       var backBtn = document.getElementById("back-btn");
@@ -1843,7 +2470,22 @@
       // Keyboard navigation
       document.addEventListener("keydown", function (e) {
         if (e.key === "Escape") {
+          var sidebar = document.getElementById("sidebar");
+          var hamburger = document.getElementById("hamburger");
+          if (sidebar && sidebar.classList.contains("open")) {
+            CategoryMenu.closeSidebar();
+            if (hamburger) hamburger.focus();
+          }
           ResultsList._hidePreview();
+          return;
+        }
+        if (e.key === "/" && !e.altKey && !e.ctrlKey && !e.metaKey) {
+          var target = e.target;
+          var editing = target && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
+          if (!editing) {
+            e.preventDefault();
+            document.getElementById("search-bar").focus();
+          }
         }
         if (e.altKey && e.key === "ArrowLeft") {
           e.preventDefault();

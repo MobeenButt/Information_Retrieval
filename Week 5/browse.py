@@ -65,6 +65,7 @@ SUBCAT_KEYWORDS: dict = {
 SAME_CAT_BOOST = 1.5
 MIN_KEYWORD_LEN = 3
 MAX_LINKS = 5
+COMPARE_MODELS = ("bm25", "tfidf", "boolean", "overlap", "nonoverlap", "bim", "proximal")
 
 
 def _metadata_values(doc: dict, keys: tuple) -> list:
@@ -343,6 +344,7 @@ class BrowseEngine:
     def search(
         self, query: str, cat: str = "", file_type: str = "", k: int = 10,
         date: str = "", author: str = "", topic: str = "", language: str = "",
+        sub: str = "",
     ) -> dict:
         """BM25 search with optional category, file type, and metadata filters.
 
@@ -381,6 +383,8 @@ class BrowseEngine:
             # Post-filter by category
             if cat and doc.get("category", "") != cat:
                 continue
+            if sub and (doc.get("subcategory") or "_unclassified") != sub:
+                continue
             # Post-filter by file_type
             if file_type and doc.get("file_type", "txt") != file_type:
                 continue
@@ -409,6 +413,33 @@ class BrowseEngine:
         raw["hits"] = hits
         raw["total"] = len(hits)
         return raw
+
+    def compare(self, query: str, models: list, k: int = 10) -> dict:
+        """Run the existing search engine for each selected model and add corpus metadata."""
+        selected = list(dict.fromkeys(models))
+        if not selected or any(model not in COMPARE_MODELS for model in selected):
+            raise ValueError("Select at least one supported model.")
+
+        results = {}
+        for model in selected:
+            raw = self._engine.search(query, model=model, k=k)
+            hits = []
+            for rank, item in enumerate(raw.get("hits", []), start=1):
+                doc = self._docs_by_id.get(item["id"])
+                if not doc:
+                    continue
+                hit = dict(item)
+                hit["rank"] = rank
+                hit["category"] = doc.get("category", "")
+                hit["subcategory"] = doc.get("subcategory")
+                hit["file_type"] = doc.get("file_type", "txt")
+                hits.append(hit)
+            results[model] = {
+                "hits": hits,
+                "total": raw.get("total", len(hits)),
+                "took_ms": raw.get("took_ms", 0),
+            }
+        return {"query": query, "models": selected, "results": results}
 
     def related_docs(self, doc_id: int, n: int = 5) -> list:
         """Return up to *n* documents related to *doc_id*.
