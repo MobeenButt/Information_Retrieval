@@ -68,6 +68,15 @@ class Handler(BaseHTTPRequestHandler):
         if url.path in ("/", "/index.html"):
             index_path = os.path.join(ROOT, "index.html")
             return self._send_html(index_path)
+        elif url.path == "/fyp":
+            return self._send_html(os.path.join(ROOT, "..", "WEEK5_FYP", "dashboard.html"))
+        elif url.path == "/api/fyp-data":
+            data_path = os.path.join(ROOT, "..", "WEEK5_FYP", "fyp_data.json")
+            try:
+                with open(data_path, encoding="utf-8") as fh:
+                    return self._send(200, json.load(fh))
+            except (OSError, ValueError) as exc:
+                return self._send(500, {"error": f"FYP fixture unavailable: {exc}"})
         elif url.path == "/api/categories":
             return self._send(200, ENGINE.category_tree())
         elif url.path == "/api/browse":
