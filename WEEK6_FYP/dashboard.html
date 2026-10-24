@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Week 6 | Extended Boolean Search</title>
+  <style>
+    /* Week 5 design tokens copied from Week 5/index.html, dark theme. */
+    :root {
+      color-scheme: dark;
+      --space-1: 8px; --space-2: 16px; --space-3: 24px; --space-4: 32px;
+      --bg: #11131a; --surface: #191c25; --surface-alt: #222633;
+      --border: #303545; --text: #edf0f7; --muted: #aeb5c5;
+      --accent: #a5a0ff; --accent-hover: #c3bfff; --success: #72d6a5; --warning: #f2c56d;
+      --yellow: var(--accent);
+      --shadow: 0 1px 3px rgb(0 0 0 / 25%), 0 8px 24px rgb(0 0 0 / 15%);
+      --header-h: 64px; --radius: 12px; --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{width:100%;min-height:100%;max-width:100%;overflow-x:hidden}
+    body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.5}
+    :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+    button,input{font:inherit}button{cursor:pointer}
+    .app{width:min(calc(100% - 32px),1120px);margin:0 auto;padding:var(--space-3) 0 var(--space-4)}
+    .page-header{padding:var(--space-3);margin-bottom:var(--space-2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .eyebrow{color:var(--accent);font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+    h1{margin:4px 0 6px;font-size:clamp(1.55rem,3vw,2rem);line-height:1.2}
+    .intro{max-width:75ch;color:var(--muted);font-size:.92rem;overflow-wrap:anywhere}
+    .meta{margin-top:var(--space-2);padding:10px 12px;color:var(--muted);background:var(--surface-alt);border:1px solid var(--border);border-radius:8px;font-size:.82rem;overflow-wrap:anywhere}
+    .search-panel{padding:var(--space-2);margin-bottom:var(--space-2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .query-row{display:flex;gap:var(--space-1);align-items:stretch}
+    #query{flex:1;min-width:0;min-height:56px;padding:12px 16px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);font-size:1rem}
+    #query::placeholder{color:var(--muted);opacity:.85}
+    .primary-action{min-height:48px;padding:0 20px;color:#fff;background:var(--accent);border:0;border-radius:8px;font-weight:650}
+    .primary-action:hover{background:var(--accent-hover);color:#11131a}
+    .quick-insert{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0 16px}
+    .quick-label{margin-right:4px;color:var(--muted);font-size:.78rem}
+    .chip{display:inline-flex;min-height:32px;align-items:center;padding:4px 12px;color:var(--text);background:var(--surface-alt);border:1px solid var(--border);border-radius:99px;font-size:.8rem}
+    .chip:hover{border-color:var(--accent);color:var(--accent)}
+    .options{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2)}
+    .switch-label{display:inline-flex;align-items:center;gap:9px;color:var(--text);font-weight:600}
+    .switch-label input{position:absolute;width:1px;height:1px;opacity:0}
+    .switch-track{position:relative;width:42px;height:24px;background:var(--surface-alt);border:1px solid var(--border);border-radius:99px;transition:background .15s}
+    .switch-track::after{position:absolute;top:3px;left:3px;width:16px;height:16px;background:var(--muted);border-radius:50%;content:"";transition:transform .15s,background .15s}
+    .switch-label input:checked+.switch-track{background:var(--accent);border-color:var(--accent)}
+    .switch-label input:checked+.switch-track::after{transform:translateX(18px);background:#11131a}
+    .switch-label input:focus-visible+.switch-track{outline:3px solid var(--accent);outline-offset:3px}
+    .explain-label{display:inline-flex;align-items:center;gap:8px;color:var(--text);font-size:.9rem}
+    #explain{width:18px;height:18px;accent-color:var(--accent)}
+    .p-control{display:grid;grid-template-columns:auto minmax(130px,220px) 2.5rem;align-items:center;gap:10px;color:var(--text);font-size:.88rem}
+    #p{width:100%;accent-color:var(--accent)}
+    #p-value{color:var(--accent);font-weight:750;font-variant-numeric:tabular-nums}
+    .p-hint{grid-column:1/-1;margin-left:0;color:var(--muted);font-size:.78rem;white-space:nowrap}
+    .top-k{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:.82rem}
+    #k{width:72px;min-height:36px;padding:4px 8px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:8px}
+    .status{min-height:1.5rem;margin:0 0 var(--space-1);color:var(--muted);font-size:.85rem}
+    .error-state,.empty-state{padding:var(--space-3);margin-bottom:var(--space-2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .error-state{color:var(--warning);border-color:var(--warning)}
+    .empty-state{text-align:center;color:var(--muted)}
+    .empty-state strong{display:block;margin-bottom:4px;color:var(--text);font-size:1.1rem}
+    .loading{display:flex;align-items:center;gap:12px;padding:var(--space-2);margin-bottom:var(--space-1);color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+    .spinner{width:20px;height:20px;border:3px solid var(--surface-alt);border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .results-list{display:flex;flex-direction:column;gap:12px}
+    .result-card{min-width:0;padding:18px 20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);transition:border-color 180ms ease,box-shadow 180ms ease}
+    .result-card:hover,.result-card:focus-within{border-color:var(--accent)}
+    .result-head{display:grid;grid-template-columns:2rem minmax(0,1fr) auto;align-items:start;gap:12px}
+    .rank{display:grid;width:30px;height:30px;place-items:center;color:var(--accent);background:var(--surface-alt);border-radius:8px;font-size:.78rem;font-weight:750}
+    .card-title{min-width:0;padding-top:2px;font-size:1.08rem;font-weight:650;line-height:1.35;overflow-wrap:anywhere}
+    .score-badge{padding:4px 10px;color:#11131a;background:var(--accent);border-radius:99px;font-size:.82rem;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .score-row{display:flex;align-items:center;gap:9px;margin:12px 0;color:var(--muted);font-size:.76rem}
+    .score-track{display:block;width:120px;height:5px;overflow:hidden;background:var(--surface-alt);border-radius:99px}
+    .score-fill{display:block;height:100%;background:var(--accent);border-radius:inherit}
+    .card-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0;color:var(--muted);font-size:.8rem}
+    .type-tag{padding:3px 9px;color:var(--text);background:var(--surface-alt);border-radius:99px;font-size:.74rem}
+    .source-file{overflow-wrap:anywhere}
+    .source-file strong{color:var(--text);font-weight:600}
+    .document-text{max-height:15rem;overflow:auto;margin-top:10px;color:var(--muted);font-size:.86rem;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+    mark{padding:0 1px;color:#11131a;background:var(--yellow);border-radius:2px}
+    details{margin-top:12px;border-top:1px solid var(--border)}
+    summary{padding:10px 0 2px;color:var(--accent);font-size:.84rem;font-weight:650;cursor:pointer}
+    .explain-wrap{max-width:100%;overflow-x:auto}
+    .explain-table{width:100%;margin:8px 0;border-collapse:collapse;font-size:.78rem;text-align:left}
+    .explain-table th,.explain-table td{padding:7px 9px;border-bottom:1px solid var(--border);vertical-align:top}
+    .explain-table th{color:var(--muted);font-weight:650}
+    .explain-table td:last-child{font-variant-numeric:tabular-nums}
+    .explain-term{color:var(--accent);font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+    @media(max-width:680px){
+      .app{width:100%;max-width:none;margin:0;padding:12px 16px 24px}
+      .page-header,.search-panel,.query-row,.options{min-width:0;max-width:100%}.page-header{padding:16px}.search-panel{padding:12px}
+      .query-row{flex-direction:column}.query-row>*{min-width:0;max-width:100%}#query{width:100%}.primary-action{width:100%}
+      .options{display:flex;flex-direction:column;align-items:stretch;gap:12px}.p-control{display:grid;min-width:0;width:100%;max-width:100%;grid-template-columns:50px minmax(0,1fr) 24px}
+      #p{min-width:0;width:100%}.top-k{align-self:flex-start;margin-left:0}.result-card{padding:14px}
+      .result-head{grid-template-columns:28px minmax(0,1fr);gap:9px}
+      .score-badge{grid-column:2;grid-row:2;justify-self:start}
+      .score-row{margin:8px 0 10px 37px}
+      .score-track{width:min(38vw,140px)}
+    }
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="page-header">
+      <div class="eyebrow">Information Retrieval · Week 6</div>
+      <h1>Extended Boolean Search</h1>
+      <p class="intro">Search the FYP source collection with AND, OR, NOT, parentheses, and quoted phrases. Adjacent terms imply AND.</p>
+      <div id="meta" class="meta">Loading source data…</div>
+    </header>
+
+    <form id="search" class="search-panel">
+      <div class="query-row">
+        <input id="query" type="search" placeholder="(timeout OR crash) AND database" aria-label="Search query" required autocomplete="off">
+        <button class="primary-action" type="submit">Search</button>
+      </div>
+      <div class="quick-insert" aria-label="Insert query operator">
+        <span class="quick-label">Quick insert</span>
+        <button class="chip" type="button" data-insert="AND">AND</button>
+        <button class="chip" type="button" data-insert="OR">OR</button>
+        <button class="chip" type="button" data-insert="NOT">NOT</button>
+        <button class="chip" type="button" data-insert="( )">( )</button>
+        <button class="chip" type="button" data-insert="&quot;&quot;">&quot;&quot;</button>
+      </div>
+      <div class="options">
+        <label class="switch-label" for="extended"><input id="extended" type="checkbox" checked><span class="switch-track" aria-hidden="true"></span><span>Extended Boolean</span></label>
+        <label class="explain-label" for="explain"><input id="explain" type="checkbox"> Explain each result</label>
+        <label class="p-control" for="p"><span>p value</span><input id="p" type="range" value="2" min="1" max="10" step="1"><output id="p-value" for="p">2</output><span class="p-hint">p=1 is average-like, higher p is stricter.</span></label>
+        <label class="top-k" for="k">Top k <input id="k" type="number" value="20" min="1" max="100"></label>
+      </div>
+    </form>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <section id="results" aria-live="polite" aria-label="Search results"></section>
+  </main>
+  <script>
+    const $=selector=>document.querySelector(selector);
+    const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+    function insertAtCursor(text){
+      const input=$("#query"),start=input.selectionStart??input.value.length,end=input.selectionEnd??start;
+      let insertion=text,offset=text.length;
+      if(text==="( )"){insertion="(  )";offset=2}
+      else if(text==='""'){offset=1}
+      else if(["AND","OR","NOT"].includes(text))insertion=` ${text} `,offset=insertion.length;
+      input.setRangeText(insertion,start,end,"end");input.focus();input.setSelectionRange(start+offset,start+offset);
+    }
+    document.querySelectorAll("[data-insert]").forEach(button=>button.addEventListener("click",()=>insertAtCursor(button.dataset.insert)));
+    $("#p").addEventListener("input",()=>$("#p-value").value=$("#p").value);
+
+    async function loadMeta(){
+      const response=await fetch("/api/fyp-meta"),meta=await response.json();
+      if(!response.ok)throw Error(meta.error||"Could not load source summary.");
+      $("#meta").textContent=`${meta.document_count.toLocaleString()} documents · ${Object.keys(meta.source_counts).length} source files · ${meta.source_root}`;
+    }
+    function queryTerms(query){
+      const terms=[],pattern=/"([^"\\]*(?:\\.[^"\\]*)*)"|([\p{L}\p{N}_-]+)/gu;let match;
+      while((match=pattern.exec(query))!==null){const term=match[1]||match[2];if(!["AND","OR","NOT"].includes(term.toUpperCase()))terms.push(term)}
+      return [...new Set(terms)].sort((a,b)=>b.length-a.length);
+    }
+    function highlighted(value,terms){
+      const text=String(value??"");if(!terms.length)return esc(text);
+      const regex=new RegExp(terms.map(term=>term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|"),"giu");let html="",last=0,match;
+      while((match=regex.exec(text))!==null){html+=esc(text.slice(last,match.index))+`<mark>${esc(match[0])}</mark>`;last=match.index+match[0].length;if(!match[0].length)regex.lastIndex++}
+      return html+esc(text.slice(last));
+    }
+    function explanationRows(node,rows,depth=0){
+      if(!node)return;
+      if(node.term!==undefined){rows.push({name:node.term,rule:"Term weight",weight:node.weight,score:node.score,depth,term:true});return}
+      const rule=node.operator==="AND"?"p-norm AND · complement mean":node.operator==="OR"?"p-norm OR · mean": "NOT · 1 − child";
+      rows.push({name:node.operator,rule,weight:null,score:node.score,depth,term:false});
+      (node.children||[]).forEach(child=>explanationRows(child,rows,depth+1));
+    }
+    function explainTable(hit){
+      const rows=[];explanationRows(hit.explain?.expression,rows);
+      Object.entries(hit.explain?.term_weights||{}).forEach(([term,weight])=>{
+        if(!rows.some(row=>row.term&&row.name===term))rows.push({name:term,rule:"Normalized TF-IDF",weight,score:weight,depth:0,term:true});
+      });
+      return `<div class="explain-wrap"><table class="explain-table"><thead><tr><th>Term / operation</th><th>How it combines</th><th>Weight</th><th>Result</th></tr></thead><tbody>${rows.map(row=>`<tr><td class="${row.term?"explain-term":""}" style="padding-left:${9+row.depth*14}px">${esc(row.name)}</td><td>${esc(row.rule)}</td><td>${row.weight==null?"—":Number(row.weight).toFixed(3)}</td><td>${Number(row.score).toFixed(3)}</td></tr>`).join("")}</tbody></table></div>`;
+    }
+    function render(results,extended,terms){
+      if(!results.length){$("#results").innerHTML='<div class="empty-state"><strong>No results</strong>No documents matched this query.</div>';return}
+      $("#results").innerHTML=`<div class="results-list">${results.map((hit,index)=>{
+        const doc=hit.document,score=Math.max(0,Math.min(1,Number(hit.score)||0)),percent=(score*100).toFixed(2);
+        return `<article class="result-card"><div class="result-head"><span class="rank" aria-label="Rank ${index+1}">${index+1}</span><h2 class="card-title">${highlighted(doc.title,terms)}</h2>${extended?`<span class="score-badge" aria-label="Score ${score.toFixed(2)}">${score.toFixed(2)}</span>`:""}</div>${extended?`<div class="score-row"><span>Score</span><span class="score-track" role="img" aria-label="${percent}% score"><span class="score-fill" style="width:${percent}%"></span></span><span>${percent}%</span></div>`:""}<div class="card-meta"><span class="type-tag">${esc(doc.type)}</span><span class="source-file">Source file: <strong>${esc(doc.source_file)}</strong> · ${esc(doc.source)}</span></div><details><summary>Document text</summary><div class="document-text">${highlighted(doc.text,terms)}</div></details>${$("#explain").checked&&extended&&hit.explain?`<details open><summary>Score explanation</summary>${explainTable(hit)}</details>`:""}</article>`;
+      }).join("")}</div>`;
+    }
+    $("#search").addEventListener("submit",async event=>{
+      event.preventDefault();const started=performance.now(),query=$("#query").value,extended=$("#extended").checked,terms=queryTerms(query);
+      $("#status").textContent="";$("#results").innerHTML='<div class="loading"><span class="spinner" aria-hidden="true"></span>Scoring documents…</div>';
+      const params=new URLSearchParams({q:query,k:$("#k").value,p:$("#p").value,extended:extended?"1":"0",explain:$("#explain").checked?"1":"0"});
+      try{
+        const response=await fetch("/api/fyp-search?"+params),payload=await response.json();
+        if(!response.ok)throw Error(payload.error||"Search failed.");
+        render(payload.results,extended,terms);
+        $("#status").textContent=`${payload.results.length} results shown · searched ${payload.document_count.toLocaleString()} documents · ${(performance.now()-started).toFixed(0)} ms`;
+      }catch(error){
+        $("#results").innerHTML=`<div class="error-state" role="alert"><strong>Invalid query</strong><br>${esc(error.message)}</div>`;
+        $("#status").textContent="Please correct the query and try again.";
+      }
+    });
+    loadMeta().catch(error=>$("#meta").textContent=`Could not load source summary: ${error.message}`);
+  </script>
+</body>
+</html>
