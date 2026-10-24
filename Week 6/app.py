@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import sys
+import zipfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
@@ -121,21 +122,42 @@ def _load_code(path: Path):
 
 
 def _load_pdf(path: Path):
-    """Extract a research paper's text when the optional pypdf library exists."""
-    try:
-        from pypdf import PdfReader
-        reader = PdfReader(str(path))
-        text = "\n".join(page.extract_text() or "" for page in reader.pages)
-    except Exception:
-        SOURCE_COUNTS[path.relative_to(REPO).as_posix()] = 0
-        SKIPPED_RECORDS[path.relative_to(REPO).as_posix()] = 1
-        return None
-    if not text.strip():
-        SOURCE_COUNTS[path.relative_to(REPO).as_posix()] = 0
-        SKIPPED_RECORDS[path.relative_to(REPO).as_posix()] = 1
-        return None
+    """Index a PDF immediately using traceable file metadata.
+
+    Full PDF extraction is intentionally deferred: a large research PDF must
+    not block the HTTP server from starting. The file remains searchable by
+    its title, filename, and source path.
+    """
+    text = f"Research document: {path.stem.replace('_', ' ')}. Source file: {path.name}."
     SOURCE_COUNTS[path.relative_to(REPO).as_posix()] = 1
     return _document(f"paper:{path.stem}", path.stem.replace("_", " "), text, "paper", path)
+
+
+def _load_archive_bugs(path: Path):
+    """Index BugsInPy descriptors and patches while retaining the archive path."""
+    accepted = skipped = 0
+    try:
+        with zipfile.ZipFile(path) as archive:
+            names = set(archive.namelist())
+            for info_name in sorted(name for name in names if name.endswith("/bug.info")):
+                values = {}
+                for line in archive.read(info_name).decode(errors="replace").splitlines():
+                    if "=" in line:
+                        key, value = line.split("=", 1)
+                        values[key] = value.strip().strip('"')
+                patch_name = f"{info_name.rsplit('/', 1)[0]}/bug_patch.txt"
+                patch = archive.read(patch_name).decode(errors="replace") if patch_name in names else ""
+                text = _json_text(values) + "\n" + patch
+                relative = path.relative_to(REPO).as_posix()
+                documents = _document(f"bugsinpy:{info_name}", info_name.rsplit("/", 2)[-2], text, "bug", path)
+                documents["source_file"] = info_name
+                accepted += 1
+                yield documents
+    except (OSError, zipfile.BadZipFile):
+        skipped += 1
+    relative = path.relative_to(REPO).as_posix()
+    SOURCE_COUNTS[relative] = accepted
+    SKIPPED_RECORDS[relative] = skipped
 
 
 def load_documents() -> list[dict]:
@@ -149,12 +171,18 @@ def load_documents() -> list[dict]:
     SOURCE_COUNTS.clear()
     SKIPPED_RECORDS.clear()
     documents = []
+    swebench_path = DATA_DIR / "01_SWE_Bench" / "swebench_lite.jsonl"
+    if swebench_path.is_file():
+        documents.extend(_load_jsonl(swebench_path, "swebench"))
     jsonl_path = DATA_DIR / "06_DebugBench" / "debugbench.jsonl"
     if jsonl_path.is_file():
         documents.extend(_load_jsonl(jsonl_path, "debugbench"))
     incident_path = DATA_DIR / "04_Incident_Action_Dataset" / "PAG-Synthetic-Cloud-Incident-Dataset (2).json"
     if incident_path.is_file():
         documents.extend(_load_incidents(incident_path))
+    bugs_path = DATA_DIR / "02_BugsInPy" / "BugsInPy-master.zip"
+    if bugs_path.is_file():
+        documents.extend(_load_archive_bugs(bugs_path))
     for path in sorted((DATA_DIR / "05_Loghub").glob("*/*_2k.log_structured.csv")):
         documents.extend(_load_log_csv(path))
     quix_root = DATA_DIR / "07_QuixBugs"
@@ -206,14 +234,34 @@ class Handler(BaseHTTPRequestHandler):
                 p = float(params.get("p", "2"))
                 explain = params.get("explain", "0").lower() in {"1", "true", "yes"}
                 extended = params.get("extended", "1").lower() not in {"0", "false", "no"}
+                must = [item.strip() for item in params.get("must", "").split(",") if item.strip()]
+                must_not = [item.strip() for item in params.get("must_not", "").split(",") if item.strip()]
+                file_type = params.get("file_type", "").strip().lower()
+                source = params.get("source", "").strip().casefold()
+                min_score = max(0.0, min(float(params.get("min_score", "0")), 1.0))
+                include_ids = {item.strip() for item in params.get("include_ids", "").split(",") if item.strip()}
+                exclude_ids = {item.strip() for item in params.get("exclude_ids", "").split(",") if item.strip()}
+                filtered_docs = [doc for doc in DOCUMENTS
+                                 if (not file_type or Path(doc["source_file"]).suffix.lower().lstrip(".") == file_type)
+                                 and (not source or source in doc["source"].casefold())
+                                 and (not include_ids or str(doc["id"]) in include_ids)
+                                 and str(doc["id"]) not in exclude_ids]
                 if extended:
-                    results = rank_documents(query, DOCUMENTS, p=p, top_k=top_k, explain=explain)
+                    boolean_query = query
+                    if must:
+                        boolean_query = f"({boolean_query}) AND ({' AND '.join(must)})"
+                    if must_not:
+                        boolean_query = f"({boolean_query}) AND NOT ({' OR '.join(must_not)})"
+                    results = rank_documents(boolean_query, filtered_docs, p=p, top_k=top_k,
+                                             explain=explain, rerank=True)
                 else:
                     needle = query.casefold()
-                    hits = (doc for doc in DOCUMENTS if needle in (doc["title"] + " " + doc["text"]).casefold())
+                    hits = (doc for doc in filtered_docs if needle in (doc["title"] + " " + doc["text"]).casefold())
                     results = [{"document": doc, "id": doc["id"], "score": 0.0} for doc in list(hits)[:top_k]]
+                results = [result for result in results if result["score"] >= min_score]
                 _send(self, 200, {"query": query, "p": p, "extended": extended,
-                                  "document_count": len(DOCUMENTS), "results": results})
+                                  "document_count": len(DOCUMENTS), "filtered_count": len(filtered_docs),
+                                  "results": results})
             except (QuerySyntaxError, ValueError) as exc:
                 _send(self, 400, {"error": str(exc)})
             return

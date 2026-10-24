@@ -5,6 +5,7 @@ from collections import Counter
 from dataclasses import dataclass
 import math
 import re
+from difflib import SequenceMatcher
 from typing import Any, Mapping, Sequence
 
 
@@ -120,12 +121,106 @@ def parse_query(query: str) -> Node:
 
 
 def relevance_adjustment(document: Mapping[str, Any], phrase: str) -> float:
-    """REPLACEABLE TEAMMATE HOOK: multiplier for external relevance functions.
+    """Return a bounded relevance multiplier for exact, partial, and fuzzy matches.
 
-    Returns 1.0 until a teammate's relevance, partial-match, or fuzzy score
-    function is available. Replace this body or pass a weight_hook to rank.
+    Exact matches retain the normalized TF-IDF weight. Partial phrase/token
+    matches receive a graded multiplier, while close spelling variants receive
+    a smaller fuzzy multiplier. Field boosts favor titles and summaries without
+    excluding matches found in the document body.
     """
-    return 1.0
+    phrase = phrase.casefold().strip()
+    title = str(document.get("title", "")).casefold()
+    summary = str(document.get("summary", "")).casefold()
+    body = str(document.get("text", "") or document.get("content", "")).casefold()
+    source = str(document.get("source", "")).casefold()
+    source_file = str(document.get("source_file", "")).casefold()
+    if not phrase or phrase in title or phrase in summary or phrase in body or phrase in source or phrase in source_file:
+        return 1.0 + (0.12 if phrase in title or phrase in summary else 0.0)
+    phrase_tokens = re.findall(r"\w+", phrase)
+    tokens = re.findall(r"\w+", f"{title} {summary} {source} {source_file}")
+    if not phrase_tokens or not tokens:
+        return 0.0
+    matched = sum(1 for term in phrase_tokens if term in tokens)
+    partial = matched / len(phrase_tokens)
+    fuzzy = max((SequenceMatcher(None, phrase, token).ratio() for token in tokens), default=0.0)
+    if partial:
+        return min(1.0, 0.35 + 0.55 * partial)
+    return 0.35 + 0.35 * fuzzy if fuzzy >= 0.78 else 0.0
+
+
+def partial_scores(query: str, documents: Sequence[Mapping[str, Any]]) -> dict[str, float]:
+    """Score documents by the proportion of query terms they contain."""
+    terms = [term.casefold() for term in re.findall(r"\w+", query) if term.upper() not in _OPERATORS]
+    if not terms:
+        return {str(doc.get("id", "")): 0.0 for doc in documents}
+    scores = {}
+    for doc in documents:
+        text = " ".join(str(doc.get(field, "")) for field in
+                        ("title", "text", "summary", "content", "source", "source_file")).casefold()
+        scores[str(doc.get("id", ""))] = sum(term in text for term in terms) / len(terms)
+    return scores
+
+
+def fuzzy_scores(query: str, documents: Sequence[Mapping[str, Any]], threshold: float = 0.78) -> dict[str, float]:
+    """Return the best fuzzy token coverage for each document."""
+    terms = [term.casefold() for term in re.findall(r"\w+", query) if term.upper() not in _OPERATORS]
+    scores = {}
+    for doc in documents:
+        token_set = set(re.findall(r"\w+", " ".join(str(doc.get(field, "")) for field in
+                                                     ("title", "text", "summary", "content")).casefold()))
+        matches = []
+        for term in terms:
+            if term in token_set:
+                matches.append(1.0)
+                continue
+            candidates = [token for token in token_set
+                          if token[:1] == term[:1] and abs(len(token) - len(term)) <= 2][:64]
+            matches.append(max((SequenceMatcher(None, term, token).ratio() for token in candidates), default=0.0))
+        scores[str(doc.get("id", ""))] = sum(score if score >= threshold else 0.0 for score in matches) / len(terms) if terms else 0.0
+    return scores
+
+
+def _bm25_scores(phrases: Sequence[str], documents: Sequence[Mapping[str, Any]],
+                 counts: Sequence[Counter], k1: float = 1.2, b: float = 0.75) -> list[float]:
+    """Return normalized BM25 scores for the query phrases."""
+    lengths = [len(re.findall(r"\w+", " ".join(str(document.get(field, ""))
+                                                for field in ("title", "text", "summary", "content"))))
+               for document in documents]
+    average_length = sum(lengths) / len(lengths) if lengths else 1.0
+    total = len(documents)
+    idf = {phrase: math.log(1 + (total - sum(item[phrase] > 0 for item in counts) + .5) /
+                            (sum(item[phrase] > 0 for item in counts) + .5))
+           for phrase in phrases}
+    scores = []
+    for index, length in enumerate(lengths):
+        score = 0.0
+        denominator_length = 1 - b + b * length / max(average_length, 1.0)
+        for phrase in phrases:
+            term_frequency = counts[index][phrase]
+            score += idf[phrase] * (term_frequency * (k1 + 1)) / (
+                term_frequency + k1 * denominator_length) if term_frequency else 0.0
+        scores.append(score)
+    maximum = max(scores, default=0.0)
+    return [score / maximum if maximum else 0.0 for score in scores]
+
+
+def _proximity_scores(phrases: Sequence[str], documents: Sequence[Mapping[str, Any]]) -> list[float]:
+    """Reward query terms occurring close together in each document."""
+    scores = []
+    for document in documents:
+        tokens = re.findall(r"\w+", " ".join(str(document.get(field, ""))
+                                             for field in ("title", "text", "summary", "content")).casefold())
+        positions = []
+        for phrase in phrases:
+            term = phrase.casefold()
+            positions.append([index for index, token in enumerate(tokens) if token == term])
+        if len(positions) < 2 or not all(positions):
+            scores.append(1.0 if positions and positions[0] else 0.0)
+            continue
+        distances = [min(abs(left - right) for left in positions[0] for right in other)
+                     for other in positions[1:]]
+        scores.append(1.0 / (1.0 + sum(distances) / len(distances)))
+    return scores
 
 
 def _phrase_counts(documents: Sequence[Mapping[str, Any]], phrases: Sequence[str]) -> list[Counter]:
@@ -157,7 +252,7 @@ def _tree_terms(node: Node) -> list[str]:
 
 def rank_documents(query: str, documents: Sequence[Mapping[str, Any]], *, p: float = 2,
                    top_k: int = 10, explain: bool = False,
-                   weight_hook=None) -> list[dict[str, Any]]:
+                   weight_hook=None, rerank: bool = False) -> list[dict[str, Any]]:
     """Score all docs using normalized TF-IDF and p-norm Boolean operators.
 
     AND uses the complement p-norm, OR uses the direct p-norm, and NOT uses
@@ -193,12 +288,28 @@ def rank_documents(query: str, documents: Sequence[Mapping[str, Any]], *, p: flo
             score = (sum(value ** p for value in values) / len(values)) ** (1 / p)
         return score, {"operator": node.kind, "children": [item[1] for item in parts], "score": score}
 
+    partial = partial_scores(query, documents)
+    fuzzy = fuzzy_scores(query, documents)
+    bm25 = _bm25_scores(phrases, documents, counts)
+    proximity = _proximity_scores(phrases, documents)
     results = []
     for index, document in enumerate(documents):
         score, detail = evaluate(tree, weights[index])
+        document_id = str(document.get("id", ""))
+        coverage = partial.get(document_id, 0.0)
+        fuzzy_coverage = fuzzy.get(document_id, 0.0)
+        boolean_score = score
+        if rerank:
+            score = min(1.0, .55 * boolean_score + .25 * bm25[index] +
+                        .10 * proximity[index] + .10 * coverage)
+        detail["score"] = score
         result = {"document": document, "id": document.get("id", ""), "score": score}
         if explain:
-            result["explain"] = {"term_weights": weights[index], "expression": detail}
+            result["explain"] = {"term_weights": weights[index], "expression": detail,
+                                 "partial_coverage": coverage, "fuzzy_coverage": fuzzy_coverage,
+                                 "boolean_score": boolean_score, "bm25_score": bm25[index],
+                                 "proximity_score": proximity[index], "coverage_score": coverage,
+                                 "reranked": rerank}
         results.append(result)
     results.sort(key=lambda result: (-result["score"], str(result["id"])))
     return results[:top_k]

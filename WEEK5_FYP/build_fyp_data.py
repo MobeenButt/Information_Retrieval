@@ -15,8 +15,10 @@ import pandas as pd
 
 
 HERE = Path(__file__).resolve().parent
-JSONL = HERE / "swebench_lite.jsonl"
-PARQUET = HERE / "test1.parquet"
+REPO = HERE.parent
+DATA_ROOT = REPO / "FYP_Data"
+JSONL = DATA_ROOT / "01_SWE_Bench" / "swebench_lite.jsonl"
+PARQUET = DATA_ROOT / "01_SWE_Bench" / "test1.parquet"
 OUTPUT = HERE / "fyp_data.json"
 
 
@@ -192,7 +194,7 @@ def main() -> None:
         item.setdefault("category", "SWE Bench")
 
     # Synthetic cloud incidents: incident/action reports and corrective actions.
-    incident_file = HERE / "FYP_Data" / "04_Incident_Action_Dataset" / "PAG-Synthetic-Cloud-Incident-Dataset (2).json"
+    incident_file = DATA_ROOT / "04_Incident_Action_Dataset" / "PAG-Synthetic-Cloud-Incident-Dataset (2).json"
     for row in json.loads(incident_file.read_text(encoding="utf-8")):
         iid = f"cloud:{row['Incident_ID']}"
         title = str(row.get("Summary") or row["Incident_ID"])
@@ -209,7 +211,7 @@ def main() -> None:
         add_record(iid, title, "Incident Action Reports", str(row.get("Root_Cause_Team", "cloud")), row.get("Detected_Time", ""), items, {"severity": row.get("Severity", ""), "region": row.get("Region", "")})
 
     # DebugBench: question, buggy implementation, proposed solution, and explanation.
-    debug_file = HERE / "FYP_Data" / "06_DebugBench" / "debugbench.jsonl"
+    debug_file = DATA_ROOT / "06_DebugBench" / "debugbench.jsonl"
     for index, row in enumerate(json.loads(line) for line in debug_file.read_text(encoding="utf-8").splitlines() if line.strip()):
         iid = f"debugbench:{row.get('slug', index)}:{index}"
         title = str(row.get("question") or row.get("slug") or iid)
@@ -222,7 +224,7 @@ def main() -> None:
         add_record(iid, title, "DebugBench", str(row.get("language", "")), str(row.get("release_time", "")), items, {"subcategory": row.get("category", ""), "difficulty": row.get("level", "")})
 
     # BugsInPy is distributed as an archive; index every bug descriptor and patch.
-    bugs_zip = HERE / "FYP_Data" / "02_BugsInPy" / "BugsInPy-master.zip"
+    bugs_zip = DATA_ROOT / "02_BugsInPy" / "BugsInPy-master.zip"
     with zipfile.ZipFile(bugs_zip) as archive:
         for info_name in [name for name in archive.namelist() if name.endswith("/bug.info")]:
             parts = Path(info_name).parts
@@ -244,7 +246,7 @@ def main() -> None:
             add_record(iid, f"{project} bug {bug_no}", "BugsInPy", project, "", items, values)
 
     # LogHub: retain every structured log row and link adjacent artifacts.
-    for csv_path in sorted((HERE / "FYP_Data" / "05_Loghub").glob("*/*_2k.log_structured.csv")):
+    for csv_path in sorted((DATA_ROOT / "05_Loghub").glob("*/*_2k.log_structured.csv")):
         frame = pd.read_csv(csv_path).fillna("")
         service = csv_path.parent.name
         iid = f"loghub:{service.lower()}"
@@ -258,7 +260,7 @@ def main() -> None:
         add_record(iid, f"{service} operational logs", "LogHub", service, "", items, {"row_count": len(frame)})
 
     # QuixBugs source files are individual code artifacts with internal links.
-    quix_root = HERE / "FYP_Data" / "07_QuixBugs"
+    quix_root = DATA_ROOT / "07_QuixBugs"
     for source_path in sorted(quix_root.rglob("*")):
         if not source_path.is_file() or source_path.suffix.lower() not in {".py", ".java"}:
             continue
@@ -270,7 +272,7 @@ def main() -> None:
 
     # Research PDFs are navigable source documents; content extraction is not
     # assumed, so their file identity and topic remain explicit evidence.
-    for pdf_path in sorted((HERE / "FYP_Data").glob("*.pdf")):
+    for pdf_path in sorted(DATA_ROOT.glob("*.pdf")):
         iid = f"research:{pdf_path.stem}"
         item = evidence(iid, f"{iid}:document", "graph", "research library", pdf_path.name, "Research document", f"PDF source: {pdf_path.name}", .65, "")
         add_record(iid, pdf_path.stem, "Research Documents", "Research Library", "", [item], {"file": pdf_path.name})

@@ -126,6 +126,15 @@
         <label class="explain-label" for="explain"><input id="explain" type="checkbox"> Explain each result</label>
         <label class="p-control" for="p"><span>p value</span><input id="p" type="range" value="2" min="1" max="10" step="1"><output id="p-value" for="p">2</output><span class="p-hint">p=1 is average-like, higher p is stricter.</span></label>
         <label class="top-k" for="k">Top k <input id="k" type="number" value="20" min="1" max="100"></label>
+        <label class="top-k" for="file-type">File type
+          <select id="file-type"><option value="">Any</option><option value="jsonl">JSONL</option><option value="csv">CSV</option><option value="py">Python</option><option value="java">Java</option><option value="pdf">PDF</option><option value="zip">ZIP</option></select>
+        </label>
+        <label class="top-k" for="min-score">Min score <input id="min-score" type="range" value="0" min="0" max="1" step=".05"><output id="min-score-value">0</output></label>
+        <label class="top-k" for="source-filter">Source contains <input id="source-filter" type="search" placeholder="optional"></label>
+        <label class="top-k" for="must">Must include <input id="must" type="search" placeholder="term,term"></label>
+        <label class="top-k" for="must-not">Must not include <input id="must-not" type="search" placeholder="term,term"></label>
+        <label class="top-k" for="include-ids">Include IDs <input id="include-ids" type="search" placeholder="id,id"></label>
+        <label class="top-k" for="exclude-ids">Exclude IDs <input id="exclude-ids" type="search" placeholder="id,id"></label>
       </div>
     </form>
 
@@ -146,6 +155,7 @@
     }
     document.querySelectorAll("[data-insert]").forEach(button=>button.addEventListener("click",()=>insertAtCursor(button.dataset.insert)));
     $("#p").addEventListener("input",()=>$("#p-value").value=$("#p").value);
+    $("#min-score").addEventListener("input",()=>$("#min-score-value").value=$("#min-score").value);
 
     async function loadMeta(){
       const response=await fetch("/api/fyp-meta"),meta=await response.json();
@@ -175,7 +185,8 @@
       Object.entries(hit.explain?.term_weights||{}).forEach(([term,weight])=>{
         if(!rows.some(row=>row.term&&row.name===term))rows.push({name:term,rule:"Normalized TF-IDF",weight,score:weight,depth:0,term:true});
       });
-      return `<div class="explain-wrap"><table class="explain-table"><thead><tr><th>Term / operation</th><th>How it combines</th><th>Weight</th><th>Result</th></tr></thead><tbody>${rows.map(row=>`<tr><td class="${row.term?"explain-term":""}" style="padding-left:${9+row.depth*14}px">${esc(row.name)}</td><td>${esc(row.rule)}</td><td>${row.weight==null?"—":Number(row.weight).toFixed(3)}</td><td>${Number(row.score).toFixed(3)}</td></tr>`).join("")}</tbody></table></div>`;
+      const scores=hit.explain||{};
+      return `<div class="explain-wrap"><table class="explain-table"><thead><tr><th>Term / operation</th><th>How it combines</th><th>Weight</th><th>Result</th></tr></thead><tbody>${rows.map(row=>`<tr><td class="${row.term?"explain-term":""}" style="padding-left:${9+row.depth*14}px">${esc(row.name)}</td><td>${esc(row.rule)}</td><td>${row.weight==null?"—":Number(row.weight).toFixed(3)}</td><td>${Number(row.score).toFixed(3)}</td></tr>`).join("")}</tbody></table><table class="explain-table"><thead><tr><th>Reranking component</th><th>Contribution</th></tr></thead><tbody><tr><td>Boolean / p-norm</td><td>${Number(scores.boolean_score||0).toFixed(3)}</td></tr><tr><td>BM25</td><td>${Number(scores.bm25_score||0).toFixed(3)}</td></tr><tr><td>Proximity</td><td>${Number(scores.proximity_score||0).toFixed(3)}</td></tr><tr><td>Partial coverage</td><td>${Number(scores.coverage_score||0).toFixed(3)}</td></tr></tbody></table></div>`;
     }
     function render(results,extended,terms){
       if(!results.length){$("#results").innerHTML='<div class="empty-state"><strong>No results</strong>No documents matched this query.</div>';return}
@@ -187,12 +198,12 @@
     $("#search").addEventListener("submit",async event=>{
       event.preventDefault();const started=performance.now(),query=$("#query").value,extended=$("#extended").checked,terms=queryTerms(query);
       $("#status").textContent="";$("#results").innerHTML='<div class="loading"><span class="spinner" aria-hidden="true"></span>Scoring documents…</div>';
-      const params=new URLSearchParams({q:query,k:$("#k").value,p:$("#p").value,extended:extended?"1":"0",explain:$("#explain").checked?"1":"0"});
+      const params=new URLSearchParams({q:query,k:$("#k").value,p:$("#p").value,extended:extended?"1":"0",explain:$("#explain").checked?"1":"0",file_type:$("#file-type").value,min_score:$("#min-score").value,source:$("#source-filter").value,must:$("#must").value,must_not:$("#must-not").value,include_ids:$("#include-ids").value,exclude_ids:$("#exclude-ids").value});
       try{
         const response=await fetch("/api/fyp-search?"+params),payload=await response.json();
         if(!response.ok)throw Error(payload.error||"Search failed.");
         render(payload.results,extended,terms);
-        $("#status").textContent=`${payload.results.length} results shown · searched ${payload.document_count.toLocaleString()} documents · ${(performance.now()-started).toFixed(0)} ms`;
+        $("#status").textContent=`${payload.results.length} results shown · searched ${payload.filtered_count.toLocaleString()} of ${payload.document_count.toLocaleString()} documents · ${(performance.now()-started).toFixed(0)} ms`;
       }catch(error){
         $("#results").innerHTML=`<div class="error-state" role="alert"><strong>Invalid query</strong><br>${esc(error.message)}</div>`;
         $("#status").textContent="Please correct the query and try again.";

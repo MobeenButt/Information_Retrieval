@@ -14,7 +14,7 @@ class RealDataLoaderTests(unittest.TestCase):
         cls.documents = week6_app.load_documents()
 
     def test_expected_raw_document_count(self):
-        self.assertEqual(len(self.documents), 37533)
+        self.assertEqual(len(self.documents), 38334)
 
     def test_document_fields_and_real_source_paths(self):
         required = {"id", "title", "text", "type", "source", "source_file"}
